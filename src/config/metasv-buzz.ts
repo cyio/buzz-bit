@@ -32,7 +32,7 @@ interface OauthSettings {
 
 // const domain: string = getBaseDomain()
 
-const type: string = process.env.TYPE || 'dev'
+const env: string = process.env.NODE_ENV || 'development'
 
 const testRecommandUsers = [
   '3e83f04a92c7a8c0e051fc6b813f3f59e643b1a64e8f75b030da8f0969b3ee4f',
@@ -69,7 +69,7 @@ const prodHotBuzz: string[] = [
   'c0c82f4761b5adf3503b183326ad603867afc24e83d78d4485c26bc2fe5bca56',
 ]
 const config: ObjTypes<ConfigTypes> = {
-  dev: {
+  development: {
     baseUrl: '',
     showMoneyUrl: 'https://www.showmoney.app',  // Showmoney 钱包地址 - 不需要变动
     metaFileServiceUrl: '',
@@ -78,7 +78,7 @@ const config: ObjTypes<ConfigTypes> = {
     basePath: '/',
     // metaIdTag: 'testshowid',
     metaIdTag: 'metaid',
-    env: type,
+    env,
     projectAddress: '15XtDJMeaMAafuVHdxS7Vvu6F8uXF1EU4h',
     payCurrency: 'usd',
     simpleBlogFee: 0.0001,
@@ -91,42 +91,14 @@ const config: ObjTypes<ConfigTypes> = {
     rePostAmount: 0.0001,
     rePostFee: 0.0001,
     oauthSettings: {
-      clientId: privateConfig.clientId,
-      clientSecret: privateConfig.clientSecret,
+      clientId: privateConfig[env].clientId,
+      clientSecret: privateConfig[env].clientSecret,
       redirectUri: 'http://localhost:8080/'
     },
     recommandUsers: testRecommandUsers,
     hotBuzz: testHotBuzz,
   },
-  test: {
-    baseUrl: '',
-    showMoneyUrl: '',
-    metaFileServiceUrl: '',
-    metaIdServiceUrl: '',
-    metaIdCenterUrl: '',
-    basePath: '/metasv-buzz/',
-    metaIdTag: 'testshowid',
-    env: type,
-    projectAddress: '15XtDJMeaMAafuVHdxS7Vvu6F8uXF1EU4h',
-    payCurrency: 'usd',
-    simpleBlogFee: 0.0001,
-    payLikeAmount: 0.0001,
-    payLikeFee: 0.0001,
-    payCommentFee: 0.0001,
-    payCommentAmount: 0.0001,
-    payFollowAmount: 0.0001,
-    payFollowFee: 0.0001,
-    rePostAmount: 0.0001,
-    rePostFee: 0.0001,
-    oauthSettings: {
-      clientId: '********',
-      clientSecret: '*************',
-      redirectUri: '*************'
-    },
-    recommandUsers: testRecommandUsers,
-    hotBuzz: testHotBuzz,
-  },
-  prod: {
+  production: {
     baseUrl: 'https://buzz.metasv.com', 		    // 当前项目的基本 Url
     showMoneyUrl: 'https://www.showmoney.app',  // Showmoney 钱包地址 - 不需要变动
     metaFileServiceUrl: 'https://buzz-api.metasv.com/api',  // MetaFile 文件服务API地址 - 不需要变动
@@ -136,7 +108,7 @@ const config: ObjTypes<ConfigTypes> = {
     // metaIdCenterUrl: 'https://buzz-api.metasv.com/tag',// MetaSV Tag 服务API地址
     basePath: '/metasv-buzz/',					// 默认 不需要变动
     metaIdTag: 'metaid',
-    env: type,
+    env,
     projectAddress: '12tfZ62i9GesyYWCA3nZuibFJCGsmxKyF2',
     payCurrency: 'usd',
     simpleBlogFee: 0.01,
@@ -149,13 +121,13 @@ const config: ObjTypes<ConfigTypes> = {
     rePostAmount: 0.01,
     rePostFee: 0.0025,
     oauthSettings: {
-      clientId: 'metabuzz',
-      clientSecret: '3aa03fa8-5c67-4bf4-b670-3b8a89ef879a',
-      redirectUri: 'https://buzz.metasv.com/metasv-buzz/'
+      clientId: privateConfig[env].clientId,
+      clientSecret: privateConfig[env].clientSecret,
+      redirectUri: 'https://buzz-bit.vercel.app'
     },
     recommandUsers: prodRecommandUsers,
     hotBuzz: prodHotBuzz,
   },
 }
 
-export default config[type]
+export default config[env]

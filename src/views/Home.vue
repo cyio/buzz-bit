@@ -26,6 +26,7 @@ import Uploader from "@/components/Uploader.vue";
 import MetaIdJs from "metaidjs"
 import { goAuth, getToken, queryMetaIdData } from '@/api/metasv-buzz.ts'
 import AppConfig from '@/config/metasv-buzz'
+import { isProd } from '@/utils/index';
 // import { setLocal } from '@/utils/storage';
 
 const CLIENT_ID = 'e6d94fe3-69ab-43a9-8988-3255e5957864'
@@ -125,6 +126,10 @@ export default {
         attachments: this.attachments.map((item, index) => { return `![metafile](${index})` }),
         // mention: [],
       }
+      const payTo = isProd ? [{
+        amount: 1000,
+        address: "18H4SRi4nh9yg6Tr8M24CTtsveqzmFmJxM",
+      }] : []
       const config = {
         nodeName: "SimpleMicroblog",
         metaIdTag: "metaid",
@@ -132,12 +137,7 @@ export default {
         accessToken: this.accessToken,
         encrypt: 0,
         payCurrency: "BSV",
-        // payTo: [
-        //   {
-        //     amount: 2000,
-        //     address: "1ad59XtDJMeaMAuXasFad1EU4h",
-        //   },
-        // ],
+        payTo,
         path: "/Protocols/SimpleMicroblog",
         dataType: "application/json",
         attachments: this.attachments,

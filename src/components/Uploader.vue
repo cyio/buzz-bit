@@ -76,7 +76,6 @@ export default Vue.extend({
       const {
         clipboardData: { files },
       } = e;
-      console.log(files);
       this.handleFiles(files);
     },
     optimizeOptions(file) {
@@ -91,22 +90,17 @@ export default Vue.extend({
     },
     processImage(file) {
       const self = this
-      const options = this.optimizeOptions(file)
+      const _options = this.optimizeOptions(file)
       return new Promise((resolve, reject) => {
         const options = {
-          ...options,
+          ..._options,
           success: async (result) => {
-            console.log("Output: ", result);
-            // console.timeEnd('compress')
-            // debugger
             const blobUrl = URL.createObjectURL(result)
             const binary = await this.blobToBinary(result);
 
             const imageObj = {
               fileName: result.name,
               fileType: result.type,
-              // url: blobUrl,
-              // binary: result,
               data: binary.toString("hex"),
             };
             const previewObj = {
