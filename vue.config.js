@@ -4,6 +4,20 @@ function resolve (dir) {
 }
 module.exports = {
     lintOnSave: true,
+    configureWebpack: {
+      module: {
+        rules: [
+          {
+            test: /\.wasm/,
+            use: [
+              {
+                loader: 'file-loader'
+              }
+            ]
+          }
+        ]
+      },
+    },
     chainWebpack: (config)=>{
         config.resolve.alias
             .set('@$', resolve('src'))
@@ -20,5 +34,5 @@ module.exports = {
         }      
       },
       historyApiFallback: false,
-    },  
+    },
 }

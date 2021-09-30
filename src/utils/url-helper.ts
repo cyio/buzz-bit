@@ -1,3 +1,4 @@
+// @ts-nocheck
 /* eslint-disable */
 
 type ValueType = string | number | boolean | object;

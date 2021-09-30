@@ -6,17 +6,17 @@
     <textarea
       v-model="content"
       placeholder="add multiple lines"
-      rows="20" cols="50"
+      rows="5" cols="50"
     ></textarea><br>
     <button @click="send" :disabled='!isLoaded' class="send">send</button>
     <!-- <img alt="Vue logo" src="../assets/logo.png" /> -->
-    <!-- <HelloWorld msg="Welcome to Your Vue.js App" /> -->
+    <Uploader ref="uploader" @change="handleMetafileChange" @close="handleMetafileClose" />
   </div>
 </template>
 
 <script>
 // @ is an alias to /src
-import HelloWorld from "@/components/HelloWorld.vue";
+import Uploader from "@/components/Uploader.vue";
 import MetaIdJs from "metaidjs"
 import { goAuth, getToken, queryMetaIdData } from '@/api/metasv-buzz.ts'
 import AppConfig from '@/config/metasv-buzz'
@@ -45,7 +45,7 @@ function getUrlParameterByName(name, url) {
 export default {
   name: "Home",
   components: {
-    HelloWorld,
+    Uploader,
   },
   data() {
     return {
@@ -55,7 +55,8 @@ export default {
       accessToken: '',
       content: '',
       metaIdJs: null,
-      user: {}
+      user: {},
+      attachments: []
     }
   },
   methods: {
@@ -65,8 +66,8 @@ export default {
       setLocal('refresh_token', res.refreshToken)
       setLocal('access_token', res.accessToken)
     },
-    async getAccessToken() {
-      await getToken({
+    getAccessToken() {
+      return getToken({
         'grant_type': 'authorization_code',
         code: this.code,
         // 'client_id': id,
@@ -115,10 +116,10 @@ export default {
         createTime: new Date().getTime(),
         content: this.content,
         contentType: 'text/plain',
-        // attachments: this.attachments.map((item, index) => { return `![metafile](${index})` }),
+        attachments: this.attachments.map((item, index) => { return `![metafile](${index})` }),
         // mention: [],
       }
-      __metaIdJs.sendMetaDataTx({
+      const config = {
         nodeName: "SimpleMicroblog",
         metaIdTag: "metaid",
         brfcId: "9e73d8935669",
@@ -133,6 +134,7 @@ export default {
         // ],
         path: "/Protocols/SimpleMicroblog",
         dataType: "application/json",
+        attachments: this.attachments,
         // attachments: [
           // {
             // fileName: "PC0b3c7d089fa7d55720d6cf.png",
@@ -149,6 +151,8 @@ export default {
           if (res.code === 200) {
             console.log(res.data.txId);
             this.content = ''
+            this.attachments = []
+            this.$refs.uploader.clear()
             // do something...
           } else {
             new Error(res.data.message);
@@ -158,7 +162,9 @@ export default {
         onCancel(res) {
           console.log('cancel: ', res)
         }
-      });
+      }
+      console.log(config)
+      __metaIdJs.sendMetaDataTx(config);
     },
     onLoaded() {
       console.log('loaded', performance.now())
@@ -256,6 +262,12 @@ export default {
       //   this.loadingMore = false
       //   this.NProgress.remove()
       // }
+    },
+    handleMetafileChange(files) {
+      this.attachments = files
+    },
+    handleMetafileClose() {
+      this.attachments = []
     }
   },
   computed: {

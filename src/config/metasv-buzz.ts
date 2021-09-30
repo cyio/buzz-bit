@@ -93,7 +93,7 @@ const config: ObjTypes<ConfigTypes> = {
     oauthSettings: {
       clientId: privateConfig.clientId,
       clientSecret: privateConfig.clientSecret,
-      redirectUri: 'http://localhost:8080/#/'
+      redirectUri: 'http://localhost:8080/'
     },
     recommandUsers: testRecommandUsers,
     hotBuzz: testHotBuzz,

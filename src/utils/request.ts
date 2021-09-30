@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import Vue from 'vue'
 import { CustomError } from './error'
 import { getLocal, setLocal } from './storage'

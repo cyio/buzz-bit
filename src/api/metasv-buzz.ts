@@ -1,3 +1,5 @@
+// @ts-nocheck
+
 import { HttpRequests, ApiRequestTypes, ContentType } from '@/utils/request'
 import AppConfig from '@/config/metasv-buzz'
 // const AppConfig = {
