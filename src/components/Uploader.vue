@@ -182,7 +182,8 @@ a {
 
 .wrap {
   display: flex;
-  justify-content: center;
+  flex-wrap: wrap;
+  margin-top: 15px;
 
   .select-area {
     padding: 1.25rem;

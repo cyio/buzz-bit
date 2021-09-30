@@ -1,14 +1,20 @@
 <template>
   <div class="home">
-    <button @click="auth" class="auth">auth</button>
-    <div>当前用户：{{user.name}}</div>
-    <div class="sta">is ready: {{isLoaded}}</div><br>
-    <textarea
-      v-model="content"
-      placeholder="add multiple lines"
-      rows="5" cols="50"
-    ></textarea><br>
-    <button @click="send" :disabled='!isLoaded' class="send">send</button>
+    <div class="userinfo">
+      <button @click="auth" class="auth">登陆/切换帐号</button>
+      <div class="username"> 当前用户：{{user.name || '...'}}</div>
+    </div>
+    <div class="status">{{isLoaded ? '': '正在加载...'}}</div><br>
+    <div class="input-area">
+      <textarea
+        v-model="content"
+        placeholder="输入文字"
+        rows="5" cols="50"
+      ></textarea><br>
+      <div class="btn-area">
+        <button @click="send" :disabled='!isLoaded' class="send">发送</button>
+      </div>
+    </div>
     <!-- <img alt="Vue logo" src="../assets/logo.png" /> -->
     <Uploader ref="uploader" @change="handleMetafileChange" @close="handleMetafileClose" />
   </div>
@@ -332,11 +338,33 @@ export default {
 };
 </script>
 
-<style>
-.send {
-  width: 160px;
-  height: 40px;
-  position: relative;
-  left: 132px;
+<style lang="stylus">
+.home {
+  max-width: 600px;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  .userinfo {
+    display: flex;
+    .username {
+      margin-left: 10px;
+    }
+  }
+  .input-area {
+    display: flex;
+    textarea {
+      width: 70%;
+      margin-right: 15px;
+    }
+    .btn-area {
+      width: 20%;
+      display: flex;
+      align-items: flex-end;
+    }
+    .send {
+      width: 100%;
+      height: 40px;
+    }
+  }
 }
 </style>

@@ -35,7 +35,3 @@ yarn run lint
 ### Customize configuration
 See [Configuration Reference](https://cli.vuejs.org/config/).
 
-
-### 问题
-不支持 cjs 或 ejs node 运行
-metaid-play/index.mjs
