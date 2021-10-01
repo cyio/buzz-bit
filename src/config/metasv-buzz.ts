@@ -72,7 +72,7 @@ const config: ObjTypes<ConfigTypes> = {
   development: {
     baseUrl: '',
     showMoneyUrl: 'https://www.showmoney.app',  // Showmoney 钱包地址 - 不需要变动
-    metaFileServiceUrl: '',
+    metaFileServiceUrl: 'https://showman.showpay.io/',
     metaIdServiceUrl: '',
     metaIdCenterUrl: '',
     basePath: '/',
@@ -101,7 +101,7 @@ const config: ObjTypes<ConfigTypes> = {
   production: {
     baseUrl: 'https://buzz.metasv.com', 		    // 当前项目的基本 Url
     showMoneyUrl: 'https://www.showmoney.app',  // Showmoney 钱包地址 - 不需要变动
-    metaFileServiceUrl: 'https://buzz-api.metasv.com/api',  // MetaFile 文件服务API地址 - 不需要变动
+    metaFileServiceUrl: 'https://showman.showpay.io/',  // MetaFile 文件服务API地址 - 不需要变动
     metaIdServiceUrl: 'https://api.showmoney.app',      // Showmoney MetaId 数据服务服务API地址
     // metaIdServiceUrl: 'https://buzz-api.metasv.com',      // MetaSV MetaId 数据服务服务API地址
     metaIdCenterUrl: 'https://api.showmoney.app/tag',// Showmoney Tag 服务API地址
@@ -123,7 +123,7 @@ const config: ObjTypes<ConfigTypes> = {
     oauthSettings: {
       clientId: privateConfig[env].clientId,
       clientSecret: privateConfig[env].clientSecret,
-      redirectUri: 'https://buzz-bit.vercel.app'
+      redirectUri: 'https://buzzbit.vercel.app'
     },
     recommandUsers: prodRecommandUsers,
     hotBuzz: prodHotBuzz,

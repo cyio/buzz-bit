@@ -1,6 +1,7 @@
 // @ts-nocheck
 
 import { HttpRequests, ApiRequestTypes, ContentType } from '@/utils/request'
+import { isProd } from '@/utils/index'
 import AppConfig from '@/config/metasv-buzz'
 // const AppConfig = {
 //   showMoneyUrl: 'https://www.showmoney.app',  // Showmoney 钱包地址 - 不需要变动
@@ -41,7 +42,10 @@ interface MetaIdDataResTypes {
 
 const callApi = async (config: ApiRequestTypes): Promise<any> => {
   const Http = new HttpRequests()
-  const url = AppConfig.showMoneyUrl + config.url
+  let url = AppConfig.showMoneyUrl + config.url
+  if (config.host) {
+    url = isProd ? config.host + config.url : config.url
+  }
   const res = await Http.postFetch<any>(url, config.params, config.options)
   return res
 }
@@ -55,6 +59,14 @@ export const getToken = (params: GetTokenParamsTypes): Promise<any> => {
         'Content-Type': ContentType.form
       },
     }
+  })
+}
+// https://api.showmoney.app/aggregation/v2/app/buzz/getBuzzMyCustomizeList
+export const getBuzzList = (params): Promise<any> => {
+  return callApi({
+    url: '/aggregation/v2/app/buzz/getBuzzMyCustomizeList',
+    host: 'https://api.showmoney.app/',
+    params: params
   })
 }
 export const goAuth = () => {

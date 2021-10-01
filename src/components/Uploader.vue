@@ -7,21 +7,25 @@
       @drop="drop"
       @paste="onPaste"
     > 
-      <button>
+      <button class="select-btn">
         <label class="text-primary"
           >选择图片...
           <input
             type="file"
-            class="sr-only"
+            class="select-input"
             id="file"
             accept="image/*"
             multiple="multiple"
-            ref="input"
+            ref="selectInput"
           />
         </label>
       </button>
       <span> 共 {{previewImages.length}} 个 </span>
       <button @click="clear">清除图片</button>
+      <div>
+        <input type="checkbox" id="checkbox" v-model="useOriginal">
+        <label for="checkbox">使用原图</label>
+      </div>
     </div>
     <div class="image-preview">
       <div class="item" v-for="(image, index) in previewImages" :key="index">
@@ -49,18 +53,19 @@ export default Vue.extend({
     return {
       images: [],
       previewImages: [],
-      // useOrigin: false,
+      useOriginal: false,
     };
   },
   methods: {
     removeImg(index) {
       this.images.splice(index, 1)
       this.previewImages.splice(index, 1)
+      this.$refs.selectInput.value = ''
     },
     clear() {
       this.images = []
       this.previewImages = []
-      this.$refs.input.value = ''
+      this.$refs.selectInput.value = ''
     },
     change: function (e) {
       this.handleFiles(e.target.files);
@@ -81,6 +86,7 @@ export default Vue.extend({
     optimizeOptions(file) {
       const options = {}
       // 仅大图需要转 webp，小图延用原格式
+      if (this.useOriginal) return options
       if (file.size < 10 * 1024) return options
       const commonOptions = {
         maxWidth: 1080,
@@ -126,7 +132,6 @@ export default Vue.extend({
         this.images.push(imageObj);
         this.previewImages.push(previewObj);
       }
-      this.$emit("change", this.images);
     },
     blobToBinary(fileBlob) {
       return new Promise((resolve, reject) => {
@@ -150,6 +155,14 @@ export default Vue.extend({
     formatPercent(percent) {
       return (percent * 100).toFixed(2) + '%';
     },
+  },
+  watch: {
+    'images': {
+        handler: function(newValue) {
+          this.$emit("change", this.images);
+        },
+        deep: true
+    }
   }
 });
 </script>
@@ -185,8 +198,11 @@ a {
     background-color: #f8f9fa;
     height: 150px;
     border: 2px dashed #d8d2d2;
-    input {
+    .select-input {
       visibility: hidden;
+    }
+    .select-btn {
+      margin-bottom: 10px;
     }
   }
   .image-preview {

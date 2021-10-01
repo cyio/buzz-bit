@@ -31,8 +31,16 @@ module.exports = {
           pathRewrite: {
             '^/showMANDB': '' // 重写接口
           }
-        }      
+        },
+        '/aggregation': {
+          target: 'https://api.showmoney.app',
+          changeOrigin: true,
+          pathRewrite: {
+            // '^/aggregation': '' // 重写接口
+          }
+        }
       },
       historyApiFallback: false,
     },
+    productionSourceMap: process.env.NODE_ENV != 'production'
 }

@@ -16,15 +16,17 @@
       </div>
     </div>
     <!-- <img alt="Vue logo" src="../assets/logo.png" /> -->
-    <Uploader ref="uploader" @change="handleMetafileChange" @close="handleMetafileClose" />
+    <Uploader ref="uploader" @change="handleMetafileChange" />
+    <BuzzList :buzzListData="buzzListData" />
   </div>
 </template>
 
 <script>
 // @ is an alias to /src
 import Uploader from "@/components/Uploader.vue";
+import BuzzList from "@/components/BuzzList.vue";
 import MetaIdJs from "metaidjs"
-import { goAuth, getToken, queryMetaIdData } from '@/api/metasv-buzz.ts'
+import { goAuth, getToken, getBuzzList } from '@/api/metasv-buzz.ts'
 import AppConfig from '@/config/metasv-buzz'
 import { isProd } from '@/utils/index';
 // import { setLocal } from '@/utils/storage';
@@ -53,6 +55,7 @@ export default {
   name: "Home",
   components: {
     Uploader,
+    BuzzList
   },
   data() {
     return {
@@ -63,7 +66,8 @@ export default {
       content: '',
       metaIdJs: null,
       user: {},
-      attachments: []
+      attachments: [],
+      buzzListData: []
     }
   },
   methods: {
@@ -118,6 +122,20 @@ export default {
         }
       })
     },
+    computeAppFees() {
+      const postFee = 1000
+      const mineFeeRate = 0.5
+      const postImgFeeRate = 0.05
+      const compressFeeRate = 0.2
+      const imgs = this.$refs.uploader.previewImages
+      const fileSize = imgs.reduce((acc, cur) => acc + cur.output.size, 0)
+      const savedSize = imgs.reduce((acc, cur) => acc + cur.input.size - cur.output.size, 0)
+      // 基础体积费用 + 节省体积费用
+      const basicSizeFee = Math.floor(fileSize * mineFeeRate * postImgFeeRate)
+      const savedSizeFee = Math.floor(savedSize * mineFeeRate * compressFeeRate)
+      console.log('fee', { postFee, basicSizeFee, savedSizeFee})
+      return { postFee, basicSizeFee, savedSizeFee }
+    },
     send() {
       const buzzData = {
         createTime: new Date().getTime(),
@@ -126,10 +144,16 @@ export default {
         attachments: this.attachments.map((item, index) => { return `![metafile](${index})` }),
         // mention: [],
       }
-      const payTo = isProd ? [{
-        amount: 1000,
-        address: "18H4SRi4nh9yg6Tr8M24CTtsveqzmFmJxM",
-      }] : []
+      const chargeAddress = {
+        'postFee': '18H4SRi4nh9yg6Tr8M24CTtsveqzmFmJxM',
+        'basicSizeFee': '13fk1eut5jjefQ7HdgY34ANm6shBnVzUVc',
+        'savedSizeFee': '14nXduvCiHx3hEm6dmGKwJnth2iZVX6YF1'
+      }
+      const feeMap = this.computeAppFees()
+      const payTo = Object.keys(feeMap).map(key => ({
+        amount: feeMap[key],
+        address: chargeAddress[key]
+      }))
       const config = {
         nodeName: "SimpleMicroblog",
         metaIdTag: "metaid",
@@ -159,6 +183,7 @@ export default {
             this.content = ''
             this.attachments = []
             this.$refs.uploader.clear()
+            this.getBuzzList()
             // do something...
           } else {
             new Error(res.data.message);
@@ -173,7 +198,7 @@ export default {
       __metaIdJs.sendMetaDataTx(config);
     },
     onLoaded() {
-      console.log('loaded', performance.now())
+      console.log('metaidjs loaded', performance.now() / 1000)
       this.isLoaded = true
       this.getUser()
     },
@@ -188,6 +213,7 @@ export default {
           if (res.code === 200) {
             console.log('userinfo', res.data)
             this.user = res.data
+            this.getBuzzList(this.user.metaId)
           } else {
             console.log('get user error: ', res)
           }
@@ -198,82 +224,23 @@ export default {
         },
       })
     },
-    async getBuzzList(type) {
-      // if (this.loadingMore || (type === 'user' && !this.userInfo.following.length)) return
+    getBuzzList(metaId) {
       const params = {
-        find: {
-          $and: [
-            {
-              $or: [
-                // {
-                //   parentNodeName: 'ShowText'
-                // },
-                {
-                  parentNodeName: 'SimpleMicroblog',
-                  encrypt: '0',
-                },
-                {
-                  parentNodeName: 'SimpleRePost'
-                },
-                {
-                  parentNodeName: 'metanote',
-                  'data.isPrivate': 0
-                },
-              ],
-            },
-          ],
-          metaId: AppConfig.metaIdTag,
-          encrypt: '0',
-          isNew: true,
-        },
-        sort: {
-          timestamp: -1
-        },
-        // skip: this.pageNum,
-        // limit: this.pageSize
+        Protocols: ['SimpleMicroblog'],
+        metaId,
+        page: '1',
+        pageSize: '10',
+        timestamp: 0
       }
-      if (type === 'user') {
-        params.find['$or'] = [
-          { rootTxId: this.userInfo.metaId },
-        ]
-        const following = this.userInfo.following
-        // following.push(this.userInfo.metaId)
-        following.forEach(user => {
-          params.find['$or'].push({ rootTxId: user })
-        })
-      } else {
-        delete params.$or
-      }
-      // this.loadingMore = true
-      // this.NProgress.start()
-      const res = await queryMetaIdData(params)
-      console.log('query params', params, res)
-      // if (res?.code === 200) {
-      //   const list = res.result.data
-      //   // 是否已经没有更多了
-      //   if (list.length < this.pageSize) {
-      //     this.isEnd = true
-      //   }
-      //   this.metaBuzzList = this.metaBuzzList.concat(list)
-      //   window.scrollTo({
-      //     top: window.pageYOffset - 10,
-      //     behavior: 'smooth'
-      //   })
-      //   this.NProgress.done()
-      //   setTimeout(() => {
-      //     this.loadingMore = false
-      //   }, 5000)
-      // } else {
-      //   this.$toasted.error('获取数据失败.')
-      //   this.loadingMore = false
-      //   this.NProgress.remove()
-      // }
+      getBuzzList(params).then(res => {
+        const { code, data } = res
+        if (code === 0) {
+          this.buzzListData = res.data.results?.items || []
+        }
+      })
     },
     handleMetafileChange(files) {
       this.attachments = files
-    },
-    handleMetafileClose() {
-      this.attachments = []
     }
   },
   computed: {
@@ -313,6 +280,7 @@ export default {
         return this.onLoaded()
       }
       if (!val) return
+      console.log('before new MetaIdJs', performance.now() / 1000)
       window.__metaIdJs = new MetaIdJs({
         oauthSettings: {
           clientId: AppConfig.oauthSettings.clientId,
