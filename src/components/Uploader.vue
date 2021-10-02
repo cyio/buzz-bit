@@ -22,9 +22,15 @@
       </button>
       <span> 共 {{previewImages.length}} 个 </span>
       <button @click="clear">清除图片</button>
-      <div>
-        <input type="checkbox" id="checkbox" v-model="useOriginal">
-        <label for="checkbox">使用原图</label>
+      <div class="img-options">
+        <div class="img-option-item">
+          <input type="checkbox" id="useOriginal" v-model="useOriginal">
+          <label for="useOriginal">使用原图</label>
+        </div>
+        <div class="img-option-item">
+          <input type="checkbox" id="useOriginalWidth" v-model="useOriginalWidth">
+          <label for="useOriginalWidth">压缩时，保持原图宽高</label>
+        </div>
       </div>
     </div>
     <div class="image-preview">
@@ -54,6 +60,7 @@ export default Vue.extend({
       images: [],
       previewImages: [],
       useOriginal: false,
+      useOriginalWidth: false
     };
   },
   methods: {
@@ -86,47 +93,69 @@ export default Vue.extend({
     optimizeOptions(file) {
       const options = {}
       // 仅大图需要转 webp，小图延用原格式
-      if (this.useOriginal) return options
       if (file.size < 10 * 1024) return options
       const commonOptions = {
-        maxWidth: 1080,
+        maxWidth: this.useOriginalWidth ? Infinity : 1080,
         mimeType: 'image/webp',
       }
       return commonOptions
     },
-    processImage(file) {
+    processImage(input) {
       const self = this
-      const _options = this.optimizeOptions(file)
-      return new Promise((resolve, reject) => {
-        const options = {
-          ..._options,
-          success: async (result) => {
-            const blobUrl = URL.createObjectURL(result)
-            const binary = await this.blobToBinary(result);
+      const _options = this.optimizeOptions(input)
+      return new Promise(async (resolve, reject) => {
+        if (self.useOriginal) {
+          const blobUrl = URL.createObjectURL(input)
+          const binary = await this.blobToBinary(input);
+          const imageObj = {
+            fileName: input.name,
+            fileType: input.type,
+            data: binary.toString("hex"),
+          };
+          const previewObj = {
+            url: blobUrl,
+            input,
+            output: input
+          }
+          resolve({imageObj, previewObj});
+        } else {
+          const options = {
+            ..._options,
+            success: async (result) => {
+              if (result.size >= input.size) {
+                result = input
+              }
+              const blobUrl = URL.createObjectURL(result)
+              const binary = await this.blobToBinary(result);
 
-            const imageObj = {
-              fileName: result.name,
-              fileType: result.type,
-              data: binary.toString("hex"),
-            };
-            const previewObj = {
-              url: blobUrl,
-              input: file,
-              output: result
-            }
-            console.log('压缩对比：', previewObj)
-            resolve({imageObj, previewObj});
-            // self.output.push();
-            // vm.$refs.input.value = '';
-          },
-          error: function (err) {
-            reject(error.message);
-          },
-        };
-        new Compressor(file, options);
+              const imageObj = {
+                fileName: result.name,
+                fileType: result.type,
+                data: binary.toString("hex"),
+              };
+              const previewObj = {
+                url: blobUrl,
+                input,
+                output: result
+              }
+              console.log('压缩对比：', previewObj)
+              resolve({imageObj, previewObj});
+              // self.output.push();
+              // vm.$refs.input.value = '';
+            },
+            error: function (err) {
+              reject(error.message);
+            },
+          };
+          new Compressor(input, options);
+        }
       });
     },
     async handleFiles(files) {
+      if (!files) {
+        console.log('未选择有效文件')
+        return
+      }
       for (let i = 0; i < files.length && i < 9; i++) {
         const {imageObj, previewObj} = await this.processImage(files[i]);
         this.images.push(imageObj);
@@ -222,6 +251,12 @@ a {
         right: 10px;
         bottom: 10px;
       }
+    }
+  }
+  .img-options {
+    display: flex;
+    .img-option-item {
+      margin-right: 10px;
     }
   }
 }

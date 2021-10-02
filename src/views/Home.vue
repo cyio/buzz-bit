@@ -17,6 +17,7 @@
     </div>
     <!-- <img alt="Vue logo" src="../assets/logo.png" /> -->
     <Uploader ref="uploader" @change="handleMetafileChange" />
+    <!-- <button @click="getBuzzList" class="send">刷新列表</button> -->
     <BuzzList :buzzListData="buzzListData" />
   </div>
 </template>
@@ -126,7 +127,7 @@ export default {
       const postFee = 1000
       const mineFeeRate = 0.5
       const postImgFeeRate = 0.05
-      const compressFeeRate = 0.2
+      const compressFeeRate = 0.005
       const imgs = this.$refs.uploader.previewImages
       const fileSize = imgs.reduce((acc, cur) => acc + cur.output.size, 0)
       const savedSize = imgs.reduce((acc, cur) => acc + cur.input.size - cur.output.size, 0)
@@ -213,7 +214,7 @@ export default {
           if (res.code === 200) {
             console.log('userinfo', res.data)
             this.user = res.data
-            this.getBuzzList(this.user.metaId)
+            this.getBuzzList()
           } else {
             console.log('get user error: ', res)
           }
@@ -224,10 +225,10 @@ export default {
         },
       })
     },
-    getBuzzList(metaId) {
+    getBuzzList() {
       const params = {
         Protocols: ['SimpleMicroblog'],
-        metaId,
+        metaId: this.user.metaId,
         page: '1',
         pageSize: '10',
         timestamp: 0

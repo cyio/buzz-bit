@@ -32,7 +32,6 @@ export default Vue.extend({
   },
   methods: {
     getImageUrl(src) {
-      debugger
       const srcArray = src.split('://')
       const fileId = srcArray[1]
       let url = src
