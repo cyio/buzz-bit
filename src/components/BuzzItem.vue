@@ -1,10 +1,14 @@
 <template>
   <div class="item">
-    <div class="time">
-      {{ buzz.timestamp | formatTime }}
+    <div class="attrs">
+      <div class="time">{{ buzz.timestamp | formatTime }}</div>
+      <div class="link-wrap">
+        <a class="tx-link" :href="getTxUrl(buzz.txId)" target="_blank">tx</a>
+        <a class="tx-link" :href="getShowBuzzUrl(buzz.txId)" target="_blank">showbuzz</a>
+      </div>
     </div>
-    <div class="content">
-      {{ buzz.content }}
+    <div class="content" v-html="displayContent(buzz.content)">
+      <!-- {{ displayContent(buzz.content) }} -->
     </div>
     <div class="imgs">
       <div class="img-item" v-for="(metafile, index) in buzz.attachments" :key="index">
@@ -39,6 +43,20 @@ export default Vue.extend({
         url = fileId && fileId !== '' ? `${AppConfig.metaFileServiceUrl}/metafile/${fileId}` : null
       }
       return url
+    },
+    getTxUrl(txId) {
+      return 'https://whatsonchain.com/tx/' + txId
+    },
+    getShowBuzzUrl(txId) {
+      return 'https://www.showbuzz.app/details/' + txId
+    },
+    displayContent(content = '') {
+      content = this.handleHashTags(content)
+      return content.replace(/(?:\r\n|\r|\n|\\n)/g, '<br />')
+    },
+    handleHashTags(val) {
+      const html = val.replace(/#([\u4e00-\u9fa5_\w-]+)#/g, '<a href="' + this.$router.options.base + 'list?tag=$1">$&</a> ')
+      return html
     }
   },
   filters: {
@@ -52,13 +70,21 @@ export default Vue.extend({
 <style scoped lang="stylus">
 .item {
   text-align: left;
-  margin: 15px;
+  margin: 15px 0;
   border: 1px solid #d0c9c9;;
   padding: 10px 5px;
-  .time {
+  .attrs {
+    display: flex;
+    justify-content: space-between;
     color: #909399;
     font-size: 12px;
     margin-bottom: 10px;
+    a {
+      color: inherit;
+    }
+    .tx-link {
+      padding: 0 5px;
+    }
   }
   .imgs {
     display: flex;

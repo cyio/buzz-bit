@@ -11,9 +11,13 @@
         placeholder="输入文字"
         rows="5" cols="50"
       ></textarea><br>
-      <div class="btn-area">
-        <button @click="send" :disabled='!isLoaded' class="send">发送</button>
+    </div>
+    <div class="input-operation">
+      <div class="text-option">
+        <input type="checkbox" id="useEncrypt" v-model="useEncrypt">
+        <label for="useEncrypt">私密</label>
       </div>
+      <button @click="send" :disabled='!isLoaded' class="send">发送</button>
     </div>
     <!-- <img alt="Vue logo" src="../assets/logo.png" /> -->
     <Uploader ref="uploader" @change="handleMetafileChange" />
@@ -29,13 +33,7 @@ import BuzzList from "@/components/BuzzList.vue";
 import MetaIdJs from "metaidjs"
 import { goAuth, getToken, getBuzzList } from '@/api/metasv-buzz.ts'
 import AppConfig from '@/config/metasv-buzz'
-import { isProd } from '@/utils/index';
-// import { setLocal } from '@/utils/storage';
 
-const CLIENT_ID = 'e6d94fe3-69ab-43a9-8988-3255e5957864'
-const CLIENT_SECRET = 'af22ad2f-8bc8-45c2-b155-bd4ed6ee97bd'
-const ACCESS_TOKEN = '4bf0d693-970b-4e21-a12a-ecb876d7f186'
-// TODO token 流程是什么？为什么会提示失效
 function getLocal(key) {
   return window.localStorage.getItem(key)
 }
@@ -68,7 +66,8 @@ export default {
       metaIdJs: null,
       user: {},
       attachments: [],
-      buzzListData: []
+      buzzListData: [],
+      useEncrypt: false
     }
   },
   methods: {
@@ -137,6 +136,13 @@ export default {
       console.log('fee', { postFee, basicSizeFee, savedSizeFee})
       return { postFee, basicSizeFee, savedSizeFee }
     },
+    updateAttachmentsEncrypt() {
+      if (this.useEncrypt) {
+        this.attachments.forEach(i => i.encrypt = 1)
+      } else {
+        this.attachments.forEach(i => delete i.encrypt)
+      }
+    },
     send() {
       const buzzData = {
         createTime: new Date().getTime(),
@@ -155,12 +161,13 @@ export default {
         amount: feeMap[key],
         address: chargeAddress[key]
       }))
+      this.updateAttachmentsEncrypt()
       const config = {
         nodeName: "SimpleMicroblog",
         metaIdTag: "metaid",
         brfcId: "9e73d8935669",
         accessToken: this.accessToken,
-        encrypt: 0,
+        encrypt: +this.useEncrypt,
         payCurrency: "BSV",
         payTo,
         path: "/Protocols/SimpleMicroblog",
@@ -236,7 +243,8 @@ export default {
       getBuzzList(params).then(res => {
         const { code, data } = res
         if (code === 0) {
-          this.buzzListData = res.data.results?.items || []
+          const items = res.data.results?.items || []
+          this.buzzListData = items.filter(i => i.encrypt === '0')
         }
       })
     },
@@ -307,7 +315,7 @@ export default {
 };
 </script>
 
-<style lang="stylus">
+<style lang="stylus" scoped>
 .home {
   max-width: 600px;
   margin: 0 auto;
@@ -321,17 +329,20 @@ export default {
   }
   .input-area {
     display: flex;
+    margin-bottom: 10px;
     textarea {
-      width: 70%;
-      margin-right: 15px;
-    }
-    .btn-area {
-      width: 20%;
-      display: flex;
-      align-items: flex-end;
+      width: 100%;
     }
     .send {
       width: 100%;
+      height: 40px;
+    }
+  }
+  .input-operation {
+    display: flex;
+    justify-content: space-between;
+    .send {
+      width: 120px;
       height: 40px;
     }
   }

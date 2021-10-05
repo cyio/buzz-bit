@@ -1,10 +1,10 @@
 <template>
   <div class="wrap">
-    <div v-for="(buzz, index) in buzzListData" :key="buzz.txId + index">
-      <buzz-item
-        :buzz="buzz"
-      />
-    </div>
+    <buzz-item
+      v-for="(buzz, index) in buzzListData" 
+      :buzz="buzz"
+      :key="buzz.txId + index"
+    />
   </div>
 </template>
 
