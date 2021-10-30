@@ -73,6 +73,9 @@ export default Vue.extend({
   margin: 15px 0;
   border: 1px solid #d0c9c9;;
   padding: 10px 5px;
+  .content {
+    word-wrap: break-word;
+  }
   .attrs {
     display: flex;
     justify-content: space-between;
