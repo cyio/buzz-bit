@@ -32,6 +32,13 @@ module.exports = {
             '^/showMANDB': '' // 重写接口
           }
         },
+        '/api/aggregation': {
+          target: 'https://www.showbuzz.app/',
+          changeOrigin: true,
+          pathRewrite: {
+            // '^/aggregation': '' // 重写接口
+          }
+        },
         '/aggregation': {
           target: 'https://api.showmoney.app',
           changeOrigin: true,

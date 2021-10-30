@@ -21,7 +21,11 @@
     </div>
     <!-- <img alt="Vue logo" src="../assets/logo.png" /> -->
     <Uploader ref="uploader" @change="handleMetafileChange" />
-    <!-- <button @click="getBuzzList" class="send">刷新列表</button> -->
+    <!-- <button @click="getCurBuzzList" class="send">刷新列表</button> -->
+    <div class="list-nav">
+      <div class="item follow" @click="curListType = 'follow'" role="button">关注</div>
+      <div class="item my" @click="curListType = 'my'" role="button">我的</div>
+    </div>
     <BuzzList :buzzListData="buzzListData" />
   </div>
 </template>
@@ -31,7 +35,7 @@
 import Uploader from "@/components/Uploader.vue";
 import BuzzList from "@/components/BuzzList.vue";
 import MetaIdJs from "metaidjs"
-import { goAuth, getToken, getBuzzList } from '@/api/metasv-buzz.ts'
+import { goAuth, getToken, getBuzzList, getFollowBuzzList } from '@/api/metasv-buzz.ts'
 import AppConfig from '@/config/metasv-buzz'
 
 function getLocal(key) {
@@ -67,6 +71,7 @@ export default {
       user: {},
       attachments: [],
       buzzListData: [],
+      curListType: 'follow',
       useEncrypt: false
     }
   },
@@ -191,11 +196,9 @@ export default {
             this.content = ''
             this.attachments = []
             this.$refs.uploader.clear()
-            this.getBuzzList()
-            // do something...
+            this.getCurBuzzList()
           } else {
             new Error(res.data.message);
-            // do something...
           }
         },
         onCancel(res) {
@@ -219,9 +222,9 @@ export default {
         // callback: 'handleUserInfo',
         callback: (res) => {
           if (res.code === 200) {
-            console.log('userinfo', res.data)
+            // console.log('userinfo', res.data)
             this.user = res.data
-            this.getBuzzList()
+            this.getCurBuzzList()
           } else {
             console.log('get user error: ', res)
           }
@@ -247,6 +250,29 @@ export default {
           this.buzzListData = items.filter(i => i.encrypt === '0')
         }
       })
+    },
+    getFollowBuzzList() {
+      const params = {
+        metaId: this.user.metaId,
+        page: '1',
+        pageSize: '10',
+        timeType: "today",
+        timestamp: 0
+      }
+      getFollowBuzzList(params).then(res => {
+        const { code, data } = res
+        if (code === 0) {
+          const items = res.data.results?.items || []
+          this.buzzListData = items.filter(i => i.encrypt === '0')
+        }
+      })
+    },
+    getCurBuzzList() {
+      const map = {
+        'my': 'getBuzzList',
+        'follow': 'getFollowBuzzList',
+      }
+      this[map[this.curListType]]()
     },
     handleMetafileChange(files) {
       this.attachments = files
@@ -307,10 +333,12 @@ export default {
           }
         }
       })
+    },
+    'curListType': function(val) {
+      this.getCurBuzzList()
     }
   },
   mounted() {
-    // this.getBuzzList()
   }
 };
 </script>
@@ -344,6 +372,12 @@ export default {
     .send {
       width: 120px;
       height: 40px;
+    }
+  }
+  .list-nav {
+    display: flex;
+    .item {
+      margin-right: 12px;
     }
   }
 }

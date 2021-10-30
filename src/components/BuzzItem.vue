@@ -1,11 +1,15 @@
 <template>
   <div class="item">
     <div class="attrs">
+      <div class="username">{{ buzz.userName }}</div>
       <div class="time">{{ buzz.timestamp | formatTime }}</div>
       <div class="link-wrap">
         <a class="tx-link" :href="getTxUrl(buzz.txId)" target="_blank">tx</a>
         <a class="tx-link" :href="getShowBuzzUrl(buzz.txId)" target="_blank">showbuzz</a>
       </div>
+      <div class="comment">评论[{{buzz.comment.length}}]</div>
+      <div class="likes">喜欢[{{buzz.like.length}}]</div>
+      <div class="likes">转发[{{buzz.rePost.length}}]</div>
     </div>
     <div class="content" v-html="displayContent(buzz.content)">
       <!-- {{ displayContent(buzz.content) }} -->
@@ -73,6 +77,8 @@ export default Vue.extend({
   margin: 15px 0;
   border: 1px solid #d0c9c9;;
   padding: 10px 5px;
+  max-height: 160px;
+  overflow: hidden;
   .content {
     word-wrap: break-word;
   }

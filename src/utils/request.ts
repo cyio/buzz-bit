@@ -134,7 +134,7 @@ export class HttpRequests implements Http {
     }
     const options: RequestInit = {
       method: HttpMethod.post,
-      // credentials: 'include',
+      credentials: config?.credentials || 'include',
       headers: Object.assign({
         'Content-Type': ContentType.json
       }, config?.headers),

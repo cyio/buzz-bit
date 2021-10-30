@@ -49,7 +49,6 @@ const callApi = async (config: ApiRequestTypes): Promise<any> => {
   const res = await Http.postFetch<any>(url, config.params, config.options)
   return res
 }
-
 export const getToken = (params: GetTokenParamsTypes): Promise<any> => {
   return callApi({
     url: '/api/oauth2/oauth/token',
@@ -66,7 +65,20 @@ export const getBuzzList = (params): Promise<any> => {
   return callApi({
     url: '/aggregation/v2/app/buzz/getBuzzMyCustomizeList',
     host: 'https://api.showmoney.app/',
-    params: params
+    params: params,
+    options: {
+      credentials: 'omit',
+    }
+  })
+}
+export const getFollowBuzzList = (params): Promise<any> => {
+  return callApi({
+    url: '/api/aggregation/v2/app/buzz/getBuzzFollowList',
+    host: 'https://www.showbuzz.app/',
+    params: params,
+    options: {
+      credentials: 'omit',
+    }
   })
 }
 export const goAuth = () => {
