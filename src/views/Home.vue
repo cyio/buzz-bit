@@ -4,7 +4,8 @@
       <button @click="auth" class="auth">登陆/切换帐号</button>
       <div class="username"> 当前用户：{{user.name || '...'}}</div>
     </div>
-    <div class="status">{{isLoaded ? '': '正在加载...'}}</div><br>
+    <!-- <div class="status">{{isLoaded ? '': '正在加载...'}}</div><br> -->
+    <van-loading v-show="!isLoaded" color="#1989fa" class="loading" />
     <div class="input-area">
       <textarea
         v-model="content"
@@ -24,21 +25,23 @@
     </div>
     <Uploader v-show="showImgSelect" ref="uploader" @change="handleMetafileChange" />
     <!-- <button @click="getCurBuzzList" class="send">刷新列表</button> -->
-    <div class="list-nav">
-      <div class="item follow" @click="curListType = 'follow'" role="button">关注</div>
-      <div class="item my" @click="curListType = 'my'" role="button">我的</div>
-    </div>
-    <BuzzList :buzzListData="buzzListData" />
+    <buzz-list-container
+      scene="priv"
+      :user="user"
+      v-if="user.metaId"
+      :lastBuzzTime="lastBuzzTime"
+    />
   </div>
 </template>
 
 <script>
-// @ is an alias to /src
 import Uploader from "@/components/Uploader.vue";
-import BuzzList from "@/components/BuzzList.vue";
+import BuzzListContainer from "@/components/BuzzListContainer.vue";
+import { Loading } from 'vant';
 import MetaIdJs from "metaidjs"
-import { goAuth, getToken, getBuzzList, getFollowBuzzList } from '@/api/metasv-buzz.ts'
+import { goAuth, getToken } from '@/api/metasv-buzz.ts'
 import AppConfig from '@/config/metasv-buzz'
+// import { Loading } from 'vant';
 
 function getLocal(key) {
   return window.localStorage.getItem(key)
@@ -60,7 +63,8 @@ export default {
   name: "Home",
   components: {
     Uploader,
-    BuzzList
+    BuzzListContainer,
+    [Loading.name]: Loading,
   },
   data() {
     return {
@@ -73,9 +77,9 @@ export default {
       user: {},
       attachments: [],
       buzzListData: [],
-      curListType: 'follow',
       useEncrypt: false,
-      showImgSelect: false
+      showImgSelect: false,
+      lastBuzzTime: +new Date(),
     }
   },
   methods: {
@@ -199,7 +203,8 @@ export default {
             this.content = ''
             this.attachments = []
             this.$refs.uploader.clear()
-            this.getCurBuzzList()
+            this.lastBuzzTime = +new Date()
+            // this.getCurBuzzList()
           } else {
             new Error(res.data.message);
           }
@@ -227,7 +232,7 @@ export default {
           if (res.code === 200) {
             // console.log('userinfo', res.data)
             this.user = res.data
-            this.getCurBuzzList()
+            // this.getCurBuzzList()
           } else {
             console.log('get user error: ', res)
           }
@@ -237,45 +242,6 @@ export default {
           // }
         },
       })
-    },
-    getBuzzList() {
-      const params = {
-        Protocols: ['SimpleMicroblog'],
-        metaId: this.user.metaId,
-        page: '1',
-        pageSize: '10',
-        timestamp: 0
-      }
-      getBuzzList(params).then(res => {
-        const { code, data } = res
-        if (code === 0) {
-          const items = res.data.results?.items || []
-          this.buzzListData = items.filter(i => i.encrypt === '0')
-        }
-      })
-    },
-    getFollowBuzzList() {
-      const params = {
-        metaId: this.user.metaId,
-        page: '1',
-        pageSize: '10',
-        timeType: "today",
-        timestamp: 0
-      }
-      getFollowBuzzList(params).then(res => {
-        const { code, data } = res
-        if (code === 0) {
-          const items = res.data.results?.items || []
-          this.buzzListData = items.filter(i => i.encrypt === '0')
-        }
-      })
-    },
-    getCurBuzzList() {
-      const map = {
-        'my': 'getBuzzList',
-        'follow': 'getFollowBuzzList',
-      }
-      this[map[this.curListType]]()
     },
     handleMetafileChange(files) {
       this.attachments = files
@@ -337,9 +303,9 @@ export default {
         }
       })
     },
-    'curListType': function(val) {
-      this.getCurBuzzList()
-    }
+    // 'curListType': function(val) {
+    //   this.getCurBuzzList()
+    // }
   },
   mounted() {
   }
@@ -354,6 +320,7 @@ export default {
   flex-direction: column;
   .userinfo {
     display: flex;
+    margin-bottom 12px;
     .username {
       margin-left: 10px;
     }
@@ -382,6 +349,9 @@ export default {
     .item {
       margin-right: 12px;
     }
+  }
+  .loading {
+    margin-bottom 12px;
   }
 }
 </style>

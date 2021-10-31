@@ -29,4 +29,7 @@ export default Vue.extend({
 </script>
 
 <style scoped lang="stylus">
+.wrap {
+  min-height: 300px;
+}
 </style>
