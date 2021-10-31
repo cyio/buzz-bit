@@ -4,6 +4,7 @@
       <h3>BuzzBit</h3>
       <div class="links">
         <router-link to="/">首页</router-link>
+        <router-link to="/pub">广场</router-link>
         <router-link to="/about">关于</router-link>
         <search />
       </div>

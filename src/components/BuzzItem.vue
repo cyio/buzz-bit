@@ -1,15 +1,19 @@
 <template>
-  <div class="item">
-    <div class="attrs">
-      <div class="username">{{ buzz.userName }}</div>
-      <div class="time">{{ buzz.timestamp | formatTime }}</div>
-      <div class="link-wrap">
+  <div class="item-container">
+    <div class="item-head">
+      <div class="left">
+        <div class="avatar"></div>
+        <div class="userinfo">
+          <div class="username">{{ buzz.userName }}</div>
+          <div class="attrs">
+            <div class="time">{{ buzz.timestamp | formatTime }}</div>
+          </div>
+        </div>
+      </div>
+      <div class="right">
         <a class="tx-link" :href="getTxUrl(buzz.txId)" target="_blank">tx</a>
         <a class="tx-link" :href="getShowBuzzUrl(buzz.txId)" target="_blank">showbuzz</a>
       </div>
-      <div class="comment">评论[{{buzz.comment.length}}]</div>
-      <div class="likes">喜欢[{{buzz.like.length}}]</div>
-      <div class="likes">转发[{{buzz.rePost.length}}]</div>
     </div>
     <div class="content" v-html="displayContent(buzz.content)">
       <!-- {{ displayContent(buzz.content) }} -->
@@ -19,6 +23,15 @@
         <img
           :src="getImageUrl(metafile)"
         />
+      </div>
+    </div>
+    <div class="item-bottom">
+      <div class="left"></div>
+      <div class="right">
+        <div class="item likes">转发[{{buzz.rePost.length}}]</div>
+        <div class="item comment">评论[{{buzz.comment.length}}]</div>
+        <div class="item likes">喜欢[{{buzz.like.length}}]</div>
+        <div class="item donate">打赏[{{buzz.donate.length}}]</div>
       </div>
     </div>
   </div>
@@ -72,27 +85,50 @@ export default Vue.extend({
 </script>
 
 <style scoped lang="stylus">
-.item {
+.item-container {
   text-align: left;
   margin: 15px 0;
   border: 1px solid #d0c9c9;;
   padding: 10px 5px;
-  max-height: 160px;
+  // max-height: 160px;
   overflow: hidden;
   .content {
     word-wrap: break-word;
   }
-  .attrs {
+  .item-head {
+    margin-bottom: 18px;
     display: flex;
     justify-content: space-between;
-    color: #909399;
-    font-size: 12px;
-    margin-bottom: 10px;
-    a {
-      color: inherit;
+    .userinfo {
+      .attrs {
+        color: #909399;
+        font-size: 12px;
+      }
     }
     .tx-link {
       padding: 0 5px;
+      color: #909399;
+      font-size: 12px;
+    }
+  }
+  .sub-text {
+    color: #909399;
+    font-size: 12px;
+  }
+  .item-bottom {
+    display: flex;
+    justify-content: space-between;
+    color: #666667;
+    font-size: 12px;
+    display: flex;
+    a {
+      color: inherit;
+    }
+    .right {
+      display: flex;
+    }
+    .item  {
+      margin-right: 6px;
     }
   }
   .imgs {
@@ -102,6 +138,8 @@ export default Vue.extend({
     .img-item {
       width: 130px;
       margin-right: 8px;
+      max-height: 281.25px;
+      overflow: hidden;
     }
     img { 
       width: 100%;

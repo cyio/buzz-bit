@@ -81,6 +81,26 @@ export const getFollowBuzzList = (params): Promise<any> => {
     }
   })
 }
+export const getHotBuzzList = (params): Promise<any> => {
+  return callApi({
+    url: '/api/aggregation/v2/app/buzz/getBuzzHotList',
+    host: 'https://www.showbuzz.app/',
+    params: params,
+    options: {
+      credentials: 'omit',
+    }
+  })
+}
+export const getNewBuzzList = (params): Promise<any> => {
+  return callApi({
+    url: '/api/aggregation/v2/app/buzz/getBuzzHomeList',
+    host: 'https://www.showbuzz.app/',
+    params: params,
+    options: {
+      credentials: 'omit',
+    }
+  })
+}
 export const goAuth = () => {
   const authUrl = `${AppConfig.showMoneyUrl}/userLogin?response_type=code&scope=app&client_id=${AppConfig.oauthSettings.clientId}&redirect_uri=${AppConfig.oauthSettings.redirectUri}`
   window.location.replace(authUrl)

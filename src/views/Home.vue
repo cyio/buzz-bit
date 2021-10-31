@@ -16,11 +16,13 @@
       <div class="text-option">
         <input type="checkbox" id="useEncrypt" v-model="useEncrypt">
         <label for="useEncrypt">私密</label>
+        <input type="checkbox" id="showImgSelect" v-model="showImgSelect">
+        <label for="showImgSelect">发图</label>
       </div>
+      <!-- <button @click="showImgSelect = !showImgSelect" class="send">切换发图</button> -->
       <button @click="send" :disabled='!isLoaded' class="send">发送</button>
     </div>
-    <!-- <img alt="Vue logo" src="../assets/logo.png" /> -->
-    <Uploader ref="uploader" @change="handleMetafileChange" />
+    <Uploader v-show="showImgSelect" ref="uploader" @change="handleMetafileChange" />
     <!-- <button @click="getCurBuzzList" class="send">刷新列表</button> -->
     <div class="list-nav">
       <div class="item follow" @click="curListType = 'follow'" role="button">关注</div>
@@ -72,7 +74,8 @@ export default {
       attachments: [],
       buzzListData: [],
       curListType: 'follow',
-      useEncrypt: false
+      useEncrypt: false,
+      showImgSelect: false
     }
   },
   methods: {
