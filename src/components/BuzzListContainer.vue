@@ -7,9 +7,18 @@
         :name="item.key"
         :key="item.key"
       >
+        <div class="search-wrap" v-show="curListType === 'search'" >
+          <van-search
+            v-model="keywords"
+            placeholder="请输入关键词" @search="getSearchBuzzList"
+            class="search-input"
+          />
+          <van-button color="#1989fa" @click="getSearchBuzzList" size="small" :disabled='keywords === ""' class="search-btn">搜 索</van-button>
+        </div>
         <van-loading v-show="loading" color="#1989fa" class="loading" />
-        <BuzzList v-show="!loading" :buzzListData="buzzListData" />
+        <BuzzList v-show="!loading" :buzzListData="buzzListData[item.key]" :key="item.key" />
         <van-pagination
+          v-show="buzzListData.length > 0 && !loading"
           v-model="currentPage" :total-items="10000" :items-per-page="10"
           force-ellipses
         />
@@ -19,8 +28,8 @@
 </template>
 <script>
 import BuzzList from "@/components/BuzzList.vue";
-import { getBuzzList, getFollowBuzzList, getHotBuzzList, getNewBuzzList } from '@/api/metasv-buzz.ts'
-import { Tab, Tabs, Loading, Pagination } from 'vant';
+import { getBuzzList, getFollowBuzzList, getHotBuzzList, getNewBuzzList, getSearchBuzzList } from '@/api/metasv-buzz.ts'
+import { Tab, Tabs, Loading, Pagination, Search } from 'vant';
 // import AppConfig from '@/config/metasv-buzz'
 
 
@@ -45,11 +54,18 @@ export default {
     [Tabs.name]: Tabs,
     [Loading.name]: Loading,
     [Pagination.name]: Pagination,
+    [Search.name]: Search,
   },
   data() {
     return {
       loading: false,
-      buzzListData: [],
+      buzzListData: {
+        'hot': [],
+        'new': [],
+        'follow': [],
+        'my': [],
+        'search': [],
+      },
       currentPage: 1,
       curListType: this.scene === 'pub' ? 'hot' : 'follow',
       navData: [
@@ -60,8 +76,13 @@ export default {
         {
           key: 'new',
           title: '新帖'
+        },
+        {
+          key: 'search',
+          title: '搜索'
         }
-      ]
+      ],
+      keywords: ''
     }
   },
   methods: {
@@ -79,7 +100,7 @@ export default {
         const { code, data } = res
         if (code === 0) {
           const items = res.data.results?.items || []
-          this.buzzListData = items.filter(i => i.encrypt === '0')
+          this.buzzListData.my = items.filter(i => i.encrypt === '0')
         }
       })
     },
@@ -92,12 +113,13 @@ export default {
         timestamp: 0
       }
       this.loading = true
+      // return
       getFollowBuzzList(params).then(res => {
         this.loading = false
         const { code, data } = res
         if (code === 0) {
           const items = res.data.results?.items || []
-          this.buzzListData = items.filter(i => i.encrypt === '0')
+          this.buzzListData.follow = items.filter(i => i.encrypt === '0')
         }
       })
     },
@@ -113,14 +135,14 @@ export default {
         const { code, data } = res
         if (code === 0) {
           const items = res.data.results?.items || []
-          this.buzzListData = items.filter(i => i.encrypt === '0')
+          this.buzzListData.hot = items.filter(i => i.encrypt === '0')
         }
       })
     },
     getNewBuzzList() {
       const params = {
-        page: '1',
         page: "" + this.currentPage,
+        pageSize: '15',
         timeType: "today",
         timestamp: 0
       }
@@ -130,7 +152,24 @@ export default {
         const { code, data } = res
         if (code === 0) {
           const items = res.data.results?.items || []
-          this.buzzListData = items.filter(i => i.encrypt === '0')
+          this.buzzListData.new = items.filter(i => i.encrypt === '0')
+        }
+      })
+    },
+    getSearchBuzzList() {
+      const params = {
+        page: "" + this.currentPage,
+        pageSize: '15',
+        searchWord: this.keywords,
+        timestamp: 0
+      }
+      this.loading = true
+      getSearchBuzzList(params).then(res => {
+        this.loading = false
+        const { code, data } = res
+        if (code === 0) {
+          const items = res.data.results?.items || []
+          this.buzzListData.search = items.filter(i => i.encrypt === '0')
         }
       })
     },
@@ -140,6 +179,7 @@ export default {
         'follow': 'getFollowBuzzList',
         'hot': 'getHotBuzzList',
         'new': 'getNewBuzzList',
+        'search': 'getSearchBuzzList',
       }
       this[map[this.curListType]]()
     },
@@ -165,7 +205,12 @@ export default {
   watch: {
     'curListType': function(val) {
       this.currentPage = 1
-      this.getCurBuzzList()
+      if (val === 'search') {
+        this.loading = false
+        this.buzzListData.search = []
+      } else {
+        this.getCurBuzzList()
+      }
     },
     'lastBuzzTime': function(val) {
       this.getCurBuzzList()
@@ -183,7 +228,15 @@ export default {
 .list-container {
   .loading {
     margin-top 30%;
-    margin-bottom: 40px;
+    margin-bottom: 30%;
+    text-align: center;
+  }
+  .search-wrap {
+    display: flex;
+    align-items: center;
+    .search-input {
+      width: 80%;
+    }
   }
 }
 </style>

@@ -1,8 +1,8 @@
 <template>
   <div class="home">
     <div class="userinfo">
-      <button @click="auth" class="auth">登陆/切换帐号</button>
       <div class="username"> 当前用户：{{user.name || '...'}}</div>
+      <van-button color="#1989fa" plain size="small" @click="auth" class="auth">切换</van-button>
     </div>
     <!-- <div class="status">{{isLoaded ? '': '正在加载...'}}</div><br> -->
     <van-loading v-show="!isLoaded" color="#1989fa" class="loading" />
@@ -21,7 +21,7 @@
         <label for="showImgSelect">发图</label>
       </div>
       <!-- <button @click="showImgSelect = !showImgSelect" class="send">切换发图</button> -->
-      <button @click="send" :disabled='!isLoaded' class="send">发送</button>
+      <van-button color="#1989fa" @click="send" size="small" :disabled='!isLoaded || content === ""' class="send">发送</van-button>
     </div>
     <Uploader v-show="showImgSelect" ref="uploader" @change="handleMetafileChange" />
     <!-- <button @click="getCurBuzzList" class="send">刷新列表</button> -->
@@ -37,7 +37,6 @@
 <script>
 import Uploader from "@/components/Uploader.vue";
 import BuzzListContainer from "@/components/BuzzListContainer.vue";
-import { Loading } from 'vant';
 import MetaIdJs from "metaidjs"
 import { goAuth, getToken } from '@/api/metasv-buzz.ts'
 import AppConfig from '@/config/metasv-buzz'
@@ -64,7 +63,6 @@ export default {
   components: {
     Uploader,
     BuzzListContainer,
-    [Loading.name]: Loading,
   },
   data() {
     return {
@@ -322,7 +320,7 @@ export default {
     display: flex;
     margin-bottom 12px;
     .username {
-      margin-left: 10px;
+      margin-right: 10px;
     }
   }
   .input-area {
@@ -332,16 +330,13 @@ export default {
       width: 100%;
     }
     .send {
-      width: 100%;
-      height: 40px;
     }
   }
   .input-operation {
     display: flex;
     justify-content: space-between;
     .send {
-      width: 120px;
-      height: 40px;
+      width: 80px;
     }
   }
   .list-nav {
@@ -352,6 +347,7 @@ export default {
   }
   .loading {
     margin-bottom 12px;
+    text-align: center;
   }
 }
 </style>

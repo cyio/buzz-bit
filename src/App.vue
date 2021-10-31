@@ -4,9 +4,9 @@
       <h3>BuzzBit</h3>
       <div class="links">
         <router-link to="/">首页</router-link>
-        <router-link to="/pub" v-show="showPub">广场</router-link>
+        <router-link to="/pub">广场</router-link>
         <router-link to="/about">关于</router-link>
-        <search />
+        <!-- <search /> -->
       </div>
     </div>
     <router-view />
@@ -36,12 +36,11 @@ export default Vue.extend({
 
 <style lang="stylus" scoped>
 #app
-  font-family Avenir, Helvetica, Arial, sans-serif
   -webkit-font-smoothing antialiased
   -moz-osx-font-smoothing grayscale
-  text-align center
-  // color #2c3e50
-  margin-top 10px
+  padding: 8px;
+  max-width: 600px;
+  margin: 0 auto;
 
 .nav {
   display: flex;

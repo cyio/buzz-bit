@@ -4,10 +4,8 @@
       <div class="left">
         <div class="avatar"></div>
         <div class="userinfo">
-          <div class="username">{{ buzz.userName }}</div>
-          <div class="attrs">
-            <div class="time">{{ buzz.timestamp | formatTime }}</div>
-          </div>
+          <div class="username">{{ buzz.userName || buzz.name}}</div>
+          <div class="time">{{ buzz.timestamp | formatTime }}</div>
         </div>
       </div>
       <div class="right">
@@ -22,18 +20,33 @@
       <div class="img-item" v-for="(metafile, index) in buzz.attachments" :key="index">
         <img
           :src="getImageUrl(metafile)"
+          @click="handlePreviewImg(buzz.attachments, index)"
         />
       </div>
     </div>
     <div class="item-bottom">
       <div class="left"></div>
-      <div class="right">
+      <div class="right" v-if="buzz.comment">
         <div class="item likes">转发[{{buzz.rePost.length}}]</div>
         <div class="item comment">评论[{{buzz.comment.length}}]</div>
         <div class="item likes">喜欢[{{buzz.like.length}}]</div>
         <div class="item donate">打赏[{{buzz.donate.length}}]</div>
       </div>
     </div>
+    <van-image-preview v-model="show" :images="images" 
+      :start-position="index"
+      @change="onChange" closeable
+    >
+      <template v-slot:index>
+        <div class="img-custom" v-show="images.length > 1">
+          <div class="img-nums">{{ index + 1 }}/{{images.length}}</div>
+          <div class="switch-btns">
+            <div class="left" @click="index = Math.max(index - 1, 0)">上一个</div>
+            <div class="left" @click="index = Math.min(index + 1, images.length - 1)">下一个</div>
+          </div>
+        </div>
+      </template>
+    </van-image-preview>
   </div>
 </template>
 
@@ -41,14 +54,21 @@
 import Vue from "vue";
 import AppConfig from '@/config/metasv-buzz'
 import { formatTime } from '@/utils/index';
+import { ImagePreview } from 'vant';
 
 export default Vue.extend({
   name: "BuzzItem",
+  components: {
+    [ImagePreview.Component.name]: ImagePreview.Component,
+  },
   props: {
     buzz: Object
   },
   data() {
     return {
+      show: false,
+      index: 0,
+      images: [],
     };
   },
   methods: {
@@ -74,6 +94,15 @@ export default Vue.extend({
     handleHashTags(val) {
       const html = val.replace(/#([\u4e00-\u9fa5_\w-]+)#/g, '<a href="' + this.$router.options.base + 'list?tag=$1">$&</a> ')
       return html
+    },
+    handlePreviewImg(arr, index) {
+      const images =  arr.map(i => this.getImageUrl(i))
+      this.images = images
+      this.index = index
+      this.show = !this.show
+    },
+    onChange(index) {
+      this.index = index
     }
   },
   filters: {
@@ -100,9 +129,12 @@ export default Vue.extend({
     display: flex;
     justify-content: space-between;
     .userinfo {
-      .attrs {
+      display: flex;
+      align-items: center;
+      .time {
         color: #909399;
         font-size: 12px;
+        margin-left 6px;
       }
     }
     .tx-link {
@@ -144,6 +176,12 @@ export default Vue.extend({
     img { 
       width: 100%;
     }
+  }
+  .switch-btns {
+    width: 98vw;
+    display: flex;
+    justify-content: space-between;
+    margin-top: 42vh;
   }
 }
 </style>
