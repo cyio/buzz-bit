@@ -57,6 +57,7 @@ export const getToken = (params: GetTokenParamsTypes): Promise<any> => {
       headers: {
         'Content-Type': ContentType.form
       },
+      credentials: 'omit',
     }
   })
 }

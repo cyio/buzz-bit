@@ -18,7 +18,7 @@
         <van-loading v-show="loading" color="#1989fa" class="loading" />
         <BuzzList v-show="!loading" :buzzListData="buzzListData[item.key]" :key="item.key" />
         <van-pagination
-          v-show="buzzListData.length > 0 && !loading"
+          v-show="buzzListData[curListType].length > 0 && !loading"
           v-model="currentPage" :total-items="10000" :items-per-page="10"
           force-ellipses
         />

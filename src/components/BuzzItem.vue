@@ -40,9 +40,13 @@
       <template v-slot:index>
         <div class="img-custom" v-show="images.length > 1">
           <div class="img-nums">{{ index + 1 }}/{{images.length}}</div>
-          <div class="switch-btns">
-            <div class="left" @click="index = Math.max(index - 1, 0)">上一个</div>
-            <div class="left" @click="index = Math.min(index + 1, images.length - 1)">下一个</div>
+          <div class="switch-btns" v-if="!isMobile">
+            <div class="btn prev" :class="{'disabled': index <= 0}" @click="index = Math.max(index - 1, 0)">
+              {{index <= 0 ? '' : '上一个'}}
+            </div>
+            <div class="btn next" :class="{'disabled': index >= images.length - 1}" @click="index = Math.min(index + 1, images.length - 1)">
+              {{index >= images.length - 1 ? '' : '下一个'}}
+            </div>
           </div>
         </div>
       </template>
@@ -55,6 +59,13 @@ import Vue from "vue";
 import AppConfig from '@/config/metasv-buzz'
 import { formatTime } from '@/utils/index';
 import { ImagePreview } from 'vant';
+import { format as timeagoFormat } from 'timeago.js';
+
+function _isMobile(){
+    const isMobile = (/iphone|ipod|android|ie|blackberry|fennec/).test
+         (navigator.userAgent.toLowerCase());
+    return isMobile;
+}
 
 export default Vue.extend({
   name: "BuzzItem",
@@ -69,6 +80,7 @@ export default Vue.extend({
       show: false,
       index: 0,
       images: [],
+      isMobile: _isMobile()
     };
   },
   methods: {
@@ -107,7 +119,8 @@ export default Vue.extend({
   },
   filters: {
     formatTime(time) {
-      return formatTime(time)
+      const useTimeago = (new Date()) - time < 86400000
+      return useTimeago ? timeagoFormat(time, 'zh_CN') : formatTime(time)
     }
   }
 });
@@ -182,6 +195,12 @@ export default Vue.extend({
     display: flex;
     justify-content: space-between;
     margin-top: 42vh;
+    .btn {
+      cursor: pointer;
+      &.disabled {
+        color: gray;
+      }
+    }
   }
 }
 </style>
