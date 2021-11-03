@@ -100,7 +100,7 @@ export default Vue.extend({
       return 'https://www.showbuzz.app/details/' + txId
     },
     displayContent(content = '') {
-      content = this.handleHashTags(content)
+      // content = this.handleHashTags(content)
       return content.replace(/(?:\r\n|\r|\n|\\n)/g, '<br />')
     },
     handleHashTags(val) {

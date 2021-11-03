@@ -102,6 +102,16 @@ export const getNewBuzzList = (params): Promise<any> => {
     }
   })
 }
+export const getBuzz = (params): Promise<any> => {
+  return callApi({
+    url: '/api/aggregation/v2/app/buzz/getOneBuzz',
+    host: 'https://www.showbuzz.app/',
+    params: params,
+    options: {
+      credentials: 'omit',
+    }
+  })
+}
 export const getSearchBuzzList = (params): Promise<any> => {
   return callApi({
     url: '/aggregation/v2/app/search/getSearchContentBySearchWord',
