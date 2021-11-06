@@ -1,23 +1,24 @@
 <template>
   <div class="quote-item">
-      <span>
-        {{buzz.userName}} 转发了
-      </span>
-      <div class="item-original" v-if="dataDone">
-        <buzz-item
-          v-if="buzzData.originalNode.encrypt === '0'"
-          :buzz="buzzData.originalNode"
-          :show-footer="buzzData.data.rePostComment === ''"
-          :show-avatar="buzzData.data.rePostComment === ''" 
-        />
-        <div v-else class="content-reject">内容无权访问</div>
-      </div>
+    <buzz-header :buzz="buzz" />
+    <div class="content" v-html="displayContent(buzz.content)"></div>
+    <div class="item-original" v-if="dataDone">
+      <buzz-item
+        v-if="buzzData.originalNode.encrypt === '0'"
+        :buzz="buzzData.originalNode"
+        :show-footer="buzzData.data.rePostComment === ''"
+        :show-avatar="buzzData.data.rePostComment === ''" 
+      />
+      <div v-else class="content-reject">内容无权访问</div>
+    </div>
   </div>
 </template>
 
 <script>
 import { getBuzzRelationData, getBuzz } from '@/api/metasv-buzz'
 import BuzzItem from './BuzzItem.vue'
+import BuzzHeader from './BuzzPart/BuzzHeader.vue'
+import { convertRawText } from '@/utils/index';
 
 export default ({
   name: "QuoteItem",
@@ -25,7 +26,8 @@ export default ({
     buzz: Object
   },
   components: {
-    BuzzItem
+    BuzzItem,
+    BuzzHeader
   },
   data() {
     return {
@@ -34,14 +36,12 @@ export default ({
     };
   },
   methods: {
-    getBuzzData() {
-      
-    }
+    displayContent(content = '') {
+      // content = this.handleHashTags(content)
+      return convertRawText(content)
+    },
   },
   computed: {
-    url() {
-      return `https://www.google.com/search?q=site%3Ashowbuzz.app%2Fdetails+${this.keywords}`
-    }
   },
   async created() {
     this.buzzData = Object.assign(this.buzzData, this.buzz)
@@ -86,7 +86,7 @@ export default ({
 <style scoped lang="stylus">
 .quote-item {
   margin: 15px 0;
-  border: 1px solid #d0c9c9;
+  border-top: 1px solid #eae7e7;
   padding: 10px 5px;
   overflow: hidden;
   .item-original {

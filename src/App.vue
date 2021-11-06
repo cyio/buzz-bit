@@ -5,6 +5,7 @@
       <div class="links">
         <router-link to="/">首页</router-link>
         <router-link to="/pub">广场</router-link>
+        <router-link to="/decode">文件解码</router-link>
         <router-link to="/about">关于</router-link>
         <!-- <search /> -->
       </div>

@@ -30,3 +30,10 @@ export function formatTime(time) {
   const minute = addZero(date.getMinutes())
   return `${month}-${day} ${hour}:${minute}`
 }
+
+export function convertRawText(text) {
+  const e = /(https?:\/\/)\S*/g;
+  return text
+    .replace(e, (t, e) => '<a target="_blank" href='.concat(t, ">").concat(t, "</a>"))
+    .replace(/(?:\r\n|\r|\n|\\n)/g, '<br />')
+}

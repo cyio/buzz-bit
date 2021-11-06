@@ -19,11 +19,14 @@
         <label for="useEncrypt">私密</label>
         <input type="checkbox" id="showImgSelect" v-model="showImgSelect">
         <label for="showImgSelect">发图</label>
+        <input type="checkbox" id="showFileSelect" v-model="showFileSelect">
+        <label for="showFileSelect">分享文件</label>
       </div>
       <!-- <button @click="showImgSelect = !showImgSelect" class="send">切换发图</button> -->
       <van-button color="#1989fa" @click="send" size="small" :disabled='!isLoaded || content === ""' class="send">发送</van-button>
     </div>
-    <Uploader v-show="showImgSelect" ref="uploader" @change="handleMetafileChange" />
+    <uploader v-show="showImgSelect" ref="uploader" @change="handleMetafileChange" />
+    <file-Uploader v-show="showFileSelect" ref="uploader" @change="handleMetafileChange" />
     <!-- <button @click="getCurBuzzList" class="send">刷新列表</button> -->
     <buzz-list-container
       scene="priv"
@@ -36,11 +39,11 @@
 
 <script>
 import Uploader from "@/components/Uploader.vue";
+import FileUploader from "@/components/FileUploader.vue";
 import BuzzListContainer from "@/components/BuzzListContainer.vue";
 import MetaIdJs from "metaidjs"
 import { goAuth, getToken } from '@/api/metasv-buzz.ts'
 import AppConfig from '@/config/metasv-buzz'
-// import { Loading } from 'vant';
 
 function getLocal(key) {
   return window.localStorage.getItem(key)
@@ -62,6 +65,7 @@ export default {
   name: "Home",
   components: {
     Uploader,
+    FileUploader,
     BuzzListContainer,
   },
   data() {
@@ -77,6 +81,7 @@ export default {
       buzzListData: [],
       useEncrypt: false,
       showImgSelect: false,
+      showFileSelect: true,
       lastBuzzTime: +new Date(),
     }
   },
@@ -243,6 +248,14 @@ export default {
     },
     handleMetafileChange(files) {
       this.attachments = files
+      if (this.showFileSelect && this.attachments.length) {
+        let { fileName, data: txId } = this.attachments[0]
+        let baseUrl = 'https://buzzbit.vercel.app/'
+        // if (isLocal) {
+        // }
+        // this.content += `分享文件：${fileName} ${baseUrl}/#/preview/${txId}`
+        this.content += `#分享文件 ${fileName}`
+      }
     }
   },
   computed: {

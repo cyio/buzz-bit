@@ -5,7 +5,7 @@
       :key="buzz.txId + index"
     >
       <quote-item
-        v-if="buzz.protocol.toLowerCase() === 'simplerepost'"
+        v-if="buzz.protocol && buzz.protocol.toLowerCase() === 'simplerepost'"
         :buzz="buzz"
       />
       <buzz-item v-else :buzz="buzz" />
@@ -37,5 +37,7 @@ export default Vue.extend({
 <style scoped lang="stylus">
 .wrap {
   min-height: 300px;
+  border: 1px solid #eae7e7;
+  border-top: 0;
 }
 </style>
