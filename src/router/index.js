@@ -1,13 +1,14 @@
 import Vue from "vue";
 import VueRouter from "vue-router";
 import Home from "../views/Home.vue";
+import PubList from "../views/PubList.vue";
 
 Vue.use(VueRouter);
 
 const routes = [
   {
-    path: "/",
-    name: "Home",
+    path: "/user",
+    name: "User",
     component: Home,
   },
   {
@@ -21,27 +22,38 @@ const routes = [
   },
   {
     path: "/pub",
+    redirect: "/pub/hot",
+  },
+  {
+    path: "/pub/:type",
     name: "PubList",
-    component: () =>
-      import(/* webpackChunkName: "about" */ "../views/PubList.vue"),
+    component: PubList,
+    // component: () =>
+    //   import(/* webpackChunkName: "PubList" */ "../views/PubList.vue"),
   },
   {
     path: "/decode",
     name: "Decode",
     component: () =>
-      import(/* webpackChunkName: "about" */ "../views/Decode.vue"),
+      import(/* webpackChunkName: "Decode" */ "../views/Decode.vue"),
   },
   {
     path: "/preview/:txId",
     name: "Preview",
     component: () =>
-      import(/* webpackChunkName: "about" */ "../views/Preview.vue"),
+      import(/* webpackChunkName: "Preview" */ "../views/Preview.vue"),
+  },
+  {
+    path: "/detail/:txId",
+    name: "Detail",
+    component: () =>
+      import(/* webpackChunkName: "Detail" */ "../views/Detail.vue"),
   },
   {
     path: "/setting",
     name: "Setting",
     component: () =>
-      import(/* webpackChunkName: "about" */ "../views/Setting.vue"),
+      import(/* webpackChunkName: "Setting" */ "../views/Setting.vue"),
   },
 ];
 

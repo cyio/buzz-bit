@@ -102,6 +102,16 @@ export const getNewBuzzList = (params): Promise<any> => {
     }
   })
 }
+export const getInteractiveBuzzList = (params): Promise<any> => {
+  return callApi({
+    url: '/api/aggregation/v2/app/buzz/getBuzzInteractiveList',
+    host: 'https://www.showbuzz.app/',
+    params: params,
+    options: {
+      credentials: 'omit',
+    }
+  })
+}
 export const getBuzz = (params): Promise<any> => {
   return callApi({
     url: '/api/aggregation/v2/app/buzz/getOneBuzz',
@@ -124,7 +134,7 @@ export const getSearchBuzzList = (params): Promise<any> => {
 }
 export const goAuth = () => {
   const authUrl = `${AppConfig.showMoneyUrl}/userLogin?response_type=code&scope=app&client_id=${AppConfig.oauthSettings.clientId}&redirect_uri=${AppConfig.oauthSettings.redirectUri}`
-  window.location.replace(authUrl)
+  window.open(authUrl)
 }
 export const getTagList = async (params: BaseListParamsTypes) => {
   const Http = new HttpRequests()

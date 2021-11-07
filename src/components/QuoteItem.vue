@@ -8,6 +8,7 @@
         :buzz="buzzData.originalNode"
         :show-footer="buzzData.data.rePostComment === ''"
         :show-avatar="buzzData.data.rePostComment === ''"
+        :mode="mode"
       />
       <div v-else class="content-reject">内容无权访问</div>
     </div>
@@ -18,12 +19,14 @@
 import { getBuzzRelationData, getBuzz } from '@/api/metasv-buzz'
 import BuzzItem from './BuzzItem.vue'
 import BuzzHeader from './BuzzPart/BuzzHeader.vue'
-import { convertRawText } from '@/utils/index';
+import mixin from './BuzzPart/mixin'
 
 export default ({
   name: "QuoteItem",
+  mixins: [mixin],
   props: {
     buzz: Object,
+    mode: String
   },
   components: {
     BuzzItem,
@@ -36,10 +39,6 @@ export default ({
     };
   },
   methods: {
-    displayContent(content = '') {
-      // content = this.handleHashTags(content)
-      return convertRawText(content)
-    },
   },
   computed: {
   },

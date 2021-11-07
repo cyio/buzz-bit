@@ -56,3 +56,48 @@ export const hexToBase64Img = (hexStr, type) => {
   type = type || 'image/jpeg'
   return 'data:' + type + ';base64,' + imgBtoa
 }
+
+/**
+ * localStorage 存取 Object 封装
+ * setItem 支持传入过期时间（分钟）
+ * 带过期时间存储 {"data":{"a":1},"timestamp":1547536618350}
+ * 获取时如果没过期会取出 data，否则返回 false
+ */
+ export const Storage = {
+  setItem(key, value, expirationMin) {
+    if (expirationMin) {
+      const expirationMS = expirationMin * 60 * 1000;
+      const record = {
+        data: value,
+        timestamp: new Date().getTime() + expirationMS,
+      };
+      return localStorage.setItem(key, JSON.stringify(record));
+    }
+    if (typeof value === 'object') {
+      value = JSON.stringify(value);
+    }
+    return localStorage.setItem(key, value);
+  },
+
+  getItem(key) {
+    const record = JSON.parse(localStorage.getItem(key));
+    if (!record) {
+      return null;
+    }
+    // if (record.timestamp) {
+    //   // 过期返回false, 没有过期返回数据
+    //   return new Date().getTime() < record.timestamp && record.data;
+    // }
+    return record;
+  },
+};
+
+export function getUrlParameterByName(name, url) {
+  if (!url) url = window.location.href;
+  // name = name.replace(/[\[\]]/g, '\\$&');
+  const regex = new RegExp(`[?&]${name}(=([^&#]*)|&|#|$)`);
+  const results = regex.exec(url);
+  if (!results) return null;
+  if (!results[2]) return '';
+  return decodeURIComponent(results[2].replace(/\+/g, ' '));
+}

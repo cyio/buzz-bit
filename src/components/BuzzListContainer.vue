@@ -203,7 +203,7 @@ export default {
       let list = this.buzzListData[this.curListType]
       if (!this.showVideoInFlow) {
         return list.filter(i => {
-          const hasVideo = i.attachments[0] && i.attachments[0].endsWith('.mp4')
+          const hasVideo = i.attachments && i.attachments[0] && i.attachments[0].endsWith('.mp4')
           return !hasVideo
         })
       }
@@ -213,11 +213,15 @@ export default {
   watch: {
     'curListType': function(val) {
       this.currentPage = 1
+      this.curListType = val
       if (val === 'search') {
         this.loading = false
         this.buzzListData.search = []
       } else {
         this.getCurBuzzList()
+      }
+      if (this.$route.path !== `/pub/${val}` && val !== 'follow' && val !== 'my') {
+        this.$router.push({ path: `/pub/${val}` })
       }
     },
     'lastBuzzTime': function(val) {
@@ -227,10 +231,19 @@ export default {
       this.getCurBuzzList()
     }
   },
-  async created() {
-    this.getCurBuzzList()
+  created() {
   },
   mounted() {
+    let { params } = this.$route
+    if (params.type) {
+      if (params.type === this.curListType) {
+        this.getCurBuzzList()
+      } else {
+        this.curListType = params.type
+      }
+    } else {
+      this.getCurBuzzList()
+    }
     let value = localStorage.getItem('showVideoInFlow')
     this.showVideoInFlow = value === 'true' || value === null
   }

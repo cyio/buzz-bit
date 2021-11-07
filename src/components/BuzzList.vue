@@ -7,8 +7,9 @@
       <quote-item
         v-if="buzz.protocol && buzz.protocol.toLowerCase() === 'simplerepost'"
         :buzz="buzz"
+        mode="list"
       />
-      <buzz-item v-else :buzz="buzz" />
+      <buzz-item v-else :buzz="buzz" mode="list" />
     </div>
   </div>
 </template>

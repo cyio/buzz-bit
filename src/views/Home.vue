@@ -2,10 +2,10 @@
   <div class="home">
     <div class="userinfo">
       <div class="username"> 当前用户：{{user.name || '...'}}</div>
-      <van-button color="#1989fa" plain size="small" @click="auth" class="auth">切换</van-button>
+      <!-- <van-button color="#1989fa" plain size="small" @click="auth" class="auth">切换</van-button> -->
     </div>
     <!-- <div class="status">{{isLoaded ? '': '正在加载...'}}</div><br> -->
-    <van-loading v-show="!isLoaded" color="#1989fa" class="loading" />
+    <!-- <van-loading v-show="!isLoaded" color="#1989fa" class="loading" /> -->
     <div class="input-area">
       <textarea
         v-model="content"
@@ -23,7 +23,10 @@
         <label for="showFileSelect">分享文件</label>
       </div>
       <!-- <button @click="showImgSelect = !showImgSelect" class="send">切换发图</button> -->
-      <van-button color="#1989fa" @click="send" size="small" :disabled='!isLoaded || content === ""' class="send">发送</van-button>
+      <van-button color="#1989fa" @click="send" size="small"
+        :disabled='!isLoaded || content === ""' class="send"
+        :loading="!isLoaded"
+      >发送</van-button>
     </div>
     <uploader v-show="showImgSelect" ref="uploader" @change="handleMetafileChange" />
     <file-Uploader v-show="showFileSelect" ref="uploader" @change="handleMetafileChange" />
@@ -44,21 +47,13 @@ import BuzzListContainer from "@/components/BuzzListContainer.vue";
 import MetaIdJs from "metaidjs"
 import { goAuth, getToken } from '@/api/metasv-buzz.ts'
 import AppConfig from '@/config/metasv-buzz'
+import { Storage } from '@/utils/index';
 
 function getLocal(key) {
   return window.localStorage.getItem(key)
 }
 function setLocal(key, val) {
   return window.localStorage.setItem(key, val)
-}
-function getUrlParameterByName(name, url) {
-  if (!url) url = window.location.href;
-  // name = name.replace(/[\[\]]/g, '\\$&');
-  const regex = new RegExp(`[?&]${name}(=([^&#]*)|&|#|$)`);
-  const results = regex.exec(url);
-  if (!results) return null;
-  if (!results[2]) return '';
-  return decodeURIComponent(results[2].replace(/\+/g, ' '));
 }
 
 export default {
@@ -220,30 +215,22 @@ export default {
       console.log(config)
       __metaIdJs.sendMetaDataTx(config);
     },
-    onLoaded() {
-      console.log('metaidjs loaded', performance.now() / 1000)
-      this.isLoaded = true
-      this.getUser()
-    },
-    auth() {
-      goAuth()
-    },
     getUser() {
+      const userCache = Storage.getItem('user') || '{}'
+      if (userCache.metaId) {
+        this.user = userCache
+        return
+      }
       window.__metaIdJs.getUserInfo({
         accessToken: this.accessToken,
         // callback: 'handleUserInfo',
         callback: (res) => {
           if (res.code === 200) {
-            // console.log('userinfo', res.data)
             this.user = res.data
-            // this.getCurBuzzList()
+            Storage.setItem('user', this.user)
           } else {
             console.log('get user error: ', res)
           }
-          // handleUserInfo(res)
-          // if (res.code === 200) {
-            // console.log(res)
-          // }
         },
       })
     },
@@ -257,45 +244,8 @@ export default {
         // this.content += `分享文件：${fileName} ${baseUrl}/#/preview/${txId}`
         this.content += `#分享文件 ${fileName}`
       }
-    }
-  },
-  computed: {
-    isLogined() {
-      return !!this.accessToken
-    }
-  },
-  async created() {
-    // this.code = this.$route.query.code
-    this.code = getUrlParameterByName('code')
-    // debugger
-    // if (this.isLogined && this.refreshToken) {
-    //   this.refreshAccessToken()
-    // }
-    if (this.$route.path === '/') {
-      if (this.code) {
-        await this.getAccessToken()
-        location.href = '/#'
-      }
-      // this.$router.push({ path: '/', query: { type: this.isLogined ? 'user' : 'new' } })
-    }
-    if (getLocal('access_token')) {
-      this.accessToken = getLocal('access_token')
-    }
-    if (getLocal('refresh_token')) {
-      this.refreshToken = getLocal('refresh_token')
-    }
-    if (!this.isLogined) {
-      goAuth()
-      return
-    }
-  },
-  watch: {
-    'isLogined': function(val) {
-      // MetaIdJs 初始化太慢，进行缓存，如果 AppConfig 发生变化，请手动刷新页面使生效
-      if (window.__metaIdJs) {
-        return this.onLoaded()
-      }
-      if (!val) return
+    },
+    initSDK(hasUserInfo) {
       console.log('before new MetaIdJs', performance.now() / 1000)
       window.__metaIdJs = new MetaIdJs({
         oauthSettings: {
@@ -304,7 +254,11 @@ export default {
           redirectUri: ''
         },
         onLoaded: () => {
-          this.onLoaded()
+          console.log('metaidjs loaded', performance.now() / 1000)
+          this.isLoaded = true
+          if (!hasUserInfo) {
+            this.getUser()
+          }
         },
         onError: (res) => {
           console.log(res)
@@ -314,14 +268,47 @@ export default {
           }
         }
       })
-    },
-    // 'curListType': function(val) {
-    //   this.getCurBuzzList()
-    // }
+    }
+  },
+  computed: {
+    isLogined() {
+      return !!this.accessToken
+    }
+  },
+  created() {
+    if (getLocal('access_token')) {
+      this.accessToken = getLocal('access_token')
+    }
+    if (getLocal('refresh_token')) {
+      this.refreshToken = getLocal('refresh_token')
+    }
+  },
+  watch: {
+    // 是否存在 token
+    //  是否存在 user cache
+    //    并行初始化 sdk
+    //  sdk 是否初始化
+    'isLogined': function(val) {
+      if (val) {
+        const userCache = Storage.getItem('user') || '{}'
+        if (userCache.metaId) {
+          this.user = userCache
+          if (window.__metaIdJs) {
+            this.isLoaded = true
+          } else {
+            this.initSDK(false)
+          }
+        } else {
+          this.initSDK()
+        }
+      } else {
+        this.initSDK()
+      }
+    }
   },
   mounted() {
   }
-};
+}
 </script>
 
 <style lang="stylus" scoped>
@@ -335,6 +322,7 @@ export default {
     margin-bottom 12px;
     .username {
       margin-right: 10px;
+      min-width: 140px;
     }
   }
   .input-area {

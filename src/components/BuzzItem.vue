@@ -1,7 +1,7 @@
 <template>
-  <div class="item-container">
+  <div class="item-container" :class="['mode-' + mode]" @click="onClickContainer">
     <buzz-header :buzz="buzz" />
-    <div class="content" v-html="displayContent(buzz.content)"></div>
+    <div class="content" v-html="displayContent(buzz.content, mode === 'list')"></div>
     <div class="media">
       <div class="media-item" v-for="(metafile, index) in buzz.attachments" :key="index">
         <file-decode v-if="isShareFile(buzz)" :txId="buzz.attachments[0] | parseTxId"
@@ -16,7 +16,7 @@
         <img
           v-else
           :src="getAssetUrl(metafile)"
-          @click="handlePreviewImg(buzz.attachments, index)"
+          @click.stop="handlePreviewImg(buzz.attachments, index)"
         />
       </div>
     </div>
@@ -36,6 +36,7 @@
       :start-position="index"
       @change="onChange" closeable
       swipeDuration="100"
+      @click.stop="() => {}"
     >
       <template v-slot:index>
         <div class="img-custom" v-show="images.length > 1">
@@ -95,8 +96,8 @@ import Vue from "vue";
 import AppConfig from '@/config/metasv-buzz'
 import { ImagePreview, Popup } from 'vant';
 import BuzzHeader from './BuzzPart/BuzzHeader.vue'
-import { convertRawText } from '@/utils/index';
 import FileDecode from '@/components/FileDecode'
+import mixin from './BuzzPart/mixin'
 
 function _isMobile(){
     const isMobile = (/iphone|ipod|android|ie|blackberry|fennec/).test
@@ -106,6 +107,7 @@ function _isMobile(){
 
 export default Vue.extend({
   name: "BuzzItem",
+  mixins: [mixin],
   components: {
     [ImagePreview.Component.name]: ImagePreview.Component,
     [Popup.name]: Popup,
@@ -118,6 +120,7 @@ export default Vue.extend({
       type: Boolean,
       default: true
     },
+    mode: String
   },
   data() {
     return {
@@ -138,10 +141,6 @@ export default Vue.extend({
         url = fileId && fileId !== '' ? `${AppConfig.metaFileServiceUrl}/metafile/${fileId}` : null
       }
       return url
-    },
-    displayContent(content = '') {
-      // content = this.handleHashTags(content)
-      return convertRawText(content)
     },
     handleHashTags(val) {
       const html = val.replace(/#([\u4e00-\u9fa5_\w-]+)#/g, '<a href="' + this.$router.options.base + 'list?tag=$1">$&</a> ')
@@ -191,6 +190,17 @@ export default Vue.extend({
     },
     isShareFile(buzz) {
       return buzz.content.includes('#分享文件')
+    },
+    onClickContainer(e) {
+      let name = e.target.nodeName
+      if (name === 'I' || name === 'IMG') return // desktop 点击的是图片关闭按钮
+      this.goDetail()
+    },
+    goDetail() {
+      if (this.mode === 'list') {
+        this.$router.push({ path: `/detail/${this.buzz.txId}` })
+        localStorage.setItem('buzz', JSON.stringify(this.buzz))
+      }
     }
   },
   filters: {
@@ -213,6 +223,10 @@ export default Vue.extend({
   padding: 10px 8px;
   // max-height: 160px;
   overflow: hidden;
+  &.mode-list:hover {
+    cursor: pointer;
+    background-color: #f7f7f7;
+  }
   .content {
     word-wrap: break-word;
   }
@@ -272,6 +286,7 @@ export default Vue.extend({
   }
   .forward-popup {
     padding: 16px;
+    min-width: 300px;
     textarea {
       width: 100%;
       border: 1px solid gray;
