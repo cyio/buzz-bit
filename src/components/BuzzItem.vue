@@ -117,7 +117,7 @@ export default Vue.extend({
     showFooter: {
       type: Boolean,
       default: true
-    }
+    },
   },
   data() {
     return {

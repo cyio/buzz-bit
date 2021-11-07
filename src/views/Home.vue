@@ -81,7 +81,7 @@ export default {
       buzzListData: [],
       useEncrypt: false,
       showImgSelect: false,
-      showFileSelect: true,
+      showFileSelect: false,
       lastBuzzTime: +new Date(),
     }
   },
@@ -197,6 +197,7 @@ export default {
           // },
         // ],
         data: JSON.stringify(buzzData),
+        // data: buzzData,
         needConfirm: false,
         // checkOnly: true, // dev
         callback: (res) => {

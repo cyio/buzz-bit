@@ -37,3 +37,22 @@ export function convertRawText(text) {
     .replace(e, (t, e) => '<a target="_blank" href='.concat(t, ">").concat(t, "</a>"))
     .replace(/(?:\r\n|\r|\n|\\n)/g, '<br />')
 }
+
+export const hexToBase64Img = (hexStr, type) => {
+  if (!hexStr) {
+    return ''
+  }
+  const a = []
+  for (let i = 0, len = hexStr.length; i < len; i += 2) {
+    a.push(parseInt(hexStr.substr(i, 2), 16))
+  }
+  let binary = ''
+  const bytes = new Uint8Array(a)
+  const len = bytes.byteLength
+  for (let i = 0; i < len; i++) {
+    binary += String.fromCharCode(bytes[i])
+  }
+  const imgBtoa = window.btoa(binary)
+  type = type || 'image/jpeg'
+  return 'data:' + type + ';base64,' + imgBtoa
+}

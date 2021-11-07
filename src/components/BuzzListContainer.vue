@@ -16,7 +16,7 @@
           <van-button color="#1989fa" @click="getSearchBuzzList" size="small" :disabled='keywords === ""' class="search-btn">搜 索</van-button>
         </div>
         <van-loading v-show="loading" color="#1989fa" class="loading" />
-        <BuzzList v-show="!loading" :buzzListData="buzzListData[item.key]" :key="item.key" />
+        <BuzzList v-show="!loading" :buzzListData="curBuzzListData" :key="item.key" />
         <van-pagination
           v-show="buzzListData[curListType].length > 0 && !loading"
           v-model="currentPage" :total-items="10000" :items-per-page="10"
@@ -82,7 +82,8 @@ export default {
           title: '搜索'
         }
       ],
-      keywords: ''
+      keywords: '',
+      showVideoInFlow: true
     }
   },
   methods: {
@@ -197,10 +198,17 @@ export default {
         }
       ]
       return this.scene === 'pub' ? this.navData : priv
+    },
+    curBuzzListData() {
+      let list = this.buzzListData[this.curListType]
+      if (!this.showVideoInFlow) {
+        return list.filter(i => {
+          const hasVideo = i.attachments[0] && i.attachments[0].endsWith('.mp4')
+          return !hasVideo
+        })
+      }
+      return list
     }
-  },
-  async created() {
-    this.getCurBuzzList()
   },
   watch: {
     'curListType': function(val) {
@@ -219,7 +227,12 @@ export default {
       this.getCurBuzzList()
     }
   },
+  async created() {
+    this.getCurBuzzList()
+  },
   mounted() {
+    let value = localStorage.getItem('showVideoInFlow')
+    this.showVideoInFlow = value === 'true' || value === null
   }
 };
 </script>

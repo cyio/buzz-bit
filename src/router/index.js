@@ -22,29 +22,26 @@ const routes = [
   {
     path: "/pub",
     name: "PubList",
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
     component: () =>
       import(/* webpackChunkName: "about" */ "../views/PubList.vue"),
   },
   {
     path: "/decode",
     name: "Decode",
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
     component: () =>
       import(/* webpackChunkName: "about" */ "../views/Decode.vue"),
   },
   {
     path: "/preview/:txId",
     name: "Preview",
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
     component: () =>
       import(/* webpackChunkName: "about" */ "../views/Preview.vue"),
+  },
+  {
+    path: "/setting",
+    name: "Setting",
+    component: () =>
+      import(/* webpackChunkName: "about" */ "../views/Setting.vue"),
   },
 ];
 

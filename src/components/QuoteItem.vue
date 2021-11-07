@@ -7,7 +7,7 @@
         v-if="buzzData.originalNode.encrypt === '0'"
         :buzz="buzzData.originalNode"
         :show-footer="buzzData.data.rePostComment === ''"
-        :show-avatar="buzzData.data.rePostComment === ''" 
+        :show-avatar="buzzData.data.rePostComment === ''"
       />
       <div v-else class="content-reject">内容无权访问</div>
     </div>
@@ -23,7 +23,7 @@ import { convertRawText } from '@/utils/index';
 export default ({
   name: "QuoteItem",
   props: {
-    buzz: Object
+    buzz: Object,
   },
   components: {
     BuzzItem,

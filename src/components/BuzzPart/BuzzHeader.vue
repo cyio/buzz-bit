@@ -3,6 +3,7 @@
     <div class="left">
       <div class="avatar"></div>
       <div class="userinfo">
+        <!-- <img :src="hexToBase64Img(userInfo.headUrl)" :size="40" /> -->
         <div class="username">{{ buzz.userName || buzz.name}}</div>
         <div class="time">{{ buzz.timestamp | formatTime }}</div>
       </div>

@@ -21,7 +21,7 @@ import QuoteItem from "./QuoteItem";
 export default Vue.extend({
   name: "BuzzList",
   props: {
-    buzzListData: Array
+    buzzListData: Array,
   },
   components: {
     BuzzItem,
