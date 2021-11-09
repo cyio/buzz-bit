@@ -127,7 +127,7 @@ export default {
     getHotBuzzList() {
       const params = {
         page: "" + this.currentPage,
-        pageSize: '15',
+        pageSize: '10',
         timeType: "today",
       }
       this.loading = true
@@ -143,7 +143,7 @@ export default {
     getNewBuzzList() {
       const params = {
         page: "" + this.currentPage,
-        pageSize: '15',
+        pageSize: '10',
         timeType: "today",
         timestamp: 0
       }
@@ -160,7 +160,7 @@ export default {
     getSearchBuzzList() {
       const params = {
         page: "" + this.currentPage,
-        pageSize: '15',
+        pageSize: '10',
         searchWord: this.keywords,
         timestamp: 0
       }

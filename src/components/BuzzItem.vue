@@ -1,42 +1,47 @@
 <template>
-  <div class="item-container" :class="['mode-' + mode]" @click="onClickContainer">
-    <buzz-header :buzz="buzz" />
-    <div class="content" v-html="displayContent(buzz.content, mode === 'list')"></div>
-    <div class="media">
-      <div class="media-item" v-for="(metafile, index) in buzz.attachments" :key="index">
-        <file-decode v-if="isShareFile(buzz)" :txId="buzz.attachments[0] | parseTxId"
-          class="share-file"
-          mode="list"
-        />
-        <video
-          v-else-if="metafile.endsWith('.mp4')"
-          controls
-          :src="metafile | parseVideoUrl"
-        />
-        <img
-          v-else
-          :src="getAssetUrl(metafile)"
-          @click.stop="handlePreviewImg(buzz.attachments, index)"
-        />
+  <div class="item-container" :class="['mode-' + mode]">
+    <div class="item-inner" @click="goDetail">
+      <buzz-header :buzz="buzz" />
+      <div class="content" v-html="displayContent(buzz.content, mode === 'list')"></div>
+      <div class="media">
+        <div class="media-item" v-for="(metafile, index) in buzz.attachments" :key="index">
+          <file-decode v-if="isShareFile(buzz)" :txId="buzz.attachments[0] | parseTxId"
+            class="share-file"
+            mode="list"
+          />
+          <template v-else-if="metafile.endsWith('.mp4')">
+            <div class="" v-if="mode === 'list' && !showVideoInFlow">视频</div>
+            <video
+              v-else
+              controls
+              :src="metafile | parseVideoUrl"
+            />
+          </template>
+          <img
+            v-else
+            :src="getAssetUrl(metafile)"
+            @click.stop="handlePreviewImg(buzz.attachments, index)"
+          />
+        </div>
       </div>
-    </div>
-    <div class="item-bottom" v-if="showFooter">
-      <div class="left"></div>
-      <div class="right" v-if="buzz.comment">
-        <div class="item forward" @click="showCommentBox = true">转发[{{buzz.rePost.length}}]</div>
-        <div class="item comment">评论[{{buzz.comment.length}}]</div>
-        <div class="item likes">喜欢[{{buzz.like.length}}]</div>
-        <div class="item donate">打赏[{{buzz.donate.length}}]</div>
-      </div>
-      <div class="right" v-else>
-        <div class="item forward" @click="showCommentBox = true">转发</div>
+      <div class="item-bottom" v-if="showFooter">
+        <div class="left"></div>
+        <div class="right" v-if="buzz.comment">
+          <div class="item forward" @click.stop="showCommentBox = true;doType = 'forward'">转发[{{buzz.rePost.length}}]</div>
+          <div class="item comment" @click.stop="showCommentBox = true;doType = 'comment'">评论[{{buzz.comment.length}}]</div>
+          <div class="item likes">喜欢[{{buzz.like.length}}]</div>
+          <div class="item donate">打赏[{{buzz.donate.length}}]</div>
+        </div>
+        <div class="right" v-else>
+          <div class="item forward" @click="showCommentBox = true;doType = 'forward'">转发</div>
+          <div class="item comment" @click="showCommentBox = true;doType = 'comment'">评论</div>
+        </div>
       </div>
     </div>
     <van-image-preview v-model="show" :images="images" 
       :start-position="index"
       @change="onChange" closeable
       swipeDuration="100"
-      @click.stop="() => {}"
     >
       <template v-slot:index>
         <div class="img-custom" v-show="images.length > 1">
@@ -59,7 +64,7 @@
     >
       <div class="card forward-card">
         <div class="card-header">
-          <h4>转发帖子</h4>
+          <h4>{{doType === 'forward' ? '转发' : '评论'}}</h4>
         </div>
         <div class="card-body">
           <div class="forward-form">
@@ -80,10 +85,10 @@
         </div>
         <div class="card-footer">
           <van-button color="#1989fa"
-            @click="doForward" size="small"
+            @click="doType === 'forward' ? doForward() : doComment()" size="small"
             class="send"
           >
-            转发
+            发送
           </van-button>
         </div>
       </div>
@@ -98,6 +103,7 @@ import { ImagePreview, Popup } from 'vant';
 import BuzzHeader from './BuzzPart/BuzzHeader.vue'
 import FileDecode from '@/components/FileDecode'
 import mixin from './BuzzPart/mixin'
+import { mapState } from 'vuex'
 
 function _isMobile(){
     const isMobile = (/iphone|ipod|android|ie|blackberry|fennec/).test
@@ -129,7 +135,8 @@ export default Vue.extend({
       images: [],
       isMobile: _isMobile(),
       showCommentBox: false,
-      content: ''
+      content: '',
+      doType: 'forward'
     };
   },
   methods: {
@@ -184,6 +191,35 @@ export default Vue.extend({
       console.log(config)
       window.__metaIdJs.sendMetaDataTx(config);
     },
+    doComment() {
+      if (!window.__metaIdJs) {
+        this.$toast('请先切到首页登录');
+        return
+      }
+      const accessToken = window.localStorage.getItem('access_token')
+      const config = {
+        nodeName: 'PayComment',
+        metaIdTag: "metaid",
+        brfcId: 'ff515b313d27',
+        accessToken: accessToken,
+        encrypt: 0,
+        payCurrency: "BSV",
+        payTo: [
+          { amount: 1000, address: '18H4SRi4nh9yg6Tr8M24CTtsveqzmFmJxM' },
+        ],
+        dataType: 'applicaition/json',
+        path: '/Protocols/PayComment',
+        data: JSON.stringify({
+          createTime: +new Date(),
+          content: this.content, // 评论内容
+          contentType: 'text/plain',
+          commentTo: this.buzz.txId, // tx
+        }),
+        callback: this.handleForward
+      }
+      console.log(config)
+      window.__metaIdJs.sendMetaDataTx(config);
+    },
     handleForward(res) {
       this.content = ''
       this.showCommentBox = false
@@ -191,17 +227,18 @@ export default Vue.extend({
     isShareFile(buzz) {
       return buzz.content.includes('#分享文件')
     },
-    onClickContainer(e) {
-      let name = e.target.nodeName
-      if (name === 'I' || name === 'IMG') return // desktop 点击的是图片关闭按钮
-      this.goDetail()
-    },
     goDetail() {
       if (this.mode === 'list') {
         this.$router.push({ path: `/detail/${this.buzz.txId}` })
         localStorage.setItem('buzz', JSON.stringify(this.buzz))
       }
     }
+  },
+  computed: {
+    ...mapState({
+      user: 'user',
+      showVideoInFlow: 'showVideoInFlow'
+    }),
   },
   filters: {
     parseVideoUrl: function(t) {
@@ -218,10 +255,8 @@ export default Vue.extend({
 <style scoped lang="stylus">
 .item-container {
   text-align: left;
-  margin: 15px 0;
   border-top: 1px solid #eae7e7;
   padding: 10px 8px;
-  // max-height: 160px;
   overflow: hidden;
   &.mode-list:hover {
     cursor: pointer;
@@ -249,8 +284,9 @@ export default Vue.extend({
     .item  {
       margin-right: 6px;
     }
-    .forward {
+    .forward:hover , .comment:hover {
       cursor: pointer;
+      color: var(--theme-color);
     }
   }
   .media {

@@ -1,11 +1,5 @@
 <template>
   <div class="home">
-    <div class="userinfo">
-      <div class="username"> 当前用户：{{user.name || '...'}}</div>
-      <!-- <van-button color="#1989fa" plain size="small" @click="auth" class="auth">切换</van-button> -->
-    </div>
-    <!-- <div class="status">{{isLoaded ? '': '正在加载...'}}</div><br> -->
-    <!-- <van-loading v-show="!isLoaded" color="#1989fa" class="loading" /> -->
     <div class="input-area">
       <textarea
         v-model="content"
@@ -48,6 +42,7 @@ import MetaIdJs from "metaidjs"
 import { goAuth, getToken } from '@/api/metasv-buzz.ts'
 import AppConfig from '@/config/metasv-buzz'
 import { Storage } from '@/utils/index';
+import { mapState } from 'vuex'
 
 function getLocal(key) {
   return window.localStorage.getItem(key)
@@ -71,7 +66,6 @@ export default {
       accessToken: '',
       content: '',
       metaIdJs: null,
-      user: {},
       attachments: [],
       buzzListData: [],
       useEncrypt: false,
@@ -218,16 +212,14 @@ export default {
     getUser() {
       const userCache = Storage.getItem('user') || '{}'
       if (userCache.metaId) {
-        this.user = userCache
+        this.$store.commit('SET_USER', userCache);
         return
       }
       window.__metaIdJs.getUserInfo({
         accessToken: this.accessToken,
-        // callback: 'handleUserInfo',
         callback: (res) => {
           if (res.code === 200) {
-            this.user = res.data
-            Storage.setItem('user', this.user)
+            this.$store.commit('SET_USER', res.data);
           } else {
             console.log('get user error: ', res)
           }
@@ -271,6 +263,9 @@ export default {
     }
   },
   computed: {
+    ...mapState({
+      user: 'user'
+    }),
     isLogined() {
       return !!this.accessToken
     }
@@ -292,7 +287,7 @@ export default {
       if (val) {
         const userCache = Storage.getItem('user') || '{}'
         if (userCache.metaId) {
-          this.user = userCache
+          this.$store.commit('SET_USER', userCache);
           if (window.__metaIdJs) {
             this.isLoaded = true
           } else {

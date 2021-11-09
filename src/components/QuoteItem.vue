@@ -1,7 +1,9 @@
 <template>
-  <div class="quote-item">
-    <buzz-header :buzz="buzz" />
-    <div class="content" v-html="displayContent(buzz.content)"></div>
+  <div class="quote-item" :class="['mode-' + mode]">
+    <div class="item-inner" @click="goDetail">
+      <buzz-header :buzz="buzz" />
+      <div class="content" v-html="displayContent(buzz.content)"></div>
+    </div>
     <div class="item-original" v-if="dataDone">
       <buzz-item
         v-if="buzzData.originalNode.encrypt === '0'"
@@ -39,6 +41,12 @@ export default ({
     };
   },
   methods: {
+    goDetail() {
+      if (this.mode === 'list') {
+        this.$router.push({ path: `/detail/${this.buzz.txId}` })
+        localStorage.setItem('buzz', JSON.stringify(this.buzz))
+      }
+    }
   },
   computed: {
   },
@@ -84,10 +92,16 @@ export default ({
 <!-- Add "scoped" attribute to limit CSS to this component only -->
 <style scoped lang="stylus">
 .quote-item {
-  margin: 15px 0;
   border-top: 1px solid #eae7e7;
   padding: 10px 5px;
   overflow: hidden;
+  &.mode-list:hover {
+    cursor: pointer;
+    background-color: #f7f7f7;
+  }
+  .item-inner {
+    margin-bottom: 10px;
+  }
   .item-original {
     background: #f7f8fb;
     margin-left: 24px;

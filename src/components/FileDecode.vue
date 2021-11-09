@@ -62,7 +62,7 @@ export default ({
         this.blob = new Blob([buf], {type})
         // console.log('blob', blb)
         let url = URL.createObjectURL(this.blob)
-        console.log('url', url)
+        // console.log('url', url)
         return url
     },
     checkInput() {

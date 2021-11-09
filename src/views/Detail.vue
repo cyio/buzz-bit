@@ -1,6 +1,8 @@
 <template>
-  <div class="pub-list">
-    <button @click="$router.go(-1) ">返回</button>
+  <div class="detail">
+    <div class="head">
+      <button @click="$router.go(-1) ">返回</button>
+    </div>
     <buzz-detail :buzz="buzz" v-if="buzz.protocol" />
   </div>
 </template>
@@ -51,8 +53,9 @@ export default ({
 </script>
 
 <style scoped lang="stylus">
-.pub-list {
-  max-width: 600px;
-  margin: 0 auto;
+.detail {
+  .head {
+    margin-bottom: 15px;
+  }
 }
 </style>

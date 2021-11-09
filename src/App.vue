@@ -11,7 +11,7 @@
         <router-link to="/about">关于</router-link>
         <div class="user">
           <button @click="auth" v-if="!hasToken">登录</button>
-          <div v-else @click="auth">已登录</div>
+          <div v-else @click="authConfirm">{{user.name || '已登录'}}</div>
         </div>
         <!-- <search /> -->
       </div>
@@ -25,6 +25,8 @@ import { Vue } from 'vue-property-decorator';
 import { goAuth, getToken } from '@/api/metasv-buzz.ts'
 import { getUrlParameterByName } from '@/utils/index';
 import AppConfig from '@/config/metasv-buzz'
+import { mapState } from 'vuex'
+import { Dialog } from 'vant';
 
 function getLocal(key) {
   return window.localStorage.getItem(key)
@@ -49,6 +51,9 @@ export default Vue.extend({
     };
   },
   computed: {
+    ...mapState({
+      user: 'user',
+    }),
   },
   methods: {
     auth() {
@@ -56,6 +61,19 @@ export default Vue.extend({
       goAuth()
       localStorage.clear()
       tId = setInterval(this.checkLogin, 400)
+    },
+    authConfirm() {
+      Dialog.confirm({
+        // title: '标题',
+        message: '前往登录/切换帐号',
+      })
+        .then(() => {
+          this.auth()
+          // on confirm
+        })
+        .catch(() => {
+          // on cancel
+        });
     },
     checkLogin() {
       let token = localStorage.getItem('access_token')
@@ -146,5 +164,16 @@ export default Vue.extend({
     margin-right 6px
     white-space: nowrap;
   }
+}
+
+.user {
+  div:hover {
+    cursor: pointer
+  }
+}
+</style>
+<style>
+:root {
+  --theme-color: #ab490d;
 }
 </style>

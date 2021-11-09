@@ -3,7 +3,10 @@
     <buzz-item :buzz="buzz" v-if="buzz.protocol" />
     <div class="title">评论：</div>
     <van-loading v-show="loading" color="#1989fa" class="loading" />
-    <buzz-list v-if="!loading" :buzzListData="buzzListData" class="comment-wrap" />
+    <div v-show="!loading">
+      <buzz-list v-if="buzzListData.length" :buzzListData="buzzListData" class="comment-wrap" />
+      <div v-else class="no-comment">暂无评论</div>
+    </div>
   </div>
 </template>
 
@@ -63,8 +66,15 @@ export default ({
 
 <style scoped lang="stylus">
 .buzz-detail {
-}
-.comment-wrap {
-  margin-left: 24px;
+  .comment-wrap {
+    margin-left: 24px;
+  }
+  .no-comment {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 150px;
+    color: gray;
+  }
 }
 </style>
