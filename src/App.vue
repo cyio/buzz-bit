@@ -60,6 +60,7 @@ export default Vue.extend({
       this.$toast('前往登录');
       goAuth()
       localStorage.clear()
+      this.$store.commit('SET_USER', {});
       tId = setInterval(this.checkLogin, 400)
     },
     authConfirm() {
@@ -129,6 +130,7 @@ export default Vue.extend({
     } else {
       // 未登录去公开信息流页
       if (!this.hasToken) {
+        // 强跳路由有 bug，目前只在本地用
         if (this.isRoot()) {
           this.$router.push({ path: `/pub` })
         }
@@ -156,10 +158,13 @@ export default Vue.extend({
   justify-content: space-between;
   margin: 0 auto;
   max-width: 600px;
+  color: var(--theme-color);
 }
 
 .links {
   display: flex;
+  align-items: center;
+  color: var(--theme-color);
   > a {
     margin-right 6px
     white-space: nowrap;

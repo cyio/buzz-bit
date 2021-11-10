@@ -186,7 +186,6 @@ export default {
           // },
         // ],
         data: JSON.stringify(buzzData),
-        // data: buzzData,
         needConfirm: false,
         // checkOnly: true, // dev
         callback: (res) => {

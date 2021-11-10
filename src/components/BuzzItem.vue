@@ -230,7 +230,9 @@ export default Vue.extend({
     goDetail() {
       if (this.mode === 'list') {
         this.$router.push({ path: `/detail/${this.buzz.txId}` })
-        localStorage.setItem('buzz', JSON.stringify(this.buzz))
+        if (this.buzz.comment) {
+          localStorage.setItem('buzz', JSON.stringify(this.buzz))
+        }
       }
     }
   },
@@ -295,7 +297,7 @@ export default Vue.extend({
     margin-top: 10px;
     .media-item {
       margin-right: 8px;
-      max-height: 281.25px;
+      // max-height: 281.25px;
       overflow: hidden;
     }
     img { 

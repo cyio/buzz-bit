@@ -1,13 +1,17 @@
 <template>
   <div class="file-decode">
     <van-loading v-show="loading" color="#1989fa" class="loading" />
-    <file-preview v-if="!loading" :url="blobUrl" :type="blob.type" />
+    <div v-if="!loading">
+      <div class="size" v-show="showMetaInfo">文件大小：{{blob.size}} 文件类型：{{blob.type}}</div>
+      <file-preview :url="blobUrl" :type="blob.type" />
+    </div>
   </div>
 </template>
 
 <script>
 import { Script } from 'bsv'
 import FilePreview from '@/components/FilePreview'
+import {queryHex} from '@/api/'
 
 function hexToUtf8(s){
   return decodeURIComponent(
@@ -19,7 +23,12 @@ function hexToUtf8(s){
 export default ({
   name: "FileDecode",
   props: {
-    txId: String
+    txId: String,
+    apiService: {
+      type: String,
+      default: 'showMANDB'
+    },
+    showMetaInfo: false
   },
   components: {
     FilePreview
@@ -65,19 +74,24 @@ export default ({
         // console.log('url', url)
         return url
     },
+    parseTxInput(str) {
+      let txId = str
+      if (str.includes('/')) {
+        let arr = this.txUrl.split('/')
+        txId = arr[arr.length - 1]
+      }
+      return txId
+    },
     checkInput() {
-      let arr = this.txUrl.split('/')
-      let txId = arr[arr.length - 1]
+      let txId = this.parseTxInput(this.txUrl)
       if (!txId) {
         alert('交易ID 无效')
         return 
       }
-      let url = `https://api.whatsonchain.com/v1/bsv/main/tx/${txId}/out/0/hex`
-      this.queryHex(url)
+      this.queryHex(txId)
     },
-    async queryHex(url) {
-      let res = await fetch(url)
-      let hex = await res.text()
+    async queryHex(txId) {
+      let hex = await queryHex[this.apiService](txId)
       setTimeout(() => {
         this.loading = false
       }, 10)
@@ -87,8 +101,7 @@ export default ({
   computed: {
   },
   created() {
-    let url = `https://api.whatsonchain.com/v1/bsv/main/tx/${this.txId}/out/0/hex`
-    this.queryHex(url)
+    this.queryHex(this.txId)
   }
 });
 </script>

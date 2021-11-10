@@ -92,7 +92,7 @@ export default {
         Protocols: ['SimpleMicroblog'],
         metaId: this.user.metaId,
         page: "" + this.currentPage,
-        pageSize: '10',
+        pageSize: '6',
         timestamp: 0
       }
       this.loading = true
@@ -109,7 +109,7 @@ export default {
       const params = {
         metaId: this.user.metaId,
         page: "" + this.currentPage,
-        pageSize: '10',
+        pageSize: '6',
         timeType: "today",
         timestamp: 0
       }
@@ -127,7 +127,7 @@ export default {
     getHotBuzzList() {
       const params = {
         page: "" + this.currentPage,
-        pageSize: '10',
+        pageSize: '6',
         timeType: "today",
       }
       this.loading = true
@@ -143,7 +143,7 @@ export default {
     getNewBuzzList() {
       const params = {
         page: "" + this.currentPage,
-        pageSize: '10',
+        pageSize: '6',
         timeType: "today",
         timestamp: 0
       }
@@ -160,7 +160,7 @@ export default {
     getSearchBuzzList() {
       const params = {
         page: "" + this.currentPage,
-        pageSize: '10',
+        pageSize: '6',
         searchWord: this.keywords,
         timestamp: 0
       }

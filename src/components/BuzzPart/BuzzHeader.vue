@@ -9,8 +9,8 @@
       </div>
     </div>
     <div class="right">
-      <a class="tx-link" :href="getTxUrl(buzz.txId)" target="_blank">tx</a>
-      <a class="tx-link" :href="getShowBuzzUrl(buzz.txId)" target="_blank">showbuzz</a>
+      <a class="tx-link" :href="getTxUrl(buzz.txId)" target="_blank" @click.stop="">tx</a>
+      <a class="tx-link" :href="getShowBuzzUrl(buzz.txId)" target="_blank" @click.stop="">showbuzz</a>
     </div>
   </div>
 </template>
