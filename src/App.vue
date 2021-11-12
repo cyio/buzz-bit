@@ -1,7 +1,10 @@
 <template>
   <div id="app">
     <div class="nav">
-      <h3>BuzzBit</h3>
+      <div class="left">
+        <span class="title">BuzzBit</span>
+        <span class="ver">{{version}}</span>
+      </div>
       <div class="links">
         <router-link to="/user" v-if="hasToken">首页</router-link>
         <router-link to="/pub">广场</router-link>
@@ -28,9 +31,6 @@ import AppConfig from '@/config/metasv-buzz'
 import { mapState } from 'vuex'
 import { Dialog } from 'vant';
 
-function getLocal(key) {
-  return window.localStorage.getItem(key)
-}
 function setLocal(key, val) {
   return window.localStorage.setItem(key, val)
 }
@@ -47,7 +47,8 @@ export default Vue.extend({
   data() {
     return {
       showPub: location.host.includes('localhost'),
-      hasToken: localStorage.getItem('access_token')
+      hasToken: localStorage.getItem('access_token'),
+      version: '0.1.0'
     };
   },
   computed: {
@@ -56,11 +57,15 @@ export default Vue.extend({
     }),
   },
   methods: {
+    resetState() {
+      localStorage.clear()
+      this.hasToken = false;
+      this.$store.commit('SET_USER', {});
+    },
     auth() {
       this.$toast('前往登录');
+      this.resetState()
       goAuth()
-      localStorage.clear()
-      this.$store.commit('SET_USER', {});
       tId = setInterval(this.checkLogin, 400)
     },
     authConfirm() {
@@ -146,8 +151,8 @@ export default Vue.extend({
 
 <style lang="stylus" scoped>
 #app
-  -webkit-font-smoothing antialiased
-  -moz-osx-font-smoothing grayscale
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   padding: 8px;
   max-width: 600px;
   margin: 0 auto;
@@ -156,9 +161,17 @@ export default Vue.extend({
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin: 0 auto;
+  margin: 15px auto;
   max-width: 600px;
   color: var(--theme-color);
+}
+
+.left {
+  .ver {
+    margin-left: 5px;
+    color: #bbb7b7;
+    font-size: 12px;
+  }
 }
 
 .links {
