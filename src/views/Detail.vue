@@ -52,7 +52,7 @@ export default ({
 });
 </script>
 
-<style scoped lang="stylus">
+<style scoped lang="scss">
 .detail {
   .head {
     margin-bottom: 15px;

@@ -305,7 +305,7 @@ export default {
 }
 </script>
 
-<style lang="stylus" scoped>
+<style lang="scss" scoped>
 .home {
   max-width: 600px;
   margin: 0 auto;
@@ -313,7 +313,7 @@ export default {
   flex-direction: column;
   .userinfo {
     display: flex;
-    margin-bottom 12px;
+    margin-bottom: 12px;
     .username {
       margin-right: 10px;
       min-width: 140px;
@@ -342,7 +342,7 @@ export default {
     }
   }
   .loading {
-    margin-bottom 12px;
+    margin-bottom: 12px;
     text-align: center;
   }
 }

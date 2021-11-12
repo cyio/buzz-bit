@@ -49,7 +49,7 @@ export default ({
 });
 </script>
 
-<style scoped lang="stylus">
+<style scoped lang="scss">
 .item-head {
   margin-bottom: 18px;
   display: flex;
@@ -60,7 +60,7 @@ export default ({
     .time {
       color: #909399;
       font-size: 12px;
-      margin-left 6px;
+      margin-left: 6px;
     }
   }
   .tx-link {

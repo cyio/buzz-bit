@@ -149,13 +149,7 @@ export default Vue.extend({
 });
 </script>
 
-<style lang="stylus" scoped>
-#app
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  padding: 8px;
-  max-width: 600px;
-  margin: 0 auto;
+<style lang="scss" scoped>
 
 .nav {
   display: flex;
@@ -179,7 +173,7 @@ export default Vue.extend({
   align-items: center;
   color: var(--theme-color);
   > a {
-    margin-right 6px
+    margin-right: 6px;
     white-space: nowrap;
   }
 }
@@ -193,5 +187,12 @@ export default Vue.extend({
 <style>
 :root {
   --theme-color: #ab490d;
+}
+#app {
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  padding: 8px;
+  max-width: 600px;
+  margin: 0 auto;
 }
 </style>

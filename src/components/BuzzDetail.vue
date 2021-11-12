@@ -64,7 +64,7 @@ export default ({
 });
 </script>
 
-<style scoped lang="stylus">
+<style scoped lang="scss">
 .buzz-detail {
   .comment-wrap {
     margin-left: 24px;

@@ -250,10 +250,10 @@ export default {
 };
 </script>
 
-<style lang="stylus" scoped>
+<style lang="scss" scoped>
 .list-container {
   .loading {
-    margin-top 30%;
+    margin-top: 30%;
     margin-bottom: 30%;
     text-align: center;
   }

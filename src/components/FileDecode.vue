@@ -106,7 +106,7 @@ export default ({
 });
 </script>
 
-<style scoped lang="stylus">
+<style scoped lang="scss">
 .file-decode {
   height: 100%;
 }

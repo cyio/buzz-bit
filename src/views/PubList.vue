@@ -23,7 +23,7 @@ export default ({
 });
 </script>
 
-<style scoped lang="stylus">
+<style lang="scss" scoped>
 .pub-list {
   max-width: 600px;
   margin: 0 auto;

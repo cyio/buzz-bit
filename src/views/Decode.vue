@@ -69,12 +69,12 @@ export default ({
 });
 </script>
 
-<style scoped lang="stylus">
+<style scoped lang="scss">
 .pub-list {
   max-width: 600px;
   margin: 0 auto;
   .form {
-    margin-bottom 10px
+    margin-bottom: 10px;
   }
 }
 </style>

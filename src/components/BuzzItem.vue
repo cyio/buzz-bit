@@ -254,7 +254,7 @@ export default Vue.extend({
 });
 </script>
 
-<style scoped lang="stylus">
+<style scoped lang="scss">
 .item-container {
   text-align: left;
   border-top: 1px solid #eae7e7;

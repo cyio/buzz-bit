@@ -90,7 +90,7 @@ export default ({
 </script>
 
 <!-- Add "scoped" attribute to limit CSS to this component only -->
-<style scoped lang="stylus">
+<style scoped lang="scss">
 .quote-item {
   border-top: 1px solid #eae7e7;
   padding: 10px 5px;
