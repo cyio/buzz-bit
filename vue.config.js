@@ -23,6 +23,7 @@ module.exports = {
             .set('@$', resolve('src'))
     },
     devServer: {
+      historyApiFallback: true,
       disableHostCheck: true,
       proxy: {
         '/showMANDB': {
@@ -54,7 +55,6 @@ module.exports = {
           }
         }
       },
-      historyApiFallback: false,
     },
     productionSourceMap: process.env.NODE_ENV != 'production'
 }

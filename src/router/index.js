@@ -2,14 +2,32 @@ import Vue from "vue";
 import VueRouter from "vue-router";
 import Home from "../views/Home.vue";
 import PubList from "../views/PubList.vue";
+import { getUrlParameterByName } from '@/utils/index';
 
 Vue.use(VueRouter);
 
 const routes = [
+  { 
+    path: '/', 
+    redirect: (to) => {
+      const code = getUrlParameterByName('code')
+      const token = localStorage.getItem('access_token')
+      if (code || token) {
+        return '/user'
+      }
+      return '/pub/hot'
+    }
+  },
   {
     path: "/user",
     name: "User",
     component: Home,
+  },
+  {
+    path: "/user/:id",
+    name: "UserDetail",
+    component: () =>
+      import(/* webpackChunkName: "about" */ "../views/UserDetail.vue"),
   },
   {
     path: "/about",
@@ -55,9 +73,16 @@ const routes = [
     component: () =>
       import(/* webpackChunkName: "Setting" */ "../views/Setting.vue"),
   },
+  {
+    path: '*', // or '/index.html'
+    beforeEnter: (to, from, next) => {
+      next('/')
+    }
+  }
 ];
 
 const router = new VueRouter({
+  mode: 'history',
   routes,
 });
 
