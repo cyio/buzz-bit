@@ -1,4 +1,6 @@
 const path = require('path');
+// const polyfillNode = require('rollup-plugin-polyfill-node')
+
 function resolve (dir) {
     return path.join(__dirname, dir)
 }
@@ -25,6 +27,7 @@ module.exports = {
     devServer: {
       historyApiFallback: true,
       disableHostCheck: true,
+      port: 8080,
       proxy: {
         '/showMANDB': {
           target: 'https://api.showmoney.app',
@@ -56,5 +59,35 @@ module.exports = {
         }
       },
     },
-    productionSourceMap: process.env.NODE_ENV != 'production'
+    productionSourceMap: process.env.NODE_ENV != 'production',
+    pluginOptions: {
+      vite: {
+        /**
+         * Plugin[]
+         * @default []
+         */
+        plugins: [
+          require('rollup-plugin-polyfill-node')()
+          // polyfillNode()
+        ], // other vite plugins list, will be merge into this plugin\'s underlying vite.config.ts
+        /**
+         * Vite UserConfig.optimizeDeps options
+         * recommended set `include` for speedup page-loaded time, e.g. include: ['vue', 'vue-router', '@scope/xxx']
+         * @default {}
+         */
+        optimizeDeps: {
+          exclude: ['bsv']
+        },
+        /**
+         * type-checker, recommended disabled for large-scale old project.
+         * @default false
+         */
+        disabledTypeChecker: true,
+        /**
+         * lint code by eslint
+         * @default false
+         */
+        disabledLint: true,
+      }
+    },
 }

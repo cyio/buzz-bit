@@ -2,7 +2,7 @@
 
 import Vue from 'vue'
 import { CustomError } from './error'
-import { getLocal, setLocal } from './storage'
+import { Storage } from './index'
 // import { Decimal } from 'decimal.js'
 // import * as LosslessJSON from 'lossless-json'
 
@@ -186,7 +186,7 @@ export class HttpRequests implements Http {
 export const callApi = async (config: ApiRequestTypes): Promise<ApiResultTypes> => {
   const Http = new HttpRequests()
   const url = config.url
-  const accessToken = getLocal('accessToken')
+  const accessToken = Storage.getItem('access_token')
   const params: ApiParamsTypes = {
     d: config.params,
     n: +new Date(),
@@ -197,7 +197,7 @@ export const callApi = async (config: ApiRequestTypes): Promise<ApiResultTypes> 
   if (res.c === 200) {
     return res
   } else if (res.c === 409) {
-    setLocal('accessToken', '')
+    Storage.setItem('access_token', '')
     // Vue.toasted.error('登录信息已过期，请重新登录。').goAway(3000)
     setTimeout(() => {
       window.location.replace('/user/login')

@@ -1,4 +1,5 @@
-const privateConfig = require('../../private-config.json')
+// const privateConfig = require('../../private-config.json')
+import privateConfig from '../../private-config.json'
 
 export interface ConfigTypes {
   readonly baseUrl: string; // 当前项目基本Url

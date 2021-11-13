@@ -101,7 +101,7 @@ import Vue from "vue";
 import AppConfig from '@/config/metasv-buzz'
 import { ImagePreview, Popup } from 'vant';
 import BuzzHeader from './BuzzPart/BuzzHeader.vue'
-import FileDecode from '@/components/FileDecode'
+import FileDecode from '@/components/FileDecode.vue'
 import mixin from './BuzzPart/mixin'
 import { mapState } from 'vuex'
 

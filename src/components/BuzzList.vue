@@ -16,8 +16,8 @@
 
 <script>
 import Vue from "vue";
-import BuzzItem from "./BuzzItem";
-import QuoteItem from "./QuoteItem";
+import BuzzItem from "./BuzzItem.vue";
+import QuoteItem from "./QuoteItem.vue";
 
 export default Vue.extend({
   name: "BuzzList",

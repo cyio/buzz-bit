@@ -9,10 +9,10 @@
 </template>
 
 <script>
-import { Script } from 'bsv'
-import FilePreview from '@/components/FilePreview'
-import {queryHex} from '@/api/'
-
+import a from 'bsv'
+import FilePreview from '@/components/FilePreview.vue'
+import {queryHex} from '@/api/index.js'
+console.log('debug', a)
 function hexToUtf8(s){
   return decodeURIComponent(
      s.replace(/\s+/g, '') // remove spaces

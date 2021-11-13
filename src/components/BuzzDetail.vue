@@ -12,7 +12,7 @@
 
 <script>
 import BuzzItem from "@/components/BuzzItem";
-import FileDecode from '@/components/FileDecode'
+import FileDecode from '@/components/FileDecode.vue'
 import BuzzList from "@/components/BuzzList.vue";
 import { getInteractiveBuzzList } from '@/api/metasv-buzz.ts'
 

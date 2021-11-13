@@ -29,7 +29,7 @@
 </template>
 
 <script>
-import FileDecode from '@/components/FileDecode'
+import FileDecode from '@/components/FileDecode.vue'
 
 export default ({
   name: "Decode",
