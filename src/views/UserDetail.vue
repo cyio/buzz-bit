@@ -11,8 +11,18 @@
           <button class="tip" @click="disconnect">断开</button>
           <div class="address">当前钱包：{{address ? address.slice(0, 6) : ''}}...</div>
         </div>
-        <input type="number" placeholder="金额" v-model="amount" min="200"> 聪
-        <button class="tip" @click="tip">打赏 Buzz 主</button>
+        <div class="row">
+          <input type="number" placeholder="金额(以最小单位)" v-model="amount" min="0"> 
+          <!-- 快捷输入<input type="number" placeholder="金额" v-model="amount" min="200"> 单位系数
+          <select v-model="selectFactor">
+            <option v-for="(item, index) in factors" :key="index">{{item}}</option>
+          </select> -->
+          <div>实际金额{{ actualAmount }}</div>
+          <select v-model="selectedFT">
+            <option v-for="ft in ftList" :key="ft.unit">{{ft.unit}}</option>
+          </select>
+          <button class="tip" @click="tip">打赏 Buzz 主</button>
+        </div>
       </div>
       <BuzzList :buzzListData="curBuzzListData" />
     </template>
@@ -37,7 +47,11 @@ export default ({
       },
       currentPage: 1,
       address: null,
-      amount: 200
+      amount: 200,
+      ftList: [],
+      selectedFT: 'bsv',
+      // factors: ['1', '0.00000001'],
+      // selectFactor: '1'
     };
   },
   methods: {
@@ -61,7 +75,7 @@ export default ({
       })
     },
     check() {
-      if (typeof window.sensilet === 'undefined') {
+      if (typeof window.sensilet == 'undefined') {
         return false
       }
       return true
@@ -69,6 +83,7 @@ export default ({
     async connect() {
       const address = await sensilet.requestAccount();
       this.address = address
+      this.getList()
       this.$toast('连接成功');
       console.log(address)
     },
@@ -76,17 +91,37 @@ export default ({
       sensilet.exitAccount()
       this.address = '...'
     },
+    async getList() {
+      const bsvBalance = await sensilet.getBsvBalance()
+      const bsvFT = {
+        unit: 'bsv',
+        balance: bsvBalance.balance.total
+      }
+      const ftList = await sensilet.getSensibleFtBalance()
+      let tmp = ftList.filter(i => i.balance > 0)
+      tmp.unshift(bsvFT)
+      this.ftList.push(...tmp)
+      this.selectedFT = tmp[0].unit
+    },
     async tip() {
       // const bsvBalance = await sensilet.getBsvBalance();
       const params = {
           receivers: [{
               address: this.curBuzzListData[0].zeroAddress,
-              amount: this.amount   //unit: Sat.
+              amount: this.amount
           }],
           // broadcast: false, //default is true, sensilet will broadcast this tx. also you can send false to get a signed rawHex and broadcast yourself
       };
+      if (this.selectedFT !== 'bsv') {
+          params.genesis = this.ftList.find(i => i.unit === this.selectedFT).genesis
+      }
       try {
-        const txid = await sensilet.transferBsv(params);
+        let txid = null
+        if (this.selectedFT === 'bsv') {
+          txid = await sensilet.transferBsv(params);
+        } else {
+          txid = await sensilet.transferSensibleFt(params);
+        }
         console.log(txid)
         this.$toast('支付成功');
       } catch(e) {
@@ -94,12 +129,10 @@ export default ({
       }
     },
     async init() {
-      const isConnected = await sensilet.isConnect();
-      if (isConnected) {
-        const accountInfo = await sensilet.getAccount();
-        this.address = accountInfo
-      }
-    }
+      const accountInfo = await sensilet.getAccount();
+      this.address = accountInfo
+      this.getList()
+    },
   },
   computed: {
     curBuzzListData() {
@@ -111,6 +144,9 @@ export default ({
         })
       }
       return list
+    },
+    actualAmount() {
+      return this.amount * 0.00000001
     }
   },
   created() {
@@ -146,6 +182,9 @@ export default ({
     .row {
       display: flex;
       margin-bottom: 8px;
+      > * {
+        margin-right: 6px;
+      }
     }
   }
 }
