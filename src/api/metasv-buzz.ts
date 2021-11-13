@@ -3,14 +3,6 @@
 import { HttpRequests, ApiRequestTypes, ContentType } from '@/utils/request'
 import { isProd } from '@/utils/index'
 import AppConfig from '@/config/metasv-buzz'
-// const AppConfig = {
-//   showMoneyUrl: 'https://www.showmoney.app',  // Showmoney 钱包地址 - 不需要变动
-//   oauthSettings: {
-//     clientId: 'e6d94fe3-69ab-43a9-8988-3255e5957864',
-//     clientSecret: 'af22ad2f-8bc8-45c2-b155-bd4ed6ee97bd',
-//     redirectUri: 'http://localhost:8080/#/'
-//   },
-// }
 
 interface GetTokenParamsTypes {
   grant_type: string;
@@ -134,7 +126,8 @@ export const getSearchBuzzList = (params): Promise<any> => {
 }
 export const goAuth = () => {
   const authUrl = `${AppConfig.showMoneyUrl}/userLogin?response_type=code&scope=app&client_id=${AppConfig.oauthSettings.clientId}&redirect_uri=${AppConfig.oauthSettings.redirectUri}`
-  window.open(authUrl)
+  location.href= authUrl
+  // window.open(authUrl)
 }
 export const getTagList = async (params: BaseListParamsTypes) => {
   const Http = new HttpRequests()

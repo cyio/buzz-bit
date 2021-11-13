@@ -2,19 +2,22 @@
   <div id="app">
     <div class="nav">
       <div class="left">
-        <span class="title">BuzzBit</span>
-        <span class="ver">{{version}}</span>
+        <span class="title" @click="goHome">BuzzBit</span>
+        <span class="ver">{{$version}}</span>
       </div>
       <div class="links">
-        <router-link to="/user" v-if="hasToken">首页</router-link>
-        <router-link to="/pub">广场</router-link>
+        <router-link to="/user" v-if="hasToken || user.name">主页</router-link>
+        <router-link to="/pub/hot">广场</router-link>
         <!-- <router-link to="/login">登录</router-link> -->
         <router-link to="/decode">文件解码</router-link>
         <router-link to="/setting">设置</router-link>
         <router-link to="/about">关于</router-link>
         <div class="user">
-          <button @click="auth" v-if="!hasToken">登录</button>
-          <div v-else @click="authConfirm">{{user.name || '已登录'}}</div>
+          <div v-if="hasToken || user.name" @click="authConfirm">
+            <span v-if="user.name">{{user.name}}</span>
+            <van-loading v-else color="#1989fa" class="loading" />
+          </div>
+          <button @click="auth" v-else>登录</button>
         </div>
         <!-- <search /> -->
       </div>
@@ -30,6 +33,7 @@ import { getUrlParameterByName } from '@/utils/index';
 import AppConfig from '@/config/metasv-buzz'
 import { mapState } from 'vuex'
 import { Dialog } from 'vant';
+import { Storage } from '@/utils/index';
 
 function setLocal(key, val) {
   return window.localStorage.setItem(key, val)
@@ -47,13 +51,13 @@ export default Vue.extend({
   data() {
     return {
       showPub: location.host.includes('localhost'),
-      hasToken: localStorage.getItem('access_token'),
-      version: '0.1.0'
+      hasToken: !!this.accessToken,
     };
   },
   computed: {
     ...mapState({
       user: 'user',
+      accessToken: 'accessToken',
     }),
   },
   methods: {
@@ -91,10 +95,10 @@ export default Vue.extend({
         }
       }
     },
-    getAccessToken() {
+    getAccessToken(code) {
       return getToken({
         'grant_type': 'authorization_code',
-        code: this.code,
+        code,
         // 'client_id': id,
         'redirect_uri': AppConfig.oauthSettings.redirectUri,
         'scope': 'app',
@@ -106,43 +110,39 @@ export default Vue.extend({
             accessToken: res.access_token,
             refreshToken: res.refresh_token
           })
-          // window.location.reload()
+          this.hasToken = true
         } else if (res.error_description) {
           this.$toast(res.error_description)
         }
       })
     },
     updateAccessToken(res) {
-      this.accessToken = res.accessToken
+      this.$store.commit('SET_ACCESS_TOKEN', res.accessToken)
+      // this.accessToken = res.accessToken
       this.refreshToken = res.refreshToken
       setLocal('refresh_token', res.refreshToken)
-      setLocal('access_token', res.accessToken)
+      // setLocal('access_token', res.accessToken)
     },
     isRoot() {
       return location.hash === '#/'
+    },
+    goHome() {
+      const { path } = this.$route
+      if (path === '/user' || path === '/pub/hot') {
+      } else {
+        this.$router.push('/')
+      }
     }
   },
   created() {
     // 新页面 auth
     this.code = getUrlParameterByName('code')
-    if (this.code) {
-      this.getAccessToken().then(() => {
-        window.close()
-        // 关闭自身
-        // this.$router.push({ path: '/user' })
-        // location.href = '/#/user'
-      })
+    if (!this.hasToken && this.$route.path === '/user' && this.code) {
+      this.getAccessToken(this.code)
     } else {
-      // 未登录去公开信息流页
-      if (!this.hasToken) {
-        // 强跳路由有 bug，目前只在本地用
-        if (this.isRoot()) {
-          this.$router.push({ path: `/pub` })
-        }
-      } else {
-        if (this.isRoot()) {
-          this.$router.push({ path: `/user` })
-        }
+      const userCache = Storage.getObj('user') || '{}'
+      if (userCache.metaId) {
+        this.$store.commit('SET_USER', userCache);
       }
     }
   }
@@ -155,7 +155,7 @@ export default Vue.extend({
   display: flex;
   align-items: center;
   justify-content: space-between;
-  margin: 15px auto;
+  margin: 25px auto;
   max-width: 600px;
   color: var(--theme-color);
 }

@@ -79,7 +79,7 @@ export const hexToBase64Img = (hexStr, type) => {
     return localStorage.setItem(key, value);
   },
 
-  getItem(key) {
+  getObj(key) {
     const record = JSON.parse(localStorage.getItem(key));
     if (!record) {
       return null;
@@ -89,6 +89,11 @@ export const hexToBase64Img = (hexStr, type) => {
     //   return new Date().getTime() < record.timestamp && record.data;
     // }
     return record;
+  },
+
+  getItem(key) {
+    const record = localStorage.getItem(key)
+    return record || null
   },
 };
 

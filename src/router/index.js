@@ -20,10 +20,10 @@ const routes = [
     component: () =>
       import(/* webpackChunkName: "about" */ "../views/About.vue"),
   },
-  {
-    path: "/pub",
-    redirect: "/pub/hot",
-  },
+  // {
+  //   path: "/pub",
+  //   redirect: "/pub/hot",
+  // },
   {
     path: "/pub/:type",
     name: "PubList",

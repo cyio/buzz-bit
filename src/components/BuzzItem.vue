@@ -164,7 +164,7 @@ export default Vue.extend({
     },
     doForward() {
       if (!window.__metaIdJs) {
-        this.$toast('请先切到首页登录');
+        this.$toast('请先切到主页登录');
         return
       }
       const accessToken = window.localStorage.getItem('access_token')
@@ -193,7 +193,7 @@ export default Vue.extend({
     },
     doComment() {
       if (!window.__metaIdJs) {
-        this.$toast('请先切到首页登录');
+        this.$toast('请先切到主页登录');
         return
       }
       const accessToken = window.localStorage.getItem('access_token')

@@ -4,7 +4,7 @@
       <div class="avatar"></div>
       <div class="userinfo">
         <!-- <img :src="hexToBase64Img(userInfo.headUrl)" :size="40" /> -->
-        <div class="username">{{ buzz.userName || buzz.name}}</div>
+        <div class="username" @click.stop="goUserDetail">{{ buzz.userName || buzz.name}}</div>
         <div class="time">{{ buzz.timestamp | formatTime }}</div>
       </div>
     </div>
@@ -37,6 +37,10 @@ export default ({
     getShowBuzzUrl(txId) {
       return 'https://www.showbuzz.app/details/' + txId
     },
+    goUserDetail() {
+      const id = this.buzz.metaId
+      this.$router.push({ path: `/user/${id}` })
+    }
   },
   computed: {
   },

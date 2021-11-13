@@ -63,7 +63,7 @@ export default {
       code: '',
       isLoaded: false,
       refreshToken: '',
-      accessToken: '',
+      // accessToken: '',
       content: '',
       metaIdJs: null,
       attachments: [],
@@ -80,27 +80,6 @@ export default {
       this.refreshToken = res.refreshToken
       setLocal('refresh_token', res.refreshToken)
       setLocal('access_token', res.accessToken)
-    },
-    getAccessToken() {
-      return getToken({
-        'grant_type': 'authorization_code',
-        code: this.code,
-        // 'client_id': id,
-        'redirect_uri': AppConfig.oauthSettings.redirectUri,
-        'scope': 'app',
-        'client_id': AppConfig.oauthSettings.clientId,
-        'client_secret': AppConfig.oauthSettings.clientSecret
-      }).then(res => {
-        if (res.access_token) {
-          this.updateAccessToken({
-            accessToken: res.access_token,
-            refreshToken: res.refresh_token
-          })
-          // window.location.reload()
-        } else if (res.error_description) {
-          this.$toasted.error(res.error_description)
-        }
-      })
     },
     async refreshAccessToken() {
       await getToken({
@@ -209,7 +188,7 @@ export default {
       __metaIdJs.sendMetaDataTx(config);
     },
     getUser() {
-      const userCache = Storage.getItem('user') || '{}'
+      const userCache = Storage.getObj('user') || '{}'
       if (userCache.metaId) {
         this.$store.commit('SET_USER', userCache);
         return
@@ -263,41 +242,45 @@ export default {
   },
   computed: {
     ...mapState({
-      user: 'user'
+      user: 'user',
+      accessToken: 'accessToken'
     }),
     isLogined() {
       return !!this.accessToken
     }
   },
   created() {
-    if (getLocal('access_token')) {
-      this.accessToken = getLocal('access_token')
-    }
-    if (getLocal('refresh_token')) {
-      this.refreshToken = getLocal('refresh_token')
-    }
+    // if (getLocal('access_token')) {
+    //   this.accessToken = getLocal('access_token')
+    // }
+    // if (getLocal('refresh_token')) {
+    //   this.refreshToken = getLocal('refresh_token')
+    // }
   },
   watch: {
     // 是否存在 token
     //  是否存在 user cache
     //    并行初始化 sdk
     //  sdk 是否初始化
-    'isLogined': function(val) {
-      if (val) {
-        const userCache = Storage.getItem('user') || '{}'
-        if (userCache.metaId) {
-          this.$store.commit('SET_USER', userCache);
-          if (window.__metaIdJs) {
-            this.isLoaded = true
+    'isLogined': {
+      handler: function(val) {
+        if (val) {
+          const userCache = Storage.getObj('user') || '{}'
+          if (userCache.metaId) {
+            this.$store.commit('SET_USER', userCache);
+            if (window.__metaIdJs) {
+              this.isLoaded = true
+            } else {
+              this.initSDK(false)
+            }
           } else {
-            this.initSDK(false)
+            this.initSDK()
           }
         } else {
           this.initSDK()
         }
-      } else {
-        this.initSDK()
-      }
+      },
+      immediate: true
     }
   },
   mounted() {

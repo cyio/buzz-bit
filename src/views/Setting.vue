@@ -1,7 +1,13 @@
 <template>
-  <div class="pub-list">
-    <input type="checkbox" id="showVideo" :checked="showVideoInFlow" @change="onChange">
-    <label for="showVideo">信息流中展示视频（不影响详情页）</label>
+  <div class="setting">
+    <div class="item">
+      <input type="checkbox" id="showVideo" :checked="showVideoInFlow" @change="onChange">
+      <label for="showVideo">信息流中展示视频（不影响详情页）</label>
+    </div>
+    <div class="item">
+      应用版本  {{$version}}
+      <button @click="refresh">强制更新</button>
+    </div>
   </div>
 </template>
 
@@ -20,6 +26,9 @@ export default ({
   methods: {
     onChange() {
       this.$store.commit('SET_SHOW_VIDEO_IN_FLOW', !this.showVideoInFlow)
+    },
+    refresh() {
+      window.location.reload(true)
     }
   },
   computed: {
@@ -46,8 +55,7 @@ export default ({
 </script>
 
 <style scoped lang="scss">
-.pub-list {
-  max-width: 600px;
-  margin: 0 auto;
+.setting {
+  margin-bottom: 15px;
 }
 </style>
