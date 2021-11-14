@@ -1,5 +1,5 @@
 export const queryHexFromWOC = async txId => {
-  let url = `https://api.whatsonchain.com/v1/bsv/main/tx/${txId}/out/0/hex`
+  let url = `https://api.whatsonchain.com/v1/bsv/main/tx/${txId}/out/0/hex`  // index 不一定是 0，怎么判断？
   let res = await fetch(url)
   let hex = await res.text()
   return hex

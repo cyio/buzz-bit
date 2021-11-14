@@ -66,7 +66,7 @@ export default ({
       let binaryStr = hexToUtf8(arr[arr.length - 1])
       let isBinary = binaryStr === 'binary'
       if (!isBinary) {
-        alert('不是文件')
+        this.$toast('不是文件')
         return
       }
       // console.log(arr)

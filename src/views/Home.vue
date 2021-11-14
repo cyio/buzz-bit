@@ -16,7 +16,6 @@
         <input type="checkbox" id="showFileSelect" v-model="showFileSelect">
         <label for="showFileSelect">分享文件</label>
       </div>
-      <!-- <button @click="showImgSelect = !showImgSelect" class="send">切换发图</button> -->
       <van-button color="#1989fa" @click="send" size="small"
         :disabled='!isLoaded || content === ""' class="send"
         :loading="!isLoaded"
@@ -24,7 +23,6 @@
     </div>
     <uploader v-show="showImgSelect" ref="uploader" @change="handleMetafileChange" />
     <file-Uploader v-show="showFileSelect" ref="uploader" @change="handleMetafileChange" />
-    <!-- <button @click="getCurBuzzList" class="send">刷新列表</button> -->
     <buzz-list-container
       scene="priv"
       :user="user"
@@ -185,7 +183,7 @@ export default {
         }
       }
       console.log(config)
-      __metaIdJs.sendMetaDataTx(config);
+      __metaIdJs.addProtocolNode(config);
     },
     getUser() {
       const userCache = Storage.getObj('user') || '{}'

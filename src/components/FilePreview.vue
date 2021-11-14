@@ -50,7 +50,7 @@ export default ({
   }
   iframe {
     width: 100%;
-    min-height: 800px;
+    min-height: 1000px;
     position: absolute;
     max-width: 1200px;
     transform: translateX(-15%);

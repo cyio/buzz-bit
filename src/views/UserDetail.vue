@@ -49,7 +49,7 @@ export default ({
       address: null,
       amount: 200,
       ftList: [],
-      selectedFT: 'bsv',
+      selectedFT: 'BSV',
       // factors: ['1', '0.00000001'],
       // selectFactor: '1'
     };
@@ -94,7 +94,7 @@ export default ({
     async getList() {
       const bsvBalance = await sensilet.getBsvBalance()
       const bsvFT = {
-        unit: 'bsv',
+        unit: 'BSV',
         balance: bsvBalance.balance.total
       }
       const ftList = await sensilet.getSensibleFtBalance()
@@ -108,16 +108,16 @@ export default ({
       const params = {
           receivers: [{
               address: this.curBuzzListData[0].zeroAddress,
-              amount: this.amount
+              amount: this.actualAmount * 10 ** 8
           }],
           // broadcast: false, //default is true, sensilet will broadcast this tx. also you can send false to get a signed rawHex and broadcast yourself
       };
-      if (this.selectedFT !== 'bsv') {
+      if (this.selectedFT !== 'BSV') {
           params.genesis = this.ftList.find(i => i.unit === this.selectedFT).genesis
       }
       try {
         let txid = null
-        if (this.selectedFT === 'bsv') {
+        if (this.selectedFT === 'BSV') {
           txid = await sensilet.transferBsv(params);
         } else {
           txid = await sensilet.transferSensibleFt(params);
@@ -146,7 +146,7 @@ export default ({
       return list
     },
     actualAmount() {
-      return this.amount * 0.00000001
+      return this.selectedFT === 'BSV' ? this.amount * 0.00000001 : this.amount
     }
   },
   created() {

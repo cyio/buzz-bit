@@ -9,7 +9,7 @@
         <router-link to="/user" v-if="hasToken || user.name">主页</router-link>
         <router-link to="/pub/hot">广场</router-link>
         <!-- <router-link to="/login">登录</router-link> -->
-        <router-link to="/decode">文件解码</router-link>
+        <router-link to="/decode">解码</router-link>
         <router-link to="/setting">设置</router-link>
         <router-link to="/about">关于</router-link>
         <div class="user">
@@ -161,6 +161,9 @@ export default Vue.extend({
 }
 
 .left {
+  .title {
+    cursor: pointer;
+  }
   .ver {
     margin-left: 5px;
     color: #bbb7b7;

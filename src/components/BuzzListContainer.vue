@@ -30,8 +30,6 @@
 import BuzzList from "@/components/BuzzList.vue";
 import { getBuzzList, getFollowBuzzList, getHotBuzzList, getNewBuzzList, getSearchBuzzList } from '@/api/metasv-buzz.ts'
 import { Tab, Tabs, Loading, Pagination, Search } from 'vant';
-// import AppConfig from '@/config/metasv-buzz'
-
 
 export default {
   name: "BuzzListContainer",
@@ -95,9 +93,7 @@ export default {
         pageSize: '6',
         timestamp: 0
       }
-      this.loading = true
-      getBuzzList(params).then(res => {
-        this.loading = false
+      return getBuzzList(params).then(res => {
         const { code, data } = res
         if (code === 0) {
           const items = res.data.results?.items || []
@@ -113,10 +109,7 @@ export default {
         timeType: "today",
         timestamp: 0
       }
-      this.loading = true
-      // return
-      getFollowBuzzList(params).then(res => {
-        this.loading = false
+      return getFollowBuzzList(params).then(res => {
         const { code, data } = res
         if (code === 0) {
           const items = res.data.results?.items || []
@@ -130,9 +123,7 @@ export default {
         pageSize: '6',
         timeType: "today",
       }
-      this.loading = true
-      getHotBuzzList(params).then(res => {
-        this.loading = false
+      return getHotBuzzList(params).then(res => {
         const { code, data } = res
         if (code === 0) {
           const items = res.data.results?.items || []
@@ -147,9 +138,7 @@ export default {
         timeType: "today",
         timestamp: 0
       }
-      this.loading = true
-      getNewBuzzList(params).then(res => {
-        this.loading = false
+      return getNewBuzzList(params).then(res => {
         const { code, data } = res
         if (code === 0) {
           const items = res.data.results?.items || []
@@ -164,9 +153,7 @@ export default {
         searchWord: this.keywords,
         timestamp: 0
       }
-      this.loading = true
-      getSearchBuzzList(params).then(res => {
-        this.loading = false
+      return getSearchBuzzList(params).then(res => {
         const { code, data } = res
         if (code === 0) {
           const items = res.data.results?.items || []
@@ -174,7 +161,7 @@ export default {
         }
       })
     },
-    getCurBuzzList() {
+    async getCurBuzzList(triggerLoading = true) {
       const map = {
         'my': 'getBuzzList',
         'follow': 'getFollowBuzzList',
@@ -182,7 +169,11 @@ export default {
         'new': 'getNewBuzzList',
         'search': 'getSearchBuzzList',
       }
-      this[map[this.curListType]]()
+      if (triggerLoading) {
+        this.loading = true
+      }
+      await this[map[this.curListType]]()
+      this.loading = false
     },
   },
   computed: {
@@ -225,7 +216,9 @@ export default {
       }
     },
     'lastBuzzTime': function(val) {
-      this.getCurBuzzList()
+      setTimeout(() => {
+        this.getCurBuzzList(false)
+      }, 400)
     },
     'currentPage': function(val) {
       this.getCurBuzzList()

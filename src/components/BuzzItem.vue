@@ -189,7 +189,7 @@ export default Vue.extend({
         callback: this.handleForward
       }
       console.log(config)
-      window.__metaIdJs.sendMetaDataTx(config);
+      window.__metaIdJs.addProtocolNode(config);
     },
     doComment() {
       if (!window.__metaIdJs) {
@@ -218,7 +218,7 @@ export default Vue.extend({
         callback: this.handleForward
       }
       console.log(config)
-      window.__metaIdJs.sendMetaDataTx(config);
+      window.__metaIdJs.addProtocolNode(config);
     },
     handleForward(res) {
       this.content = ''
