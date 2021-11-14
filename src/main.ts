@@ -10,7 +10,7 @@ Vue.use(Button);
 Vue.use(Loading);
 Vue.use(Toast);
 
-Vue.prototype.$version = '0.3.0'
+Vue.prototype.$version = '0.4.2'
 
 new Vue({
   router,

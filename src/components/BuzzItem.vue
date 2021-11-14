@@ -337,7 +337,9 @@ export default Vue.extend({
       width: 80px;
     }
   }
-  .share-file {
+  img {
+    width: 100%;
+    // margin-top: 10px;
   }
 }
 </style>

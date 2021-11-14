@@ -1,6 +1,4 @@
-import dayjs from 'dayjs';
-
-export function formatBytes(bytes, decimals = 2) {
+function formatBytes(bytes, decimals = 2) {
   if (bytes === 0) return '0 Bytes';
 
   const k = 1024;
@@ -12,7 +10,7 @@ export function formatBytes(bytes, decimals = 2) {
   return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
 }
 
-export const isProd = process.env.NODE_ENV !== 'development'
+const isProd = process.env.NODE_ENV !== 'development'
 
 function addZero(value) {
   if (value > 9) {
@@ -21,7 +19,7 @@ function addZero(value) {
   return `0${value}`
 }
 
-export function formatTime(time) {
+function formatTime(time) {
   const date = new Date(time)
   const year = date.getFullYear()
   const month = date.getMonth() + 1
@@ -31,14 +29,17 @@ export function formatTime(time) {
   return `${month}-${day} ${hour}:${minute}`
 }
 
-export function convertRawText(text) {
-  const e = /(https?:\/\/)\S*/g;
+function convertRawText(text) {
+  const dogefiles = /(https?:\/\/)dogefiles.twetch\S*/g;
+  // 以空格开头
+  const href = /\s(https?:\/\/)\S*/g;
   return text
-    .replace(e, (t, e) => '<a target="_blank" href='.concat(t, ">").concat(t, "</a>"))
+    .replace(dogefiles, (t) => `<br><img src="${t}" style="width: 100%" />`)
+    .replace(href, (t) => '<a target="_blank" href='.concat(t, ">").concat(t, "</a>"))
     .replace(/(?:\r\n|\r|\n|\\n)/g, '<br />')
 }
 
-export const hexToBase64Img = (hexStr, type) => {
+const hexToBase64Img = (hexStr, type) => {
   if (!hexStr) {
     return ''
   }
@@ -63,7 +64,7 @@ export const hexToBase64Img = (hexStr, type) => {
  * 带过期时间存储 {"data":{"a":1},"timestamp":1547536618350}
  * 获取时如果没过期会取出 data，否则返回 false
  */
- export const Storage = {
+ const Storage = {
   setItem(key, value, expirationMin) {
     if (expirationMin) {
       const expirationMS = expirationMin * 60 * 1000;
@@ -97,7 +98,7 @@ export const hexToBase64Img = (hexStr, type) => {
   },
 };
 
-export function getUrlParameterByName(name, url) {
+function getUrlParameterByName(name, url) {
   if (!url) url = window.location.href;
   // name = name.replace(/[\[\]]/g, '\\$&');
   const regex = new RegExp(`[?&]${name}(=([^&#]*)|&|#|$)`);
@@ -105,4 +106,14 @@ export function getUrlParameterByName(name, url) {
   if (!results) return null;
   if (!results[2]) return '';
   return decodeURIComponent(results[2].replace(/\+/g, ' '));
+}
+
+export {
+  formatBytes,
+  isProd,
+  formatTime,
+  convertRawText,
+  Storage,
+  getUrlParameterByName,
+  hexToBase64Img
 }

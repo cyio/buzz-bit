@@ -35,8 +35,12 @@ export default ({
 <style scoped lang="scss">
 .preview {
   height: 100%;
+  img {
+    width: 100%;
+  }
+  video {
+    max-height: 100%;
+  }
 }
-video {
-  max-height: 100%;
-}
+
 </style>
