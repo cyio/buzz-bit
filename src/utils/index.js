@@ -29,16 +29,6 @@ function formatTime(time) {
   return `${month}-${day} ${hour}:${minute}`
 }
 
-function convertRawText(text) {
-  const dogefiles = /(https?:\/\/)dogefiles.twetch\S*/g;
-  // 以空格开头
-  const href = /\s(https?:\/\/)\S*/g;
-  return text
-    .replace(dogefiles, (t) => `<br><img src="${t}" style="width: 100%" />`)
-    .replace(href, (t) => '<a target="_blank" href='.concat(t, ">").concat(t, "</a>"))
-    .replace(/(?:\r\n|\r|\n|\\n)/g, '<br />')
-}
-
 const hexToBase64Img = (hexStr, type) => {
   if (!hexStr) {
     return ''
@@ -108,12 +98,30 @@ function getUrlParameterByName(name, url) {
   return decodeURIComponent(results[2].replace(/\+/g, ' '));
 }
 
+
+function isSupportPDF() {
+  var hasPDFViewer = false;
+  try {
+    var pdf =
+      navigator.mimeTypes &&
+        navigator.mimeTypes["application/pdf"]
+        ? navigator.mimeTypes["application/pdf"].enabledPlugin
+        : 0;
+    if (pdf) hasPDFViewer = true;
+  } catch (e) {
+    if (navigator.mimeTypes["application/pdf"] != undefined)
+      hasPDFViewer = true;
+  }
+
+  return hasPDFViewer;
+}
+
 export {
   formatBytes,
   isProd,
   formatTime,
-  convertRawText,
   Storage,
   getUrlParameterByName,
-  hexToBase64Img
+  hexToBase64Img,
+  isSupportPDF
 }

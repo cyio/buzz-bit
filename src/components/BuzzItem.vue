@@ -7,7 +7,7 @@
         <div class="media-item" v-for="(metafile, index) in buzz.attachments" :key="index">
           <file-decode v-if="isShareFile(buzz)" :txId="buzz.attachments[0] | parseTxId"
             class="share-file"
-            mode="list"
+            :mode="mode"
           />
           <template v-else-if="metafile.endsWith('.mp4')">
             <div class="" v-if="mode === 'list' && !showVideoInFlow">视频</div>

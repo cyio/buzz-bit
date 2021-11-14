@@ -3,7 +3,10 @@
     <van-loading v-show="loading" color="#1989fa" class="loading" />
     <div v-if="!loading">
       <div class="size" v-show="showMetaInfo">文件大小：{{blob.size}} 文件类型：{{blob.type}}</div>
-      <file-preview :url="blobUrl" :type="blob.type" />
+      <file-preview
+        :url="blobUrl" :type="blob.type"
+        v-if="showPreview"
+      />
     </div>
   </div>
 </template>
@@ -26,9 +29,14 @@ export default ({
     txId: String,
     apiService: {
       type: String,
-      default: 'showMANDB'
+      default: 'showMANDB',
+      // default: 'whatsonchain',
     },
-    showMetaInfo: false
+    showMetaInfo: false,
+    mode: {
+      type: String,
+      default: 'post'
+    }
   },
   components: {
     FilePreview
@@ -99,6 +107,12 @@ export default ({
     }
   },
   computed: {
+    showPreview() {
+      if (this.mode === 'list') {
+        return this.blob.type.includes('image')
+      }
+      return true
+    }
   },
   created() {
     this.queryHex(this.txId)

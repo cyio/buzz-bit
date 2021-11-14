@@ -1,5 +1,9 @@
 <template>
   <div class="preview" v-if="url">
+    <template v-if="type === 'application/pdf'">
+      <iframe :src="url" frameborder="0" v-if="isSupportPDF()"></iframe>
+      <a class="link" :href="url" target="_blank" v-else>下载文件</a>
+    </template>
     <video
       v-if="type === 'video/mp4'"
       controls
@@ -13,6 +17,8 @@
 </template>
 
 <script>
+import { isSupportPDF } from '@/utils/'
+
 export default ({
   name: "FilePreview",
   props: {
@@ -26,6 +32,7 @@ export default ({
     };
   },
   methods: {
+    isSupportPDF
   },
   computed: {
   }
@@ -40,6 +47,16 @@ export default ({
   }
   video {
     max-height: 100%;
+  }
+  iframe {
+    width: 100%;
+    min-height: 800px;
+    position: absolute;
+    max-width: 1200px;
+    transform: translateX(-15%);
+  }
+  .link {
+    margin-top: 16px;
   }
 }
 
