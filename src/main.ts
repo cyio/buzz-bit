@@ -4,13 +4,14 @@ import router from "./router";
 import store from "./store";
 import "./registerServiceWorker";
 import { Button, Loading, Toast } from 'vant';
+import '@vant/touch-emulator';
 
 Vue.config.productionTip = false;
 Vue.use(Button);
 Vue.use(Loading);
 Vue.use(Toast);
 
-Vue.prototype.$version = '0.6.0'
+Vue.prototype.$version = '0.6.1'
 
 new Vue({
   router,

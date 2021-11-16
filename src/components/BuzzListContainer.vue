@@ -15,13 +15,22 @@
           />
           <van-button color="#1989fa" @click="getSearchBuzzList" size="small" :disabled='keywords === ""' class="search-btn">搜 索</van-button>
         </div>
-        <van-loading v-show="loading" color="#1989fa" class="loading" />
-        <BuzzList v-show="!loading" :buzzListData="curBuzzListData" :key="item.key" />
-        <van-pagination
+        <!-- <van-loading v-show="loading" color="#1989fa" class="loading" /> -->
+        <van-pull-refresh v-model="refreshing" @refresh="onRefresh">
+          <van-list
+            v-model="loading"
+            :finished="finished"
+            finished-text="没有更多了"
+            @load="onLoad"
+          >
+            <BuzzList :buzzListData="curBuzzListData" :key="item.key" />
+          </van-list>
+        </van-pull-refresh>
+        <!-- <van-pagination
           v-show="buzzListData[curListType].length > 0 && !loading"
           v-model="currentPage" :total-items="10000" :items-per-page="10"
           force-ellipses
-        />
+        /> -->
       </van-tab>
     </van-tabs>
   </div>
@@ -29,7 +38,7 @@
 <script>
 import BuzzList from "@/components/BuzzList.vue";
 import { getBuzzList, getFollowBuzzList, getHotBuzzList, getNewBuzzList, getSearchBuzzList } from '@/api/metasv-buzz.ts'
-import { Tab, Tabs, Loading, Pagination, Search } from 'vant';
+import { Tab, Tabs, Loading, Pagination, Search, PullRefresh, List } from 'vant';
 
 export default {
   name: "BuzzListContainer",
@@ -53,10 +62,14 @@ export default {
     [Loading.name]: Loading,
     [Pagination.name]: Pagination,
     [Search.name]: Search,
+    [PullRefresh.name]: PullRefresh,
+    [List.name]: List,
   },
   data() {
     return {
       loading: false,
+      refreshing: false,
+      finished: false,
       buzzListData: {
         'hot': [],
         'new': [],
@@ -96,8 +109,7 @@ export default {
       return getBuzzList(params).then(res => {
         const { code, data } = res
         if (code === 0) {
-          const items = res.data.results?.items || []
-          this.buzzListData.my = items.filter(i => i.encrypt === '0')
+          return res.data.results?.items || []
         }
       })
     },
@@ -112,8 +124,7 @@ export default {
       return getFollowBuzzList(params).then(res => {
         const { code, data } = res
         if (code === 0) {
-          const items = res.data.results?.items || []
-          this.buzzListData.follow = items.filter(i => i.encrypt === '0')
+          return res.data.results?.items || []
         }
       })
     },
@@ -126,8 +137,7 @@ export default {
       return getHotBuzzList(params).then(res => {
         const { code, data } = res
         if (code === 0) {
-          const items = res.data.results?.items || []
-          this.buzzListData.hot = items.filter(i => i.encrypt === '0')
+          return res.data.results?.items || []
         }
       })
     },
@@ -141,8 +151,7 @@ export default {
       return getNewBuzzList(params).then(res => {
         const { code, data } = res
         if (code === 0) {
-          const items = res.data.results?.items || []
-          this.buzzListData.new = items.filter(i => i.encrypt === '0')
+          return res.data.results?.items || []
         }
       })
     },
@@ -156,8 +165,7 @@ export default {
       return getSearchBuzzList(params).then(res => {
         const { code, data } = res
         if (code === 0) {
-          const items = res.data.results?.items || []
-          this.buzzListData.search = items.filter(i => i.encrypt === '0')
+          return res.data.results?.items || []
         }
       })
     },
@@ -170,10 +178,27 @@ export default {
         'search': 'getSearchBuzzList',
       }
       if (triggerLoading) {
-        this.loading = true
+        // this.loading = true
       }
-      await this[map[this.curListType]]()
+      let list = await this[map[this.curListType]]()
+      this.buzzListData[this.curListType].push(...list.filter(i => i.encrypt === '0'))
+      console.log(this.buzzListData[this.curListType])
       this.loading = false
+      this.refreshing = false
+    },
+    async onRefresh(){
+      if (this.refreshing) {
+        this.buzzListData[this.curListType] = []
+        this.currentPage = 1
+        this.getCurBuzzList()
+      }
+    },
+    onLoad() {
+      this.finished = false;
+
+      this.loading = true;
+      this.currentPage++
+      this.getCurBuzzList()
     },
   },
   computed: {
@@ -221,7 +246,7 @@ export default {
       }, 400)
     },
     'currentPage': function(val) {
-      this.getCurBuzzList()
+      // this.getCurBuzzList()
     }
   },
   created() {
