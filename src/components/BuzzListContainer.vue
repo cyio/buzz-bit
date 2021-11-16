@@ -10,10 +10,10 @@
         <div class="search-wrap" v-show="curListType === 'search'" >
           <van-search
             v-model="keywords"
-            placeholder="请输入关键词" @search="getSearchBuzzList"
+            placeholder="请输入关键词" @search="getCurBuzzList"
             class="search-input"
           />
-          <van-button color="#1989fa" @click="getSearchBuzzList" size="small" :disabled='keywords === ""' class="search-btn">搜 索</van-button>
+          <van-button color="#1989fa" @click="getCurBuzzList" size="small" :disabled='keywords === ""' class="search-btn">搜 索</van-button>
         </div>
         <!-- <van-loading v-show="loading" color="#1989fa" class="loading" /> -->
         <van-pull-refresh v-model="refreshing" @refresh="onRefresh">
@@ -182,7 +182,7 @@ export default {
       }
       let list = await this[map[this.curListType]]()
       this.buzzListData[this.curListType].push(...list.filter(i => i.encrypt === '0'))
-      console.log(this.buzzListData[this.curListType])
+      // console.log(this.buzzListData[this.curListType])
       this.loading = false
       this.refreshing = false
     },
@@ -194,6 +194,9 @@ export default {
       }
     },
     onLoad() {
+      if (this.curListType === 'search' && this.curBuzzListData.length === 0) {
+        return
+      }
       this.finished = false;
 
       this.loading = true;

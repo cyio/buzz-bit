@@ -4,10 +4,10 @@
       <buzz-header :buzz="buzz" />
       <div class="content" v-html="displayContent(buzz.content)"></div>
     </div>
-    <div class="item-original" v-if="dataDone">
+    <div class="item-original" v-if="buzzData.quoteItem">
       <buzz-item
-        v-if="buzzData.originalNode.encrypt === '0'"
-        :buzz="buzzData.originalNode"
+        v-if="buzzData.quoteItem.encrypt === '0'"
+        :buzz="buzzData.quoteItem"
         :show-footer="buzzData.data.rePostComment === ''"
         :show-avatar="buzzData.data.rePostComment === ''"
         :mode="mode"
@@ -50,7 +50,7 @@ export default ({
   },
   computed: {
   },
-  async created() {
+  created() {
     this.buzzData = Object.assign(this.buzzData, this.buzz)
     // const userInfo = await this.$MetaIdDataAdapter.getUserInfo(this.buzz.rootTxId)
     // this.buzzData.userInfo = userInfo
@@ -71,7 +71,10 @@ export default ({
     // }
     const parentNodeName = this.buzz.protocol?.toLowerCase()
     if (['simplerepost', 'paycomment'].indexOf(parentNodeName) !== -1) {
-      // console.log(parentNodeName)
+      if (parentNodeName === 'simplerepost') {
+        this.buzzData.quoteItem = this.buzz.quoteItem || {}
+        return
+      }
       const txId = parentNodeName === 'simplerepost' ? this.buzz.quoteItem.txId : this.buzz.data.commentTo
       const params = {
         txId
@@ -81,7 +84,7 @@ export default ({
         if (code === 0) {
           this.dataDone = true
           const items = res.data.results?.items || []
-          this.buzzData.originalNode = items[0] || {}
+          this.buzzData.quoteItem = items[0] || {}
         }
       })
     }

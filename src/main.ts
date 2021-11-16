@@ -11,7 +11,7 @@ Vue.use(Button);
 Vue.use(Loading);
 Vue.use(Toast);
 
-Vue.prototype.$version = '0.6.1'
+Vue.prototype.$version = '0.7.0'
 
 new Vue({
   router,

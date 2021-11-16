@@ -1,6 +1,12 @@
 <template>
   <div class="buzz-detail">
-    <buzz-item :buzz="buzz" v-if="buzz.protocol" />
+    <template v-if="buzz.protocol">
+      <quote-item
+        v-if="buzz.protocol.toLowerCase() === 'simplerepost'"
+        :buzz="buzz"
+      />
+      <buzz-item :buzz="buzz" v-else />
+    </template>
     <div class="title">评论：</div>
     <van-loading v-show="loading" color="#1989fa" class="loading" />
     <div v-show="!loading">
@@ -15,6 +21,7 @@ import BuzzItem from "@/components/BuzzItem";
 import FileDecode from '@/components/FileDecode'
 import BuzzList from "@/components/BuzzList.vue";
 import { getInteractiveBuzzList } from '@/api/metasv-buzz.ts'
+import QuoteItem from "./QuoteItem";
 
 export default ({
   name: "BuzzDetail",
@@ -24,6 +31,7 @@ export default ({
   components: {
     FileDecode,
     BuzzItem,
+    QuoteItem,
     BuzzList
   },
   data() {
