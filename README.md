@@ -1,35 +1,41 @@
 # buzz-bit
 
-支持发 buzz
+一个支持 metaid/SimpleMicroblog 的 PWA 应用 [BuzzBit](https://buzzbit.vercel.app/)
+
+## 主要特性
+
+- 常规功能：信息流、评论、转发、搜索
+- 节省图片上链费用（默认压缩成 webp，平均节省 30%-50% 费用）
+- metafile 交易解码
+- 上传支持各种文件类型
 
 前置条件：
-1. `cp private-config.template.json private-config.json`
-2. 到 showmoney 获取 clientId、clientSecret 并填入
-3. 启动服务
+1. 到 showmoney 获取 clientId、clientSecret
+2. `cp private-config.template.json private-config.json`，填入第 1 步拿到的信息
 
 ## Project setup
 ```
-yarn install
+npm install
 ```
 
 ### Compiles and hot-reloads for development
 ```
-yarn run serve
+npm run serve
 ```
 
 ### Compiles and minifies for production
 ```
-yarn run build
+npm run build
 ```
 
 ### Run your tests
 ```
-yarn run test
+npm run test
 ```
 
 ### Lints and fixes files
 ```
-yarn run lint
+npm run lint
 ```
 
 ### Customize configuration

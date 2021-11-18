@@ -98,7 +98,7 @@
 
 <script>
 import Vue from "vue";
-import AppConfig from '@/config/metasv-buzz'
+import AppConfig from '@/config/'
 import { ImagePreview, Popup } from 'vant';
 import BuzzHeader from './BuzzPart/BuzzHeader.vue'
 import FileDecode from '@/components/FileDecode'

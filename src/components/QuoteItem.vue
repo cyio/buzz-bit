@@ -18,7 +18,7 @@
 </template>
 
 <script>
-import { getBuzzRelationData, getBuzz } from '@/api/metasv-buzz'
+import { getBuzzRelationData, getBuzz } from '@/api/buzz'
 import BuzzItem from './BuzzItem.vue'
 import BuzzHeader from './BuzzPart/BuzzHeader.vue'
 import mixin from './BuzzPart/mixin'

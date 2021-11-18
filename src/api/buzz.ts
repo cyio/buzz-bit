@@ -2,7 +2,7 @@
 
 import { HttpRequests, ApiRequestTypes, ContentType } from '@/utils/request'
 import { isProd } from '@/utils/index'
-import AppConfig from '@/config/metasv-buzz'
+import AppConfig from '@/config/'
 
 interface GetTokenParamsTypes {
   grant_type: string;

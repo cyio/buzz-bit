@@ -10,7 +10,7 @@
 
 <script>
 import BuzzDetail from "@/components/BuzzDetail";
-import { getBuzz } from '@/api/metasv-buzz.ts'
+import { getBuzz } from '@/api/buzz.ts'
 
 export default ({
   name: "Detail",

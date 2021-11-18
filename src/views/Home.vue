@@ -37,8 +37,8 @@ import Uploader from "@/components/Uploader.vue";
 import FileUploader from "@/components/FileUploader.vue";
 import BuzzListContainer from "@/components/BuzzListContainer.vue";
 import MetaIdJs from "metaidjs"
-import { goAuth, getToken } from '@/api/metasv-buzz.ts'
-import AppConfig from '@/config/metasv-buzz'
+import { goAuth, getToken } from '@/api/buzz.ts'
+import AppConfig from '@/config/'
 import { Storage } from '@/utils/index';
 import { mapState } from 'vuex'
 import mime from 'mime-types'

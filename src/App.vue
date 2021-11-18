@@ -28,9 +28,9 @@
 
 <script>
 import { Vue } from 'vue-property-decorator';
-import { goAuth, getToken } from '@/api/metasv-buzz.ts'
+import { goAuth, getToken } from '@/api/buzz.ts'
 import { getUrlParameterByName } from '@/utils/index';
-import AppConfig from '@/config/metasv-buzz'
+import AppConfig from '@/config/'
 import { mapState } from 'vuex'
 import { Dialog } from 'vant';
 import { Storage } from '@/utils/index';

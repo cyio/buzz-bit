@@ -31,7 +31,7 @@
 
 <script>
 import BuzzList from "@/components/BuzzList.vue";
-import { getBuzzList } from '@/api/metasv-buzz.ts'
+import { getBuzzList } from '@/api/buzz.ts'
 
 export default ({
   name: "UserDetail",

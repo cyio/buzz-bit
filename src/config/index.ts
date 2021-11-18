@@ -1,3 +1,5 @@
+// 此配置 fork 自 metabuzz，存在冗余字段
+
 const privateConfig = require('../../private-config.json')
 
 export interface ConfigTypes {
@@ -106,7 +108,7 @@ const config: ObjTypes<ConfigTypes> = {
     // metaIdServiceUrl: 'https://buzz-api.metasv.com',      // MetaSV MetaId 数据服务服务API地址
     metaIdCenterUrl: 'https://api.showmoney.app/tag',// Showmoney Tag 服务API地址
     // metaIdCenterUrl: 'https://buzz-api.metasv.com/tag',// MetaSV Tag 服务API地址
-    basePath: '/metasv-buzz/',					// 默认 不需要变动
+    basePath: '/buzz/',					// 默认 不需要变动
     metaIdTag: 'metaid',
     env,
     projectAddress: '12tfZ62i9GesyYWCA3nZuibFJCGsmxKyF2',

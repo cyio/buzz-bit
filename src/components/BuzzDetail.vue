@@ -20,7 +20,7 @@
 import BuzzItem from "@/components/BuzzItem";
 import FileDecode from '@/components/FileDecode'
 import BuzzList from "@/components/BuzzList.vue";
-import { getInteractiveBuzzList } from '@/api/metasv-buzz.ts'
+import { getInteractiveBuzzList } from '@/api/buzz.ts'
 import QuoteItem from "./QuoteItem";
 
 export default ({
