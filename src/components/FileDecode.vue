@@ -7,6 +7,9 @@
         :url="blobUrl" :type="blob.type"
         v-if="showPreview"
       />
+      <!-- <div class="" v-else-if="blob.type.includes('video')">
+        视频内容，点击进详情查看
+      </div> -->
     </div>
   </div>
 </template>
@@ -43,7 +46,9 @@ export default ({
   },
   data() {
     return {
-      blob: {},
+      blob: {
+        type: ''
+      },
       blobUrl: '',
       loading: true
     };
@@ -99,17 +104,25 @@ export default ({
       this.queryHex(txId)
     },
     async queryHex(txId) {
+      if (txId.includes('.')) {
+        txId = txId.split('.')[0]
+      }
       let hex = await queryHex[this.apiService](txId)
       setTimeout(() => {
         this.loading = false
       }, 10)
+      if (hex.length <= 30) {
+        console.log('文件未取到')
+        return
+      } 
       this.decodeHex(hex)
     }
   },
   computed: {
     showPreview() {
       if (this.mode === 'list') {
-        return this.blob.type.includes('image')
+        const { type } = this.blob
+        return type.includes('image')
       }
       return true
     }

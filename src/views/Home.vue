@@ -41,6 +41,7 @@ import { goAuth, getToken } from '@/api/metasv-buzz.ts'
 import AppConfig from '@/config/metasv-buzz'
 import { Storage } from '@/utils/index';
 import { mapState } from 'vuex'
+import mime from 'mime-types'
 
 function getLocal(key) {
   return window.localStorage.getItem(key)
@@ -129,7 +130,10 @@ export default {
         createTime: new Date().getTime(),
         content: this.content,
         contentType: 'text/plain',
-        attachments: this.attachments.map((item, index) => { return `![metafile](${index})` }),
+        attachments: this.attachments.map((item, index) => {
+          const ext = mime.extension(item.fileType)
+          return `![metafile](${index}).${ext}`
+        }),
         // mention: [],
       }
       const chargeAddress = {

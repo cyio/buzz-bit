@@ -4,6 +4,7 @@
       <button @click="$router.go(-1) ">返回</button>
     </div>
     <buzz-detail :buzz="buzz" v-if="buzz.protocol" />
+    <van-loading v-else color="#1989fa" class="loading" />
   </div>
 </template>
 

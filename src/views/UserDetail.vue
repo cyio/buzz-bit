@@ -154,7 +154,7 @@ export default ({
     if (this.check()) {
       this.init()
     } else {
-      this.$toast('Sensilet 未安装');
+      // this.$toast('Sensilet 未安装');
     }
   },
 });
