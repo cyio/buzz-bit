@@ -210,10 +210,6 @@ export default {
       this.attachments = files
       if (this.showFileSelect && this.attachments.length) {
         let { fileName, data: txId } = this.attachments[0]
-        let baseUrl = 'https://buzzbit.vercel.app/'
-        // if (isLocal) {
-        // }
-        // this.content += `分享文件：${fileName} ${baseUrl}/#/preview/${txId}`
         this.content += `#分享文件 ${fileName}`
       }
     },

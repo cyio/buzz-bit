@@ -10,27 +10,32 @@
         <div class="search-wrap" v-show="curListType === 'search'" >
           <van-search
             v-model="keywords"
-            placeholder="请输入关键词" @search="getCurBuzzList"
+            placeholder="请输入关键词" @search="onSearch"
             class="search-input"
           />
-          <van-button color="#1989fa" @click="getCurBuzzList" size="small" :disabled='keywords === ""' class="search-btn">搜 索</van-button>
+          <van-button color="#1989fa" @click="onSearch" size="small" :disabled='keywords === ""' class="search-btn">搜 索</van-button>
         </div>
-        <!-- <van-loading v-show="loading" color="#1989fa" class="loading" /> -->
-        <van-pull-refresh v-model="refreshing" @refresh="onRefresh">
-          <van-list
-            v-model="loading"
-            :finished="finished"
-            finished-text="没有更多了"
-            @load="onLoad"
-          >
-            <BuzzList :buzzListData="curBuzzListData" :key="item.key" />
-          </van-list>
-        </van-pull-refresh>
-        <!-- <van-pagination
-          v-show="buzzListData[curListType].length > 0 && !loading"
-          v-model="currentPage" :total-items="10000" :items-per-page="10"
-          force-ellipses
-        /> -->
+        <template v-if="curListType !== 'search'">
+          <van-pull-refresh v-model="refreshing" @refresh="onRefresh">
+            <van-list
+              v-model="loading"
+              :finished="finished"
+              finished-text="没有更多了"
+              @load="onLoad"
+            >
+              <BuzzList :buzzListData="curBuzzListData" :key="item.key" />
+            </van-list>
+          </van-pull-refresh>
+        </template>
+        <template v-else>
+          <van-loading v-show="searchLoading" color="#1989fa" class="loading" />
+          <BuzzList :buzzListData="curBuzzListData" :key="item.key" v-show="!searchLoading" />
+          <van-pagination
+            v-show="buzzListData[curListType].length > 0 && !searchLoading"
+            v-model="currentPage" :total-items="10000" :items-per-page="10"
+            force-ellipses
+          />
+        </template>
       </van-tab>
     </van-tabs>
   </div>
@@ -70,6 +75,7 @@ export default {
       loading: false,
       refreshing: false,
       finished: false,
+      searchLoading: false,
       buzzListData: {
         'hot': [],
         'new': [],
@@ -158,11 +164,13 @@ export default {
     getSearchBuzzList() {
       const params = {
         page: "" + this.currentPage,
-        pageSize: '6',
+        pageSize: '10',
         searchWord: this.keywords,
         timestamp: 0
       }
+      this.searchLoading = true
       return getSearchBuzzList(params).then(res => {
+        this.searchLoading = false
         const { code, data } = res
         if (code === 0) {
           return res.data.results?.items || []
@@ -190,6 +198,7 @@ export default {
       if (this.refreshing) {
         this.buzzListData[this.curListType] = []
         this.currentPage = 1
+         
         this.getCurBuzzList()
       }
     },
@@ -201,8 +210,13 @@ export default {
 
       this.loading = true;
       this.currentPage++
+       
       this.getCurBuzzList()
     },
+    onSearch() {
+      this.buzzListData[this.curListType] = []
+      this.getCurBuzzList()
+    }
   },
   computed: {
     navDataComputed() {
@@ -230,26 +244,33 @@ export default {
     }
   },
   watch: {
+    // 切换 Tab
     'curListType': function(val) {
       this.currentPage = 1
       this.curListType = val
       if (val === 'search') {
         this.loading = false
+        this.searchLoading = false
         this.buzzListData.search = []
       } else {
+         
         this.getCurBuzzList()
       }
       if (this.$route.path !== `/pub/${val}` && val !== 'follow' && val !== 'my') {
         this.$router.push({ path: `/pub/${val}` })
       }
     },
+    // 用户发帖后，刷新
     'lastBuzzTime': function(val) {
       setTimeout(() => {
         this.getCurBuzzList(false)
       }, 400)
     },
     'currentPage': function(val) {
-      // this.getCurBuzzList()
+      if (this.curListType === 'search' && this.keywords !== '') {
+         
+        this.getCurBuzzList()
+      }
     }
   },
   created() {
@@ -258,11 +279,13 @@ export default {
     let { params } = this.$route
     if (params.type) {
       if (params.type === this.curListType) {
+         
         this.getCurBuzzList()
       } else {
         this.curListType = params.type
       }
     } else {
+       
       this.getCurBuzzList()
     }
     let value = localStorage.getItem('showVideoInFlow')

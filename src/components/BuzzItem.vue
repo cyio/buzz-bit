@@ -111,6 +111,12 @@ function _isMobile(){
     return isMobile;
 }
 
+function imgFix(str) {
+  str = str.split('.')
+  const last = str[str.length - 1]
+  return /webp|jpg|jpeg|git/.test(last) ? str.slice(0, -1) : str
+}
+
 export default Vue.extend({
   name: "BuzzItem",
   mixins: [mixin],
@@ -142,7 +148,7 @@ export default Vue.extend({
   methods: {
     getAssetUrl(src) {
       const srcArray = src.split('://')
-      const fileId = srcArray[1]
+      let fileId = imgFix(srcArray[1])
       let url = src
       if (srcArray[0] === 'metafile') {
         url = fileId && fileId !== '' ? `${AppConfig.metaFileServiceUrl}/metafile/${fileId}` : null
