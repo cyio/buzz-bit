@@ -7,9 +7,9 @@
         :url="blobUrl" :type="blob.type"
         v-if="showPreview"
       />
-      <!-- <div class="" v-else-if="blob.type.includes('video')">
-        视频内容，点击进详情查看
-      </div> -->
+      <div class="media-placeholder" v-else>
+        媒体资源，点击进详情查看
+      </div>
     </div>
   </div>
 </template>
@@ -50,7 +50,7 @@ export default ({
         type: ''
       },
       blobUrl: '',
-      loading: true
+      loading: false
     };
   },
   methods: {
@@ -104,10 +104,15 @@ export default ({
       this.queryHex(txId)
     },
     async queryHex(txId) {
+      this.loading = true
       if (txId.includes('.')) {
         txId = txId.split('.')[0]
       }
       let hex = await queryHex[this.apiService](txId)
+      // show 文件服务不即时 error: "Has no this node"，降级转用其他服务
+      if (this.apiService === 'showMANDB' && hex.length < 50) {
+        hex = await queryHex['whatsonchain'](txId)
+      }
       setTimeout(() => {
         this.loading = false
       }, 10)
@@ -128,7 +133,9 @@ export default ({
     }
   },
   created() {
-    this.queryHex(this.txId)
+    if (this.mode !== 'list') {
+      this.queryHex(this.txId)
+    }
   }
 });
 </script>
@@ -136,5 +143,9 @@ export default ({
 <style scoped lang="scss">
 .file-decode {
   height: 100%;
+  .media-placeholder {
+    font-size: 14px;
+    color: gray;
+  }
 }
 </style>

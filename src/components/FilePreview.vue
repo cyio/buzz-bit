@@ -5,7 +5,12 @@
       <a class="link" :href="url" target="_blank" v-else>下载文件</a>
     </template>
     <video
-      v-if="type === 'video/mp4'"
+      v-else-if="type === 'video/mp4'"
+      controls
+      :src="url"
+    />
+    <audio
+      v-else-if="type.includes('audio')"
       controls
       :src="url"
     />
