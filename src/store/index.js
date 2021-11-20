@@ -10,6 +10,7 @@ export default new Vuex.Store({
   state: {
     user: {},
     accessToken: Storage.getItem('access_token') || '',
+    isSDKLoaded: false,
     showVideoInFlow: showVideoInFlowInitValue === 'false' ? false : true
   },
   mutations: {
@@ -20,6 +21,9 @@ export default new Vuex.Store({
     SET_ACCESS_TOKEN(state, value) {
       state.accessToken = value
       Storage.setItem('access_token', value)
+    },
+    SET_SDK_LOADED(state, value) {
+      state.isSDKLoaded = value
     },
     SET_SHOW_VIDEO_IN_FLOW(state, value) {
       state.showVideoInFlow = value

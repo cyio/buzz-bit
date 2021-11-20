@@ -4,6 +4,8 @@
       <div class="left">
         <span class="title" @click="goHome">BuzzBit</span>
         <span class="ver">{{$version}}</span>
+        <van-loading v-show="hasToken && !isSDKLoaded" size="16px" class="sdk-loading"
+        >{{`${$isMobile ? '' : 'MetaID框架...'}`}}</van-loading>
       </div>
       <div class="links">
         <router-link to="/user" v-if="hasToken || user.name">主页</router-link>
@@ -15,7 +17,7 @@
         <div class="user">
           <div v-if="hasToken || user.name" @click="authConfirm">
             <span v-if="user.name">{{user.name}}</span>
-            <van-loading v-else color="#1989fa" class="loading" />
+            <!-- <van-loading v-else color="#1989fa" class="loading" /> -->
           </div>
           <button @click="auth" v-else>登录</button>
         </div>
@@ -34,6 +36,7 @@ import AppConfig from '@/config/'
 import { mapState } from 'vuex'
 import { Dialog } from 'vant';
 import { Storage } from '@/utils/index';
+import SDKInit from '@/utils/sdk';
 
 function setLocal(key, val) {
   return window.localStorage.setItem(key, val)
@@ -51,19 +54,21 @@ export default Vue.extend({
   data() {
     return {
       showPub: location.host.includes('localhost'),
-      hasToken: !!this.accessToken,
     };
   },
   computed: {
     ...mapState({
       user: 'user',
       accessToken: 'accessToken',
+      isSDKLoaded: 'isSDKLoaded',
     }),
+    hasToken() {
+      return !!this.accessToken
+    }
   },
   methods: {
     resetState() {
       localStorage.clear()
-      this.hasToken = false;
       this.$store.commit('SET_USER', {});
     },
     auth() {
@@ -89,7 +94,6 @@ export default Vue.extend({
       let token = localStorage.getItem('access_token')
       if (token) {
         clearInterval(tId)
-        this.hasToken = true
         if (this.isRoot()) {
           this.$router.push({ path: `/user` })
         }
@@ -110,7 +114,6 @@ export default Vue.extend({
             accessToken: res.access_token,
             refreshToken: res.refresh_token
           })
-          this.hasToken = true
         } else if (res.error_description) {
           this.$toast(res.error_description)
         }
@@ -132,17 +135,52 @@ export default Vue.extend({
       } else {
         this.$router.push('/')
       }
+    },
+    getUser() {
+      const userCache = Storage.getObj('user') || '{}'
+      if (userCache.metaId) {
+        this.$store.commit('SET_USER', userCache);
+        return
+      }
+      window.__metaIdJs.getUserInfo({
+        accessToken: this.accessToken,
+        callback: (res) => {
+          if (res.code === 200) {
+            this.$store.commit('SET_USER', res.data);
+          } else {
+            console.log('get user error: ', res)
+          }
+        },
+      })
+    },
+    async initSDK(hasUserInfo) {
+      await SDKInit()
+      this.$store.commit('SET_SDK_LOADED', true);
+      if (!hasUserInfo) {
+        this.getUser()
+      }
     }
   },
   created() {
     // 新页面 auth
     this.code = getUrlParameterByName('code')
+    // 是否存在 token
+    //  是否存在 user cache
+    //    并行初始化 sdk
+    //  sdk 是否初始化
     if (!this.hasToken && this.$route.path === '/user' && this.code) {
-      this.getAccessToken(this.code)
+      this.getAccessToken(this.code).then(() => {
+        if (this.hasToken) {
+          // 初始化 SDK 并获取用户数据
+          this.initSDK()
+        }
+      })
     } else {
       const userCache = Storage.getObj('user') || '{}'
       if (userCache.metaId) {
         this.$store.commit('SET_USER', userCache);
+        this.initSDK(false)
+      } else {
       }
     }
   }
@@ -161,6 +199,8 @@ export default Vue.extend({
 }
 
 .left {
+  display: flex;
+  align-items: center;
   .title {
     cursor: pointer;
   }
@@ -168,6 +208,10 @@ export default Vue.extend({
     margin-left: 5px;
     color: #bbb7b7;
     font-size: 12px;
+  }
+  .sdk-loading {
+    font-size: 12px;
+    margin-left: 6px;
   }
 }
 
@@ -186,6 +230,7 @@ export default Vue.extend({
     cursor: pointer
   }
 }
+
 </style>
 <style>
 :root {

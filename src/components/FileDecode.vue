@@ -109,7 +109,7 @@ export default ({
       }
       let hex = await queryHex[this.apiService](txId)
       setTimeout(() => {
-        this.buzzListData[this.curListType].loading = false
+        this.loading = false
       }, 10)
       if (hex.length <= 30) {
         console.log('文件未取到')

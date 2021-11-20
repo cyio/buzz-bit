@@ -17,8 +17,8 @@
         <label for="showFileSelect">分享文件</label>
       </div>
       <van-button color="#1989fa" @click="send" size="small"
-        :disabled='!isLoaded || content === ""' class="send"
-        :loading="!isLoaded"
+        :disabled='!isSDKLoaded || content === ""' class="send"
+        :loading="!isSDKLoaded"
       >发送</van-button>
     </div>
     <uploader v-show="showImgSelect" ref="uploader" @change="handleMetafileChange" />
@@ -36,8 +36,7 @@
 import Uploader from "@/components/Uploader.vue";
 import FileUploader from "@/components/FileUploader.vue";
 import BuzzListContainer from "@/components/BuzzListContainer.vue";
-import MetaIdJs from "metaidjs"
-import { goAuth, getToken } from '@/api/buzz.ts'
+import { getToken } from '@/api/buzz.ts'
 import AppConfig from '@/config/'
 import { Storage } from '@/utils/index';
 import { mapState } from 'vuex'
@@ -60,7 +59,6 @@ export default {
   data() {
     return {
       code: '',
-      isLoaded: false,
       refreshToken: '',
       // accessToken: '',
       content: '',
@@ -213,73 +211,20 @@ export default {
         this.content += `#分享文件 ${fileName}`
       }
     },
-    initSDK(hasUserInfo) {
-      console.log('before new MetaIdJs', performance.now() / 1000)
-      window.__metaIdJs = new MetaIdJs({
-        oauthSettings: {
-          clientId: AppConfig.oauthSettings.clientId,
-          clientSecret: AppConfig.oauthSettings.clientSecret,
-          redirectUri: ''
-        },
-        onLoaded: () => {
-          console.log('metaidjs loaded', performance.now() / 1000)
-          this.isLoaded = true
-          if (!hasUserInfo) {
-            this.getUser()
-          }
-        },
-        onError: (res) => {
-          console.log(res)
-          const { code } = res
-          if (code === 201) {
-            goAuth()
-          }
-        }
-      })
-    }
   },
   computed: {
     ...mapState({
       user: 'user',
-      accessToken: 'accessToken'
+      accessToken: 'accessToken',
+      isSDKLoaded: 'isSDKLoaded'
     }),
     isLogined() {
       return !!this.accessToken
     }
   },
   created() {
-    // if (getLocal('access_token')) {
-    //   this.accessToken = getLocal('access_token')
-    // }
-    // if (getLocal('refresh_token')) {
-    //   this.refreshToken = getLocal('refresh_token')
-    // }
   },
   watch: {
-    // 是否存在 token
-    //  是否存在 user cache
-    //    并行初始化 sdk
-    //  sdk 是否初始化
-    'isLogined': {
-      handler: function(val) {
-        if (val) {
-          const userCache = Storage.getObj('user') || '{}'
-          if (userCache.metaId) {
-            this.$store.commit('SET_USER', userCache);
-            if (window.__metaIdJs) {
-              this.isLoaded = true
-            } else {
-              this.initSDK(false)
-            }
-          } else {
-            this.initSDK()
-          }
-        } else {
-          this.initSDK()
-        }
-      },
-      immediate: true
-    }
   },
   mounted() {
   }

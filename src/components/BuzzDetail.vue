@@ -8,9 +8,9 @@
       <buzz-item :buzz="buzz" v-else />
     </template>
     <div class="title">评论：</div>
-    <van-loading v-show="loading" color="#1989fa" class="loading" />
+    <van-loading v-show="curBuzzListData.loading" color="#1989fa" class="loading" />
     <div v-show="!loading">
-      <buzz-list v-if="buzzListData.length" :buzzListData="buzzListData" class="comment-wrap" />
+      <buzz-list v-if="curBuzzListData.length" :buzzListData="curBuzzListData" class="comment-wrap" />
       <div v-else class="no-comment">暂无评论</div>
     </div>
   </div>
@@ -37,7 +37,13 @@ export default ({
   data() {
     return {
       loading: false,
-      buzzListData: []
+      curListType: 'comment',
+      buzzListData: {
+        comment: {
+          data: [],
+          loading: false
+        }
+      }
     };
   },
   methods: {
@@ -56,14 +62,14 @@ export default ({
         const { code, data } = res
         if (code === 0) {
           const items = res.data.results?.items || []
-          this.buzzListData.push(...items)
+          this.buzzListData[this.curListType].data.push(...items)
         }
       })
     },
   },
   computed: {
     curBuzzListData() {
-      return this.buzzListData.comment
+      return this.buzzListData[this.curListType].data
     }
   },
   created() {

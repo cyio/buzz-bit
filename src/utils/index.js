@@ -116,6 +116,13 @@ function isSupportPDF() {
   return hasPDFViewer;
 }
 
+
+function isMobile(){
+  const isMobile = (/iphone|ipod|android|ie|blackberry|fennec/).test
+       (navigator.userAgent.toLowerCase());
+  return isMobile;
+}
+
 export {
   formatBytes,
   isProd,
@@ -123,5 +130,6 @@ export {
   Storage,
   getUrlParameterByName,
   hexToBase64Img,
-  isSupportPDF
+  isSupportPDF,
+  isMobile
 }
