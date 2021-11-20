@@ -1,11 +1,16 @@
 <template>
   <div class="home">
     <div class="input-area">
-      <textarea
+      <van-field
         v-model="content"
-        placeholder="输入文字"
-        rows="5" cols="50"
-      ></textarea><br>
+        rows="2"
+        autosize
+        label=""
+        type="textarea"
+        placeholder="请输入"
+        clearable
+      />
+      <div class="word-count">{{content.length || ''}}</div>
     </div>
     <div class="input-operation">
       <div class="text-option">
@@ -41,6 +46,7 @@ import AppConfig from '@/config/'
 import { Storage } from '@/utils/index';
 import { mapState } from 'vuex'
 import mime from 'mime-types'
+import { Field } from 'vant'
 
 function getLocal(key) {
   return window.localStorage.getItem(key)
@@ -55,6 +61,7 @@ export default {
     Uploader,
     FileUploader,
     BuzzListContainer,
+    [Field.name]: Field,
   },
   data() {
     return {
@@ -248,11 +255,18 @@ export default {
   .input-area {
     display: flex;
     margin-bottom: 10px;
-    textarea {
-      width: 100%;
+    border: 1px solid #e4e0e0;
+    border-radius: 12px;
+    position: relative;
+    .word-count {
+      position: absolute;
+      right: 10px;
+      bottom: 10px;
+      font-size: 12px;
+      color: gray;
     }
-    .send {
-    }
+    // .send {
+    // }
   }
   .input-operation {
     display: flex;
@@ -271,5 +285,11 @@ export default {
     margin-bottom: 12px;
     text-align: center;
   }
+}
+</style>
+<style>
+.van-field__control {
+  color: #0f1419;
+  font-size: 16px;
 }
 </style>
