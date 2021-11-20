@@ -16,23 +16,24 @@
           <van-button color="#1989fa" @click="onSearch" size="small" :disabled='keywords === ""' class="search-btn">搜 索</van-button>
         </div>
         <template v-if="curListType !== 'search'">
-          <van-pull-refresh v-model="refreshing" @refresh="onRefresh">
+          <van-pull-refresh v-model="buzzListData[curListType].refreshing" @refresh="onRefresh">
             <van-list
-              v-model="loading"
-              :finished="finished"
+              v-model="buzzListData[curListType].loading"
+              :finished="buzzListData[curListType].finished"
               finished-text="没有更多了"
-              @load="onLoad"
+              @load="onLoad(item.key)"
+              :key="item.key"
             >
               <BuzzList :buzzListData="curBuzzListData" :key="item.key" />
             </van-list>
           </van-pull-refresh>
         </template>
         <template v-else>
-          <van-loading v-show="searchLoading" color="#1989fa" class="loading" />
-          <BuzzList :buzzListData="curBuzzListData" :key="item.key" v-show="!searchLoading" />
+          <van-loading v-show="buzzListData[curListType].loading" color="#1989fa" class="loading" />
+          <BuzzList :buzzListData="curBuzzListData" :key="item.key" v-show="!buzzListData[curListType].loading" />
           <van-pagination
-            v-show="buzzListData[curListType].length > 0 && !searchLoading"
-            v-model="currentPage" :total-items="10000" :items-per-page="10"
+            v-show="buzzListData[curListType].length > 0 && !buzzListData[curListType].loading"
+            v-model="buzzListData[curListType].currentPage" :total-items="10000" :items-per-page="10"
             force-ellipses
           />
         </template>
@@ -72,18 +73,43 @@ export default {
   },
   data() {
     return {
-      loading: false,
-      refreshing: false,
-      finished: false,
-      searchLoading: false,
       buzzListData: {
-        'hot': [],
-        'new': [],
-        'follow': [],
-        'my': [],
-        'search': [],
+        'hot': {
+          data: [],
+          loading: false,
+          refreshing: false,
+          finished: false,
+          currentPage: 1,
+        },
+        'new': {
+          data: [],
+          loading: false,
+          refreshing: false,
+          finished: false,
+          currentPage: 1,
+        },
+        'follow': {
+          data: [],
+          loading: false,
+          refreshing: false,
+          finished: false,
+          currentPage: 1,
+        },
+        'my': {
+          data: [],
+          loading: false,
+          refreshing: false,
+          finished: false,
+          currentPage: 1,
+        },
+        'search': {
+          data: [],
+          loading: false,
+          refreshing: false,
+          finished: false,
+          currentPage: 1,
+        },
       },
-      currentPage: 1,
       curListType: this.scene === 'pub' ? 'hot' : 'follow',
       navData: [
         {
@@ -108,7 +134,7 @@ export default {
       const params = {
         Protocols: ['SimpleMicroblog'],
         metaId: this.user.metaId,
-        page: "" + this.currentPage,
+        page: "" + this.buzzListData[this.curListType].currentPage,
         pageSize: '6',
         timestamp: 0
       }
@@ -122,7 +148,7 @@ export default {
     getFollowBuzzList() {
       const params = {
         metaId: this.user.metaId,
-        page: "" + this.currentPage,
+        page: "" + this.buzzListData[this.curListType].currentPage,
         pageSize: '6',
         timeType: "today",
         timestamp: 0
@@ -136,7 +162,7 @@ export default {
     },
     getHotBuzzList() {
       const params = {
-        page: "" + this.currentPage,
+        page: "" + this.buzzListData[this.curListType].currentPage,
         pageSize: '6',
         timeType: "today",
       }
@@ -149,7 +175,7 @@ export default {
     },
     getNewBuzzList() {
       const params = {
-        page: "" + this.currentPage,
+        page: "" + this.buzzListData[this.curListType].currentPage,
         pageSize: '6',
         timeType: "today",
         timestamp: 0
@@ -163,7 +189,7 @@ export default {
     },
     getSearchBuzzList() {
       const params = {
-        page: "" + this.currentPage,
+        page: "" + this.buzzListData[this.curListType].currentPage,
         pageSize: '10',
         searchWord: this.keywords,
         timestamp: 0
@@ -177,7 +203,8 @@ export default {
         }
       })
     },
-    async getCurBuzzList(triggerLoading = true) {
+    async getCurBuzzList() {
+      console.log('real get buzz:', this.curListType)
       const map = {
         'my': 'getBuzzList',
         'follow': 'getFollowBuzzList',
@@ -185,36 +212,38 @@ export default {
         'new': 'getNewBuzzList',
         'search': 'getSearchBuzzList',
       }
-      if (triggerLoading) {
-        // this.loading = true
-      }
       let list = await this[map[this.curListType]]()
-      this.buzzListData[this.curListType].push(...list.filter(i => i.encrypt === '0'))
-      // console.log(this.buzzListData[this.curListType])
-      this.loading = false
-      this.refreshing = false
+      this.buzzListData[this.curListType].loading = false
+      this.buzzListData[this.curListType].refreshing = false
+      if (list.length === 0) {
+        this.buzzListData[this.curListType].finished = true
+      } else {
+        this.buzzListData[this.curListType].data.push(...list.filter(i => i.encrypt === '0'))
+      }
+      // console.log(this.buzzListData[this.curListType].data)
     },
     async onRefresh(){
-      if (this.refreshing) {
-        this.buzzListData[this.curListType] = []
-        this.currentPage = 1
+      if (this.buzzListData[this.curListType].refreshing) {
+        this.buzzListData[this.curListType].data = []
+        this.buzzListData[this.curListType].currentPage = 1
          
         this.getCurBuzzList()
       }
     },
-    onLoad() {
-      if (this.curListType === 'search' && this.curBuzzListData.length === 0) {
+    onLoad(listType) {
+      console.log('onLoad, ', listType)
+      if (this.buzzListData[listType].finished) return
+      if (listType === 'search' && this.curBuzzListData.length === 0) {
         return
       }
-      this.finished = false;
-
-      this.loading = true;
-      this.currentPage++
-       
+      // this.buzzListData[this.curListType].finished = false;
+      console.log('onLoad trigger loading ', listType, this.buzzListData[listType].currentPage)
+      this.buzzListData[listType].loading = true;
+      this.buzzListData[listType].currentPage++
       this.getCurBuzzList()
     },
     onSearch() {
-      this.buzzListData[this.curListType] = []
+      this.buzzListData[this.curListType].data = []
       this.getCurBuzzList()
     }
   },
@@ -233,7 +262,7 @@ export default {
       return this.scene === 'pub' ? this.navData : priv
     },
     curBuzzListData() {
-      let list = this.buzzListData[this.curListType]
+      let list = this.buzzListData[this.curListType].data
       if (!this.showVideoInFlow) {
         return list.filter(i => {
           const hasVideo = i.attachments && i.attachments[0] && i.attachments[0].endsWith('.mp4')
@@ -245,20 +274,22 @@ export default {
   },
   watch: {
     // 切换 Tab
-    'curListType': function(val) {
-      this.currentPage = 1
-      this.curListType = val
-      if (val === 'search') {
-        this.loading = false
-        this.searchLoading = false
-        this.buzzListData.search = []
-      } else {
-         
-        this.getCurBuzzList()
-      }
-      if (this.$route.path !== `/pub/${val}` && val !== 'follow' && val !== 'my') {
-        this.$router.push({ path: `/pub/${val}` })
-      }
+    'curListType': {
+      handler: function(val) {
+        console.log('watch')
+        this.buzzListData[this.curListType].currentPage = 1
+        this.curListType = val
+        this.buzzListData[this.curListType].data = []
+        if (val === 'search') {
+          this.buzzListData[this.curListType].loading = false
+        } else {
+          this.getCurBuzzList()
+        }
+        if (this.$route.path !== `/pub/${val}` && val !== 'follow' && val !== 'my') {
+          this.$router.push({ path: `/pub/${val}` })
+        }
+      },
+      immediate: true,
     },
     // 用户发帖后，刷新
     'lastBuzzTime': function(val) {
@@ -268,27 +299,18 @@ export default {
     },
     'currentPage': function(val) {
       if (this.curListType === 'search' && this.keywords !== '') {
-         
         this.getCurBuzzList()
       }
     }
   },
   created() {
+    const { params } = this.$route
+    if (params.type) {
+      this.curListType = params.type
+    }
   },
   mounted() {
-    let { params } = this.$route
-    if (params.type) {
-      if (params.type === this.curListType) {
-         
-        this.getCurBuzzList()
-      } else {
-        this.curListType = params.type
-      }
-    } else {
-       
-      this.getCurBuzzList()
-    }
-    let value = localStorage.getItem('showVideoInFlow')
+    const value = localStorage.getItem('showVideoInFlow')
     this.showVideoInFlow = value === 'true' || value === null
   }
 };

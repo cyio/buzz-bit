@@ -131,20 +131,20 @@ export default {
         content: this.content,
         contentType: 'text/plain',
         attachments: this.attachments.map((item, index) => {
-          const ext = mime.extension(item.fileType)
-          return `![metafile](${index}).${ext}`
+          let ext = mime.extension(item.fileType)
+          if (ext === false) {
+            let tmp = item.fileName.split('.')
+            ext = tmp[tmp.length - 1]
+          }
+          const extStr = /webp|jpg|png|jpeg|gif/.test(ext) ? '' : `.${ext}`
+          return `![metafile](${index})${extStr}`
         }),
         // mention: [],
-      }
-      const chargeAddress = {
-        'postFee': '18H4SRi4nh9yg6Tr8M24CTtsveqzmFmJxM',
-        'basicSizeFee': '13fk1eut5jjefQ7HdgY34ANm6shBnVzUVc',
-        'savedSizeFee': '14nXduvCiHx3hEm6dmGKwJnth2iZVX6YF1'
       }
       const feeMap = this.computeAppFees()
       const payTo = Object.keys(feeMap).map(key => ({
         amount: feeMap[key],
-        address: chargeAddress[key]
+        address: this.$chargeAddress[key]
       }))
       this.updateAttachmentsEncrypt()
       const config = {

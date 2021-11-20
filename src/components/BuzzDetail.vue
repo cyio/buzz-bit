@@ -50,9 +50,9 @@ export default ({
         pageSize: '10',
         timestamp: 0
       }
-      this.loading = true
+      this.buzzListData[this.curListType].loading = true
       getInteractiveBuzzList(params).then(res => {
-        this.loading = false
+        this.buzzListData[this.curListType].loading = false
         const { code, data } = res
         if (code === 0) {
           const items = res.data.results?.items || []

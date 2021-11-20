@@ -60,13 +60,13 @@ export default ({
       const params = {
         Protocols: ['SimpleMicroblog'],
         metaId,
-        page: "" + this.currentPage,
+        page: "" + this.buzzListData[this.curListType].currentPage,
         pageSize: '6',
         timestamp: 0
       }
-      this.loading = true
+      this.buzzListData[this.curListType].loading = true
       getBuzzList(params).then(res => {
-        this.loading = false
+        this.buzzListData[this.curListType].loading = false
         const { code, data } = res
         if (code === 0) {
           const items = res.data.results?.items || []
@@ -136,7 +136,7 @@ export default ({
   },
   computed: {
     curBuzzListData() {
-      let list = this.buzzListData[this.curListType]
+      let list = this.buzzListData[this.curListType].data
       if (!this.showVideoInFlow) {
         return list.filter(i => {
           const hasVideo = i.attachments && i.attachments[0] && i.attachments[0].endsWith('.mp4')

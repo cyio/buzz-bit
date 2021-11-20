@@ -29,9 +29,10 @@
         <div class="right" v-if="buzz.comment">
           <div class="item forward" @click.stop="showCommentBox = true;doType = 'forward'">转发[{{buzz.rePost.length}}]</div>
           <div class="item comment" @click.stop="showCommentBox = true;doType = 'comment'">评论[{{buzz.comment.length}}]</div>
-          <div class="item likes">喜欢[{{buzz.like.length}}]</div>
+          <div class="item likes" @click.stop="doLike">喜欢[{{buzz.like.length}}]</div>
           <div class="item donate">打赏[{{buzz.donate.length}}]</div>
         </div>
+        <!-- 搜索页数据不一致 -->
         <div class="right" v-else>
           <div class="item forward" @click="showCommentBox = true;doType = 'forward'">转发</div>
           <div class="item comment" @click="showCommentBox = true;doType = 'comment'">评论</div>
@@ -222,6 +223,42 @@ export default Vue.extend({
           commentTo: this.buzz.txId, // tx
         }),
         callback: this.handleForward
+      }
+      console.log(config)
+      window.__metaIdJs.addProtocolNode(config);
+    },
+    doLike() {
+      if (!window.__metaIdJs) {
+        this.$toast('请先切到主页登录');
+        return
+      }
+      const accessToken = window.localStorage.getItem('access_token')
+      const config = {
+        nodeName: 'PayLike',
+        metaIdTag: "metaid",
+        brfcId: '5c7afdb85de5',
+        accessToken: accessToken,
+        encrypt: 0,
+        payCurrency: "BSV",
+        payTo: [
+          { amount: 1000, address: this.buzz.zeroAddress },
+          { amount: 100, address: this.$chargeAddress.likeFee },
+        ],
+        dataType: 'applicaition/json',
+        path: '/Protocols/PayLike',
+        data: JSON.stringify({
+          createTime: +new Date(),
+          isLike: '1',
+          pay: '1000',
+          payTo: this.buzz.zeroAddress
+        }),
+        callback: (res) => {
+          if (res.code === 200) {
+            this.buzz.like.push({})
+          } else {
+            new Error(res.data.message);
+          }
+        }
       }
       console.log(config)
       window.__metaIdJs.addProtocolNode(config);
