@@ -16,7 +16,7 @@
           <van-button color="#1989fa" @click="onSearch" size="small" :disabled='keywords === ""' class="search-btn">搜 索</van-button>
         </div>
         <template v-if="curListType !== 'search'">
-          <van-pull-refresh v-model="buzzListData[curListType].refreshing" @refresh="onRefresh">
+          <!-- <van-pull-refresh v-model="buzzListData[curListType].refreshing" @refresh="onRefresh"> -->
             <van-list
               v-model="buzzListData[curListType].loading"
               :finished="buzzListData[curListType].finished"
@@ -26,7 +26,7 @@
             >
               <BuzzList :buzzListData="curBuzzListData" :key="item.key" />
             </van-list>
-          </van-pull-refresh>
+          <!-- </van-pull-refresh> -->
         </template>
         <template v-else>
           <van-loading v-show="buzzListData[curListType].loading" color="#1989fa" class="loading" />
@@ -203,8 +203,9 @@ export default {
         }
       })
     },
-    async getCurBuzzList() {
+    async getCurBuzzList(listType) {
       console.log('real get buzz:', this.curListType)
+      const _listType = listType || this.curListType
       const map = {
         'my': 'getBuzzList',
         'follow': 'getFollowBuzzList',
@@ -212,15 +213,15 @@ export default {
         'new': 'getNewBuzzList',
         'search': 'getSearchBuzzList',
       }
-      let list = await this[map[this.curListType]]()
-      this.buzzListData[this.curListType].loading = false
-      this.buzzListData[this.curListType].refreshing = false
+      let list = await this[map[_listType]]()
+      this.buzzListData[_listType].loading = false
+      this.buzzListData[_listType].refreshing = false
       if (list.length === 0) {
-        this.buzzListData[this.curListType].finished = true
+        this.buzzListData[_listType].finished = true
       } else {
-        this.buzzListData[this.curListType].data.push(...list.filter(i => i.encrypt === '0'))
+        this.buzzListData[_listType].data.push(...list)
+        // .filter(i => i.encrypt === '0')
       }
-      // console.log(this.buzzListData[this.curListType].data)
     },
     async onRefresh(){
       if (this.buzzListData[this.curListType].refreshing) {
@@ -230,8 +231,10 @@ export default {
         this.getCurBuzzList()
       }
     },
+    // 页面首次加载会触发
     onLoad(listType) {
-      console.log('onLoad, ', listType)
+      console.log('onLoad, ', listType, this.curListType)
+      // if (this.buzzListData[listType].loading) return
       if (this.buzzListData[listType].finished) return
       if (listType === 'search' && this.curBuzzListData.length === 0) {
         return
@@ -239,8 +242,10 @@ export default {
       // this.buzzListData[this.curListType].finished = false;
       console.log('onLoad trigger loading ', listType, this.buzzListData[listType].currentPage)
       this.buzzListData[listType].loading = true;
-      this.buzzListData[listType].currentPage++
-      this.getCurBuzzList()
+      if (this.buzzListData[listType].data.length > 0) {
+        this.buzzListData[listType].currentPage++
+      }
+      this.getCurBuzzList(listType)
     },
     onSearch() {
       this.buzzListData[this.curListType].data = []
@@ -276,25 +281,25 @@ export default {
     // 切换 Tab
     'curListType': {
       handler: function(val) {
-        console.log('watch')
-        this.buzzListData[this.curListType].currentPage = 1
+        console.info('watch')
         this.curListType = val
+        this.buzzListData[this.curListType].currentPage = 1
         this.buzzListData[this.curListType].data = []
         if (val === 'search') {
           this.buzzListData[this.curListType].loading = false
         } else {
-          this.getCurBuzzList()
+          this.getCurBuzzList(val)
         }
         if (this.$route.path !== `/pub/${val}` && val !== 'follow' && val !== 'my') {
           this.$router.push({ path: `/pub/${val}` })
         }
       },
-      immediate: true,
+      // immediate: true,
     },
     // 用户发帖后，刷新
     'lastBuzzTime': function(val) {
       setTimeout(() => {
-        this.getCurBuzzList(false)
+        this.getCurBuzzList()
       }, 400)
     },
     'currentPage': function(val) {
@@ -305,7 +310,8 @@ export default {
   },
   created() {
     const { params } = this.$route
-    if (params.type) {
+    if (params.type && params.type !== this.curListType) {
+      console.log('created listType changed')
       this.curListType = params.type
     }
   },

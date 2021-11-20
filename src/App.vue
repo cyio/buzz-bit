@@ -162,7 +162,6 @@ export default Vue.extend({
     }
   },
   created() {
-    // 新页面 auth
     this.code = getUrlParameterByName('code')
     // 是否存在 token
     //  是否存在 user cache

@@ -8,9 +8,10 @@ let singleton
 export default function SDKInit() {
   if (singleton) return singleton
   singleton = new Promise((resolve, reject) => {
-    const userCache = Storage.getObj('user') || '{}'
-    if (userCache.metaId && window.__metaIdJsLoaded) {
-      console.log('sdk has cache')
+    // const userCache = Storage.getObj('user') || '{}'
+    // if (userCache.metaId && window.__metaIdJs?.isInjectMainFrame) {
+    if (window.__metaIdJs?.isInjectMainFrame) {
+      console.log('sdk has cached')
       resolve(true)
       return
     }
@@ -24,7 +25,6 @@ export default function SDKInit() {
       },
       onLoaded: () => {
         console.log('metaidjs loaded', performance.now() / 1000)
-        window.__metaIdJsLoaded = true
         resolve(true)
       },
       onError: (res) => {

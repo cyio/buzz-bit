@@ -21,6 +21,7 @@
             v-else
             :src="getAssetUrl(metafile)"
             @click.stop="handlePreviewImg(buzz.attachments, index)"
+            loading="lazy"
           />
         </div>
       </div>

@@ -9,7 +9,7 @@ function convertImgs(input) {
       if (t.includes('sinaimg.cn')) {
         t = 'https://cnbeta.leanapp.cn/api/image?url=' + t
       }
-      return `<img src="${t}" style="width: 100%" />`
+      return `<img src="${t}" style="width: 100%" loading="lazy" />`
     })
   }
   return res
