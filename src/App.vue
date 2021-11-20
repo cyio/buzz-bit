@@ -8,18 +8,18 @@
         >{{`${$isMobile ? '' : 'MetaID框架...'}`}}</van-loading>
       </div>
       <div class="links">
-        <router-link to="/user" v-if="hasToken || user.name">主页</router-link>
-        <router-link to="/pub/hot">广场</router-link>
+        <router-link to="/user" v-if="hasToken || user.name">{{t('nav.home')}}</router-link>
+        <router-link to="/pub/hot">{{t('nav.public')}}</router-link>
         <!-- <router-link to="/login">登录</router-link> -->
-        <router-link to="/decode">解码</router-link>
-        <router-link to="/setting">设置</router-link>
-        <router-link to="/about">关于</router-link>
+        <router-link to="/decode">{{t('nav.decode')}}</router-link>
+        <router-link to="/setting">{{t('nav.setting')}}</router-link>
+        <router-link to="/about">{{t('nav.about')}}</router-link>
         <div class="user">
           <div v-if="hasToken || user.name" @click="authConfirm">
             <span v-if="user.name">{{user.name}}</span>
             <!-- <van-loading v-else color="#1989fa" class="loading" /> -->
           </div>
-          <button @click="auth" v-else>登录</button>
+          <button @click="auth" v-else>{{t('btn.login')}}</button>
         </div>
         <!-- <search /> -->
       </div>
@@ -29,7 +29,7 @@
 </template>
 
 <script>
-import { Vue } from 'vue-property-decorator';
+import { defineComponent } from '@vue/composition-api'
 import { goAuth, getToken } from '@/api/buzz.ts'
 import { getUrlParameterByName } from '@/utils/index';
 import AppConfig from '@/config/'
@@ -37,6 +37,7 @@ import { mapState } from 'vuex'
 import { Dialog } from 'vant';
 import { Storage } from '@/utils/index';
 import SDKInit from '@/utils/sdk';
+import { useI18n } from 'vue-i18n-composable/src/index'
 
 function setLocal(key, val) {
   return window.localStorage.setItem(key, val)
@@ -44,12 +45,17 @@ function setLocal(key, val) {
 
 // import Search from "@/components/Search.vue";
 let tId = null
-export default Vue.extend({
+export default defineComponent({
   name: "App",
   props: {
   },
   components: {
     // Search
+  },
+  setup() {
+    return {
+      ...useI18n(),
+    }
   },
   data() {
     return {

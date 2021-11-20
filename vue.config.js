@@ -14,6 +14,11 @@ module.exports = {
                 loader: 'file-loader'
               }
             ]
+          },
+          {
+            test:/\.mjs$/,
+            include: /node_modules/,
+            type: "javascript/auto"  
           }
         ]
       },

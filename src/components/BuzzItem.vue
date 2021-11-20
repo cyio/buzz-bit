@@ -28,15 +28,15 @@
       <div class="item-bottom" v-if="showFooter">
         <div class="left"></div>
         <div class="right" v-if="buzz.comment">
-          <div class="item forward" @click.stop="showCommentBox = true;doType = 'forward'">转发[{{buzz.rePost.length}}]</div>
-          <div class="item comment" @click.stop="showCommentBox = true;doType = 'comment'">评论[{{buzz.comment.length}}]</div>
-          <div class="item like" @click.stop="doHandle('doLike')">喜欢[{{buzz.like.length}}]</div>
-          <div class="item donate">打赏[{{buzz.donate.length}}]</div>
+          <div class="item forward" @click.stop="showCommentBox = true;doType = 'forward'">{{t('post.forward')}}[{{buzz.rePost.length}}]</div>
+          <div class="item comment" @click.stop="showCommentBox = true;doType = 'comment'">{{t('post.comment')}}[{{buzz.comment.length}}]</div>
+          <div class="item like" @click.stop="doHandle('doLike')">{{t('post.like')}}[{{buzz.like.length}}]</div>
+          <div class="item donate">{{t('post.tip')}}[{{buzz.donate.length}}]</div>
         </div>
         <!-- 搜索页数据不一致 -->
         <div class="right" v-else>
-          <div class="item forward" @click="showCommentBox = true;doType = 'forward'">转发</div>
-          <div class="item comment" @click="showCommentBox = true;doType = 'comment'">评论</div>
+          <div class="item forward" @click="showCommentBox = true;doType = 'forward'">{{t('post.forward')}}</div>
+          <div class="item comment" @click="showCommentBox = true;doType = 'comment'">{{t('post.comment')}}</div>
         </div>
       </div>
     </div>
@@ -106,6 +106,7 @@ import BuzzHeader from './BuzzPart/BuzzHeader.vue'
 import FileDecode from '@/components/FileDecode'
 import mixin from './BuzzPart/mixin'
 import { mapState } from 'vuex'
+import { useI18n } from 'vue-i18n-composable/src/index'
 
 function imgFix(str) {
   str = str.split('.')
@@ -139,6 +140,11 @@ export default Vue.extend({
       content: '',
       doType: 'forward'
     };
+  },
+  setup() {
+    return {
+      ...useI18n(),
+    }
   },
   methods: {
     getAssetUrl(src) {

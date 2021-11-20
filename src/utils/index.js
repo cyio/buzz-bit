@@ -123,6 +123,10 @@ function isMobile(){
   return isMobile;
 }
 
+const shared = {
+  isZh: /zh/.test(window.navigator.language || window.navigator.userLanguage),
+}
+
 export {
   formatBytes,
   isProd,
@@ -131,5 +135,6 @@ export {
   getUrlParameterByName,
   hexToBase64Img,
   isSupportPDF,
-  isMobile
+  isMobile,
+  shared
 }

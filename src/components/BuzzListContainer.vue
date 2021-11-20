@@ -45,6 +45,7 @@
 import BuzzList from "@/components/BuzzList.vue";
 import { getBuzzList, getFollowBuzzList, getHotBuzzList, getNewBuzzList, getSearchBuzzList } from '@/api/buzz.ts'
 import { Tab, Tabs, Loading, Pagination, Search, PullRefresh, List } from 'vant';
+import { useI18n } from 'vue-i18n-composable/src/index'
 
 export default {
   name: "BuzzListContainer",
@@ -70,6 +71,11 @@ export default {
     [Search.name]: Search,
     [PullRefresh.name]: PullRefresh,
     [List.name]: List,
+  },
+  setup() {
+    return {
+      ...useI18n(),
+    }
   },
   data() {
     return {
@@ -114,15 +120,15 @@ export default {
       navData: [
         {
           key: 'hot',
-          title: '热门'
+          title: this.t('nav.hot')
         },
         {
           key: 'new',
-          title: '新帖'
+          title: this.t('nav.new')
         },
         {
           key: 'search',
-          title: '搜索'
+          title: this.t('nav.search')
         }
       ],
       keywords: '',
@@ -257,11 +263,11 @@ export default {
       const priv = [
         {
           key: 'follow',
-          title: '关注'
+          title: this.t('nav.follow')
         },
         {
           key: 'my',
-          title: '我的'
+          title: this.t('nav.my')
         }
       ]
       return this.scene === 'pub' ? this.navData : priv

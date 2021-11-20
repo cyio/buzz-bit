@@ -16,7 +16,7 @@
 </template>
 
 <script>
-import { formatTime } from '@/utils/index';
+import { formatTime, shared } from '@/utils/index';
 import { format as timeagoFormat } from 'timeago.js';
 
 export default ({
@@ -47,7 +47,7 @@ export default ({
   filters: {
     formatTime(time) {
       const useTimeago = (new Date()) - time < 86400000
-      return useTimeago ? timeagoFormat(time, 'zh_CN') : formatTime(time)
+      return useTimeago ? timeagoFormat(time, shared.isZh ? 'zh_CN' : 'en_US') : formatTime(time)
     }
   }
 });

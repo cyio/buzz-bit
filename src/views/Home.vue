@@ -7,24 +7,24 @@
         autosize
         label=""
         type="textarea"
-        placeholder="请输入"
+        :placeholder="t('post.inputPlaceholder')"
         clearable
       />
       <div class="word-count">{{content.length || ''}}</div>
     </div>
     <div class="input-operation">
       <div class="text-option">
-        <input type="checkbox" id="useEncrypt" v-model="useEncrypt">
-        <label for="useEncrypt">私密</label>
+        <!-- <input type="checkbox" id="useEncrypt" v-model="useEncrypt"> -->
+        <!-- <label for="useEncrypt">私密</label> -->
         <input type="checkbox" id="showImgSelect" v-model="showImgSelect">
-        <label for="showImgSelect">发图</label>
+        <label for="showImgSelect">{{t('btn.image')}}</label>
         <input type="checkbox" id="showFileSelect" v-model="showFileSelect">
-        <label for="showFileSelect">分享文件</label>
+        <label for="showFileSelect">{{t('btn.file')}}</label>
       </div>
       <van-button color="#1989fa" @click="send" size="small"
         :disabled='!isSDKLoaded || content === ""' class="send"
         :loading="!isSDKLoaded"
-      >发送</van-button>
+      >{{t('btn.send')}}</van-button>
     </div>
     <uploader v-show="showImgSelect" ref="uploader" @change="handleMetafileChange" />
     <file-Uploader v-show="showFileSelect" ref="uploader" @change="handleMetafileChange" />
@@ -47,6 +47,7 @@ import { Storage } from '@/utils/index';
 import { mapState } from 'vuex'
 import mime from 'mime-types'
 import { Field } from 'vant'
+import { useI18n } from 'vue-i18n-composable/src/index'
 
 function getLocal(key) {
   return window.localStorage.getItem(key)
@@ -76,6 +77,11 @@ export default {
       showImgSelect: false,
       showFileSelect: false,
       lastBuzzTime: +new Date(),
+    }
+  },
+  setup() {
+    return {
+      ...useI18n(),
     }
   },
   methods: {

@@ -1,7 +1,7 @@
 <template>
   <div class="detail">
     <div class="head">
-      <button @click="$router.go(-1) ">返回</button>
+      <button @click="$router.go(-1) ">{{t('btn.back')}}</button>
     </div>
     <buzz-detail :buzz="buzz" v-if="buzz.protocol" />
     <van-loading v-else color="#1989fa" class="loading" />
@@ -11,6 +11,7 @@
 <script>
 import BuzzDetail from "@/components/BuzzDetail";
 import { getBuzz } from '@/api/buzz.ts'
+import { useI18n } from 'vue-i18n-composable/src/index'
 
 export default ({
   name: "Detail",
@@ -22,6 +23,11 @@ export default ({
       // txId: '',
       buzz: {}
     };
+  },
+  setup() {
+    return {
+      ...useI18n(),
+    }
   },
   methods: {
     getFull(txId) {
