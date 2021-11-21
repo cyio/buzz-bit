@@ -1,5 +1,4 @@
 import { goAuth } from '@/api/buzz.ts'
-import { Storage } from '@/utils/index';
 import AppConfig from '@/config/'
 import MetaIdJs from "metaidjs"
 
@@ -8,8 +7,6 @@ let singleton
 export default function SDKInit() {
   if (singleton) return singleton
   singleton = new Promise((resolve, reject) => {
-    // const userCache = Storage.getObj('user') || '{}'
-    // if (userCache.metaId && window.__metaIdJs?.isInjectMainFrame) {
     if (window.__metaIdJs?.isInjectMainFrame) {
       console.log('sdk has cached')
       resolve(true)
@@ -33,6 +30,7 @@ export default function SDKInit() {
         if (code === 201) {
           goAuth()
         }
+        reject(code)
       }
     })
   })

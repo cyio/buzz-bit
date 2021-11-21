@@ -49,9 +49,6 @@ import mime from 'mime-types'
 import { Field } from 'vant'
 import { useI18n } from 'vue-i18n-composable/src/index'
 
-function getLocal(key) {
-  return window.localStorage.getItem(key)
-}
 function setLocal(key, val) {
   return window.localStorage.setItem(key, val)
 }
@@ -198,7 +195,7 @@ export default {
         }
       }
       console.log(config)
-      __metaIdJs.addProtocolNode(config);
+      window.__metaIdJs.addProtocolNode(config);
     },
     getUser() {
       const userCache = Storage.getObj('user') || '{}'
@@ -222,6 +219,7 @@ export default {
       if (this.showFileSelect && this.attachments.length) {
         let { fileName, data: txId } = this.attachments[0]
         this.content += `#分享文件 ${fileName}`
+        console.log(txId)
       }
     },
   },
@@ -261,8 +259,6 @@ export default {
   .input-area {
     display: flex;
     margin-bottom: 10px;
-    border: 1px solid #e4e0e0;
-    border-radius: 12px;
     position: relative;
     .word-count {
       position: absolute;
@@ -270,6 +266,10 @@ export default {
       bottom: 10px;
       font-size: 12px;
       color: gray;
+    }
+    .van-field {
+      border: 1px solid #e4e0e0;
+      border-radius: 6px;
     }
     // .send {
     // }

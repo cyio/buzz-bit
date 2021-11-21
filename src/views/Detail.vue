@@ -35,7 +35,7 @@ export default ({
         const { code, data } = res
         if (code === 0) {
           this.dataDone = true
-          const items = res.data.results?.items || []
+          const items = data.results?.items || []
           this.buzz = items[0] || {}
         }
       })

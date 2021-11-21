@@ -251,7 +251,9 @@ export default {
       if (this.buzzListData[listType].data.length > 0) {
         this.buzzListData[listType].currentPage++
       }
-      this.getCurBuzzList(listType)
+      if (this.buzzListData[listType].currentPage > 1) {
+        this.getCurBuzzList(listType)
+      }
     },
     onSearch() {
       this.buzzListData[this.curListType].data = []
@@ -300,7 +302,7 @@ export default {
           this.$router.push({ path: `/pub/${val}` })
         }
       },
-      // immediate: true,
+      immediate: true,
     },
     // 用户发帖后，刷新
     'lastBuzzTime': function(val) {

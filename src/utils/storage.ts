@@ -67,7 +67,7 @@ export const getCookie = (key: string): any => {
     const val = decodeURIComponent(matchedArr[2])
     try {
       data = val.indexOf('{') === 0 ? JSON.parse(val) : val
-    } catch (error) {
+    } catch (error: any) {
       console.error(new Error(error))
     }
     return data
