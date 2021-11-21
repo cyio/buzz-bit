@@ -2,14 +2,18 @@
   <div class="file-decode">
     <van-loading v-show="loading" color="#1989fa" class="loading" />
     <div v-if="!loading">
-      <div class="size" v-show="showMetaInfo">文件大小：{{blob.size}} 文件类型：{{blob.type}}</div>
-      <file-preview
-        :url="blobUrl" :type="blob.type"
-        v-if="showPreview"
-      />
-      <div class="media-placeholder" v-else>
-        媒体资源，点击进详情查看
-      </div>
+      <buzz-item v-if="buzz" :buzz="buzz" />
+      <template v-else>
+        <div class="size" v-show="showMetaInfo">文件大小：{{blob.size}} 文件类型：{{blob.type}}</div>
+        <!-- <div v-if="buzz" class="content" v-html="displayContent(buzz.content)"></div> -->
+        <file-preview
+          :url="blobUrl" :type="blob.type"
+          v-if="showPreview"
+        />
+        <div class="media-placeholder" v-else>
+          媒体资源，点击进详情查看
+        </div>
+      </template>
     </div>
   </div>
 </template>
@@ -17,6 +21,7 @@
 <script>
 import { Script } from 'bsv'
 import FilePreview from '@/components/FilePreview'
+import BuzzItem from "@/components/BuzzItem";
 import {queryHex} from '@/api/'
 
 function hexToUtf8(s){
@@ -42,7 +47,8 @@ export default ({
     }
   },
   components: {
-    FilePreview
+    FilePreview,
+    BuzzItem
   },
   data() {
     return {
@@ -50,7 +56,8 @@ export default ({
         type: ''
       },
       blobUrl: '',
-      loading: false
+      loading: false,
+      buzz: null
     };
   },
   methods: {
@@ -66,6 +73,16 @@ export default ({
       let script = new Script().fromHex(hex)
       let asm = script.toAsmString()
       let arr = asm.split(' ')
+      if(1) {
+        console.log(arr)
+        let res = arr.filter(i => i.length <= 1000)
+          .map(i => hexToUtf8(i))
+        if (res[6].includes('SimpleMicroblog')) {
+          this.buzz = JSON.parse(res[7])
+          this.buzz.timestamp = this.buzz.createTime
+        }
+        console.log(res)
+      }
       let file = arr[7]
       let fileTypeStr = hexToUtf8(arr[arr.length - 2])
       let binaryStr = hexToUtf8(arr[arr.length - 1])
@@ -110,8 +127,11 @@ export default ({
       }
       let hex = await queryHex[this.apiService](txId)
       // show 文件服务不即时 error: "Has no this node"，降级转用其他服务
-      if (this.apiService === 'showMANDB' && hex.length < 50) {
+      if (this.apiService === 'showMANDB' && hex.length < 80) {
         hex = await queryHex['whatsonchain'](txId)
+        if (hex.length < 80) {
+          hex = await queryHex['whatsonchain'](txId, 1)
+        }
       }
       setTimeout(() => {
         this.loading = false
@@ -119,7 +139,7 @@ export default ({
       if (hex.length <= 30) {
         console.log('文件未取到')
         return
-      } 
+      }
       this.decodeHex(hex)
     }
   },

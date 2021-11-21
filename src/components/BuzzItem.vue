@@ -25,7 +25,7 @@
           />
         </div>
       </div>
-      <div class="item-bottom" v-if="showFooter">
+      <div class="item-bottom" v-if="showFooter && buzz.txId">
         <div class="left"></div>
         <div class="right" v-if="buzz.comment">
           <div class="item forward" @click.stop="showCommentBox = true;doType = 'forward'">{{t('post.forward')}}[{{buzz.rePost.length}}]</div>
@@ -170,20 +170,16 @@ export default Vue.extend({
       this.index = index
     },
     doForward() {
-      if (!window.__metaIdJs) {
-        this.$toast('请先切到主页登录');
-        return
-      }
-      const accessToken = window.localStorage.getItem('access_token')
       const config = {
         nodeName: 'SimpleRePost',
         metaIdTag: "metaid",
         brfcId: "9e73d8935669",
-        accessToken: accessToken,
+        accessToken: this.accessToken,
         encrypt: 0,
         payCurrency: "BSV",
         payTo: [
           { amount: 1000, address: '18H4SRi4nh9yg6Tr8M24CTtsveqzmFmJxM' },
+          { amount: 500, address: this.buzz.zeroAddress },
         ],
         dataType: 'applicaition/json',
         path: '/Protocols/SimpleRePost',
@@ -199,20 +195,16 @@ export default Vue.extend({
       window.__metaIdJs.addProtocolNode(config);
     },
     doComment() {
-      if (!window.__metaIdJs) {
-        this.$toast('请先切到主页登录');
-        return
-      }
-      const accessToken = window.localStorage.getItem('access_token')
       const config = {
         nodeName: 'PayComment',
         metaIdTag: "metaid",
         brfcId: 'ff515b313d27',
-        accessToken: accessToken,
+        accessToken: this.accessToken,
         encrypt: 0,
         payCurrency: "BSV",
         payTo: [
           { amount: 1000, address: '18H4SRi4nh9yg6Tr8M24CTtsveqzmFmJxM' },
+          { amount: 500, address: this.buzz.zeroAddress },
         ],
         dataType: 'applicaition/json',
         path: '/Protocols/PayComment',
@@ -286,7 +278,8 @@ export default Vue.extend({
     ...mapState({
       user: 'user',
       showVideoInFlow: 'showVideoInFlow',
-      isSDKLoaded: 'isSDKLoaded'
+      isSDKLoaded: 'isSDKLoaded',
+      accessToken: 'accessToken'
     }),
   },
   filters: {

@@ -8,7 +8,7 @@
         <div class="time">{{ buzz.timestamp | formatTime }}</div>
       </div>
     </div>
-    <div class="right">
+    <div class="right" v-show="buzz.txId">
       <a class="tx-link" :href="getTxUrl(buzz.txId)" target="_blank" @click.stop="">tx</a>
       <a class="tx-link" :href="getShowBuzzUrl(buzz.txId)" target="_blank" @click.stop="">showbuzz</a>
     </div>

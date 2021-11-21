@@ -43,7 +43,9 @@ export default ({
       loading: false,
       curListType: 'user',
       buzzListData: {
-        user: []
+        user: {
+          data: []
+        }
       },
       currentPage: 1,
       address: null,
@@ -70,7 +72,7 @@ export default ({
         const { code, data } = res
         if (code === 0) {
           const items = res.data.results?.items || []
-          this.buzzListData.user = items.filter(i => i.encrypt === '0')
+          this.buzzListData.user.data = items.filter(i => i.encrypt === '0')
         }
       })
     },
