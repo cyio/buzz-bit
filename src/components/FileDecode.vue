@@ -6,12 +6,17 @@
       <template v-else>
         <div class="size" v-show="showMetaInfo">文件大小：{{blob.size}} 文件类型：{{blob.type}}</div>
         <!-- <div v-if="buzz" class="content" v-html="displayContent(buzz.content)"></div> -->
-        <file-preview
-          :url="blobUrl" :type="blob.type"
-          v-if="showPreview"
-        />
-        <div class="media-placeholder" v-else>
-          媒体资源，点击进详情查看
+        <template v-if="isValidMimeType">
+          <file-preview
+            :url="blobUrl" :type="blob.type"
+            v-if="showPreview"
+          />
+          <div class="media-placeholder" v-else>
+            媒体资源，点击进详情查看
+          </div>
+        </template>
+        <div class="download" v-else>
+          <a :href="blobUrl" :download="filename">下载</a>
         </div>
       </template>
     </div>
@@ -55,6 +60,7 @@ export default ({
       blob: {
         type: ''
       },
+      filename: '',
       blobUrl: '',
       loading: false,
       buzz: null
@@ -73,9 +79,9 @@ export default ({
       let script = new Script().fromHex(hex)
       let asm = script.toAsmString()
       let arr = asm.split(' ')
-      if(1) {
+      if (1) {
         console.log(arr)
-        let res = arr.filter(i => i.length <= 1000)
+        let res = arr.map(i => i.length <= 1000 ? i : 'too long')
           .map(i => hexToUtf8(i))
         if (res[6].includes('SimpleMicroblog')) {
           this.buzz = JSON.parse(res[7])
@@ -85,6 +91,7 @@ export default ({
       }
       let file = arr[7]
       let fileTypeStr = hexToUtf8(arr[arr.length - 2])
+      this.filename = hexToUtf8(arr[6])
       let binaryStr = hexToUtf8(arr[arr.length - 1])
       let isBinary = binaryStr === 'binary'
       if (!isBinary) {
@@ -98,7 +105,7 @@ export default ({
         // console.log('hex', hexStr)
         let buf = Buffer.from(hexStr, 'hex')
         // console.log('buf', buf)
-        this.blob = new Blob([buf], {type})
+        this.blob = new Blob([buf], { type })
         // console.log('blob', blb)
         let url = URL.createObjectURL(this.blob)
         // console.log('url', url)
@@ -150,6 +157,11 @@ export default ({
         return type.includes('image')
       }
       return true
+    },
+    isValidMimeType() {
+      const { type } = this.blob
+      const isPCFile = /ppt|xls|doc|0/.test(type)
+      return !isPCFile
     }
   },
   created() {

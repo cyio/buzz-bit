@@ -256,7 +256,8 @@ export default {
       }
     },
     onSearch() {
-      this.buzzListData[this.curListType].data = []
+      this.buzzListData.search.data = []
+      this.buzzListData.search.loading = true
       this.getCurBuzzList()
     }
   },

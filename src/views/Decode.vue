@@ -23,9 +23,6 @@
         :showMetaInfo="true"
        />
     </div>
-    <!-- <div class="download">
-      下载：
-    </div> -->
   </div>
 </template>
 

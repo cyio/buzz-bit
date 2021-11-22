@@ -127,6 +127,11 @@ const shared = {
   isZh: /zh/.test(window.navigator.language || window.navigator.userLanguage),
 }
 
+function getExtension(str) {
+  let arr = str.split('.')
+  return arr[arr.length - 1] || 'unknown'
+}
+
 export {
   formatBytes,
   isProd,
@@ -136,5 +141,6 @@ export {
   hexToBase64Img,
   isSupportPDF,
   isMobile,
-  shared
+  shared,
+  getExtension
 }

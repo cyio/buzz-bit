@@ -163,7 +163,7 @@ export default {
         encrypt: +this.useEncrypt,
         payCurrency: "BSV",
         payTo,
-        path: "/Protocols/SimpleMicroblog/self",
+        path: "/Protocols/SimpleMicroblog",
         dataType: "application/json",
         attachments: this.attachments,
         // attachments: [

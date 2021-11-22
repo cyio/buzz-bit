@@ -50,7 +50,7 @@
 <script>
 import Vue from "vue";
 import Compressor from "compressorjs";
-import { formatBytes } from '@/utils/index'
+import { formatBytes, getExtension } from '@/utils/index'
 
 export default Vue.extend({
   name: "FileUploader",
@@ -106,51 +106,19 @@ export default Vue.extend({
       const self = this
       const _options = this.optimizeOptions(input)
       return new Promise(async (resolve, reject) => {
-        if (1) {
-          const blobUrl = URL.createObjectURL(input)
-          const binary = await this.blobToBinary(input); // Buffer
-          const imageObj = {
-            fileName: input.name,
-            fileType: input.type,
-            data: binary.toString("hex"),
-          };
-          const previewObj = {
-            url: blobUrl,
-            input,
-            output: input
-          }
-          resolve({imageObj, previewObj});
-        } else {
-          const options = {
-            ..._options,
-            success: async (result) => {
-              if (result.size >= input.size) {
-                result = input
-              }
-              const blobUrl = URL.createObjectURL(result)
-              const binary = await this.blobToBinary(result);
-
-              const imageObj = {
-                fileName: result.name,
-                fileType: result.type,
-                data: binary.toString("hex"),
-              };
-              const previewObj = {
-                url: blobUrl,
-                input,
-                output: result
-              }
-              console.log('压缩对比：', previewObj)
-              resolve({imageObj, previewObj});
-              // self.output.push();
-              // vm.$refs.input.value = '';
-            },
-            error: function (err) {
-              reject(error.message);
-            },
-          };
-          new Compressor(input, options);
+        const blobUrl = URL.createObjectURL(input)
+        const binary = await this.blobToBinary(input); // Buffer
+        const imageObj = {
+          fileName: input.name,
+          fileType: input.type || getExtension(input.name),
+          data: binary.toString("hex"),
+        };
+        const previewObj = {
+          url: blobUrl,
+          input,
+          output: input
         }
+        resolve({imageObj, previewObj});
       });
     },
     async handleFiles(files) {
