@@ -25,20 +25,7 @@
           />
         </div>
       </div>
-      <div class="item-bottom" v-if="showFooter && buzz.txId">
-        <div class="left"></div>
-        <div class="right" v-if="buzz.comment">
-          <div class="item forward" @click.stop="showCommentBox = true;doType = 'forward'">{{t('post.forward')}}[{{buzz.rePost.length}}]</div>
-          <div class="item comment" @click.stop="showCommentBox = true;doType = 'comment'">{{t('post.comment')}}[{{buzz.comment.length}}]</div>
-          <div class="item like" @click.stop="doHandle('doLike')">{{t('post.like')}}[{{buzz.like.length}}]</div>
-          <div class="item donate">{{t('post.tip')}}[{{buzz.donate.length}}]</div>
-        </div>
-        <!-- 搜索页数据不一致 -->
-        <div class="right" v-else>
-          <div class="item forward" @click.stop="showCommentBox = true;doType = 'forward'">{{t('post.forward')}}</div>
-          <div class="item comment" @click.stop="showCommentBox = true;doType = 'comment'">{{t('post.comment')}}</div>
-        </div>
-      </div>
+      <buzz-footer :buzz="buzz" v-if="showFooter && buzz.txId" />
     </div>
     <van-image-preview v-model="show" :images="images" 
       :start-position="index"
@@ -60,49 +47,15 @@
       </template>
     </van-image-preview>
     <!-- :overlay="false" -->
-    <van-popup v-model="showCommentBox" closeable
-      duration="0"
-      class="forward-popup"
-    >
-      <div class="card forward-card">
-        <div class="card-header">
-          <h4>{{doType === 'forward' ? '转发' : '评论'}}</h4>
-        </div>
-        <div class="card-body">
-          <div class="forward-form">
-            <!-- <avatar :src="hexToBase64Img(userInfo.headUrl)" :size="40" /> -->
-            <!-- <avatar :tx="userInfo.avatarTxId" :size="40" /> -->
-            <div class="field">
-              <textarea v-model="content" placeholder="添加评论" autofocus />
-            </div>
-          </div>
-          <div class="forward-buzz">
-            <buzz-item
-              v-if="showCommentBox"
-              :buzz="buzz"
-              :show-footer="false"
-              :show-relation="false"
-            />
-          </div>
-        </div>
-        <div class="card-footer">
-          <van-button color="#1989fa"
-            @click="doType === 'forward' ? doHandle('doForward') : doHandle('doComment')" size="small"
-            class="send"
-          >
-            发送
-          </van-button>
-        </div>
-      </div>
-    </van-popup>
   </div>
 </template>
 
 <script>
 import Vue from "vue";
 import AppConfig from '@/config/'
-import { ImagePreview, Popup } from 'vant';
+import { ImagePreview } from 'vant';
 import BuzzHeader from './BuzzPart/BuzzHeader.vue'
+import BuzzFooter from './BuzzPart/BuzzFooter.vue'
 import FileDecode from '@/components/FileDecode'
 import mixin from './BuzzPart/mixin'
 import { mapState } from 'vuex'
@@ -119,8 +72,8 @@ export default Vue.extend({
   mixins: [mixin],
   components: {
     [ImagePreview.Component.name]: ImagePreview.Component,
-    [Popup.name]: Popup,
     BuzzHeader,
+    BuzzFooter,
     FileDecode
   },
   props: {
@@ -168,100 +121,6 @@ export default Vue.extend({
     },
     onChange(index) {
       this.index = index
-    },
-    doForward() {
-      const config = {
-        nodeName: 'SimpleRePost',
-        metaIdTag: "metaid",
-        brfcId: "9e73d8935669",
-        accessToken: this.accessToken,
-        encrypt: 0,
-        payCurrency: "BSV",
-        payTo: [
-          { amount: 1000, address: '18H4SRi4nh9yg6Tr8M24CTtsveqzmFmJxM' },
-          { amount: 500, address: this.buzz.zeroAddress },
-        ],
-        dataType: 'applicaition/json',
-        path: '/Protocols/SimpleRePost',
-        data: JSON.stringify({
-          createTime: new Date().getTime(),
-          rePostTx: this.buzz.txId,
-          rePostProtocol: '', // this.dialogData.nodeName,
-          rePostComment: this.content // 评论内容
-        }),
-        callback: this.handleForward
-      }
-      console.log(config)
-      window.__metaIdJs.addProtocolNode(config);
-    },
-    doComment() {
-      const config = {
-        nodeName: 'PayComment',
-        metaIdTag: "metaid",
-        brfcId: 'ff515b313d27',
-        accessToken: this.accessToken,
-        encrypt: 0,
-        payCurrency: "BSV",
-        payTo: [
-          { amount: 1000, address: '18H4SRi4nh9yg6Tr8M24CTtsveqzmFmJxM' },
-          { amount: 500, address: this.buzz.zeroAddress },
-        ],
-        dataType: 'applicaition/json',
-        path: '/Protocols/PayComment',
-        data: JSON.stringify({
-          createTime: +new Date(),
-          content: this.content, // 评论内容
-          contentType: 'text/plain',
-          commentTo: this.buzz.txId, // tx
-        }),
-        callback: this.handleForward
-      }
-      console.log(config)
-      window.__metaIdJs.addProtocolNode(config);
-    },
-    doHandle(func) {
-      if (this.isSDKLoaded) {
-        this[func]()
-      } else {
-        this.$toast('请等待 MetaID框架 加载完成');
-      }
-    },
-    doLike() {
-      const accessToken = window.localStorage.getItem('access_token')
-      const config = {
-        nodeName: 'PayLike',
-        metaIdTag: "metaid",
-        brfcId: '5c7afdb85de5',
-        accessToken: accessToken,
-        encrypt: 0,
-        payCurrency: "BSV",
-        payTo: [
-          { amount: 1000, address: this.buzz.zeroAddress },
-          { amount: 100, address: this.$chargeAddress.likeFee },
-        ],
-        dataType: 'applicaition/json',
-        path: '/Protocols/PayLike',
-        data: JSON.stringify({
-          createTime: +new Date(),
-          isLike: '1',
-          pay: '1000',
-          payTo: this.buzz.zeroAddress,
-          likeTo: this.buzz.txId
-        }),
-        callback: (res) => {
-          if (res.code === 200) {
-            this.buzz.like.push({})
-          } else {
-            new Error(res.data.message);
-          }
-        }
-      }
-      console.log(config)
-      window.__metaIdJs.addProtocolNode(config);
-    },
-    handleForward(res) {
-      this.content = ''
-      this.showCommentBox = false
     },
     isShareFile(buzz) {
       return buzz.content.includes('#分享文件')
@@ -312,26 +171,6 @@ export default Vue.extend({
     color: #909399;
     font-size: 12px;
   }
-  .item-bottom {
-    display: flex;
-    justify-content: space-between;
-    color: #666667;
-    font-size: 12px;
-    display: flex;
-    a {
-      color: inherit;
-    }
-    .right {
-      display: flex;
-    }
-    .item  {
-      margin-right: 6px;
-    }
-    .forward:hover , .comment:hover, .like:hover {
-      cursor: pointer;
-      color: var(--theme-color);
-    }
-  }
   .media {
     display: flex;
     flex-wrap: wrap;
@@ -361,21 +200,6 @@ export default Vue.extend({
       &.disabled {
         color: gray;
       }
-    }
-  }
-  .forward-popup {
-    padding: 16px;
-    min-width: 300px;
-    textarea {
-      width: 100%;
-      border: 1px solid gray;
-    }
-    .card-footer {
-      display: flex;
-      justify-content: flex-end;
-    }
-    .send {
-      width: 80px;
     }
   }
   img {

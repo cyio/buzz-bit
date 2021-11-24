@@ -14,6 +14,7 @@
       />
       <div v-else class="content-reject">内容无权访问</div>
     </div>
+    <buzz-footer :buzz="buzz" v-if="showFooter && buzz.txId" class="footer" />
   </div>
 </template>
 
@@ -21,6 +22,7 @@
 import { getBuzzRelationData, getBuzz } from '@/api/buzz'
 import BuzzItem from './BuzzItem.vue'
 import BuzzHeader from './BuzzPart/BuzzHeader.vue'
+import BuzzFooter from './BuzzPart/BuzzFooter.vue'
 import mixin from './BuzzPart/mixin'
 
 export default ({
@@ -28,11 +30,16 @@ export default ({
   mixins: [mixin],
   props: {
     buzz: Object,
-    mode: String
+    mode: String,
+    showFooter: {
+      type: Boolean,
+      default: true
+    },
   },
   components: {
     BuzzItem,
-    BuzzHeader
+    BuzzHeader,
+    BuzzFooter
   },
   data() {
     return {
@@ -108,6 +115,9 @@ export default ({
   .item-original {
     background: #f7f8fb;
     margin-left: 24px;
+  }
+  .footer {
+    margin-top: 10px;
   }
 }
 </style>

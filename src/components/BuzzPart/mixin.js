@@ -5,9 +5,6 @@ export default {
     // this.hello()
   },
   methods: {
-    hello: function () {
-      console.log('hello from mixin!')
-    },
     displayContent(content = '', isBrief = false) {
       // content = this.handleHashTags(content)
       let val = content
