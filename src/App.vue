@@ -10,7 +10,7 @@
       <div class="links">
         <router-link to="/user" v-if="hasToken || user.name">{{t('nav.home')}}</router-link>
         <router-link to="/pub/hot">{{t('nav.public')}}</router-link>
-        <!-- <router-link to="/login">登录</router-link> -->
+        <router-link to="/search">{{t('nav.search')}}</router-link>
         <router-link to="/decode">{{t('nav.decode')}}</router-link>
         <router-link to="/setting">{{t('nav.setting')}}</router-link>
         <router-link to="/about">{{t('nav.about')}}</router-link>

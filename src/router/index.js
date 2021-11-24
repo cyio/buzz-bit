@@ -74,6 +74,12 @@ const routes = [
       import(/* webpackChunkName: "Setting" */ "../views/Setting.vue"),
   },
   {
+    path: "/search",
+    name: "Search",
+    component: () =>
+      import(/* webpackChunkName: "Setting" */ "../views/Search.vue"),
+  },
+  {
     path: '*', // or '/index.html'
     beforeEnter: (to, from, next) => {
       next('/')

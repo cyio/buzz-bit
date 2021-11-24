@@ -35,8 +35,8 @@
         </div>
         <!-- 搜索页数据不一致 -->
         <div class="right" v-else>
-          <div class="item forward" @click="showCommentBox = true;doType = 'forward'">{{t('post.forward')}}</div>
-          <div class="item comment" @click="showCommentBox = true;doType = 'comment'">{{t('post.comment')}}</div>
+          <div class="item forward" @click.stop="showCommentBox = true;doType = 'forward'">{{t('post.forward')}}</div>
+          <div class="item comment" @click.stop="showCommentBox = true;doType = 'comment'">{{t('post.comment')}}</div>
         </div>
       </div>
     </div>
@@ -245,7 +245,8 @@ export default Vue.extend({
           createTime: +new Date(),
           isLike: '1',
           pay: '1000',
-          payTo: this.buzz.zeroAddress
+          payTo: this.buzz.zeroAddress,
+          likeTo: this.buzz.txId
         }),
         callback: (res) => {
           if (res.code === 200) {

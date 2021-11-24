@@ -15,28 +15,17 @@
           />
           <van-button color="#1989fa" @click="onSearch" size="small" :disabled='keywords === ""' class="search-btn">搜 索</van-button>
         </div>
-        <template v-if="curListType !== 'search'">
-          <!-- <van-pull-refresh v-model="buzzListData[curListType].refreshing" @refresh="onRefresh"> -->
-            <van-list
-              v-model="buzzListData[curListType].loading"
-              :finished="buzzListData[curListType].finished"
-              finished-text="没有更多了"
-              @load="onLoad(item.key)"
-              :key="item.key"
-            >
-              <BuzzList :buzzListData="curBuzzListData" :key="item.key" />
-            </van-list>
-          <!-- </van-pull-refresh> -->
-        </template>
-        <template v-else>
-          <van-loading v-show="buzzListData[curListType].loading" color="#1989fa" class="loading" />
-          <BuzzList :buzzListData="curBuzzListData" :key="item.key" v-show="!buzzListData[curListType].loading" />
-          <van-pagination
-            v-show="buzzListData[curListType].length > 0 && !buzzListData[curListType].loading"
-            v-model="buzzListData[curListType].currentPage" :total-items="10000" :items-per-page="10"
-            force-ellipses
-          />
-        </template>
+        <!-- <van-pull-refresh v-model="buzzListData[curListType].refreshing" @refresh="onRefresh"> -->
+        <van-list
+          v-model="buzzListData[curListType].loading"
+          :finished="buzzListData[curListType].finished"
+          finished-text="没有更多了"
+          @load="onLoad(item.key)"
+          :key="item.key"
+        >
+          <BuzzList :buzzListData="curBuzzListData" :key="item.key" />
+        </van-list>
+        <!-- </van-pull-refresh> -->
       </van-tab>
     </van-tabs>
   </div>
@@ -108,13 +97,6 @@ export default {
           finished: false,
           currentPage: 1,
         },
-        'search': {
-          data: [],
-          loading: false,
-          refreshing: false,
-          finished: false,
-          currentPage: 1,
-        },
       },
       curListType: this.scene === 'pub' ? 'hot' : 'follow',
       navData: [
@@ -126,10 +108,6 @@ export default {
           key: 'new',
           title: this.t('nav.new')
         },
-        {
-          key: 'search',
-          title: this.t('nav.search')
-        }
       ],
       keywords: '',
       showVideoInFlow: true
@@ -210,14 +188,13 @@ export default {
       })
     },
     async getCurBuzzList(listType) {
-      console.log('real get buzz:', this.curListType)
+      // console.log('real get buzz:', this.curListType)
       const _listType = listType || this.curListType
       const map = {
         'my': 'getBuzzList',
         'follow': 'getFollowBuzzList',
         'hot': 'getHotBuzzList',
         'new': 'getNewBuzzList',
-        'search': 'getSearchBuzzList',
       }
       let list = await this[map[_listType]]()
       this.buzzListData[_listType].loading = false
@@ -239,14 +216,7 @@ export default {
     },
     // 页面首次加载会触发
     onLoad(listType) {
-      console.log('onLoad, ', listType, this.curListType)
-      // if (this.buzzListData[listType].loading) return
       if (this.buzzListData[listType].finished) return
-      if (listType === 'search' && this.curBuzzListData.length === 0) {
-        return
-      }
-      // this.buzzListData[this.curListType].finished = false;
-      console.log('onLoad trigger loading ', listType, this.buzzListData[listType].currentPage)
       this.buzzListData[listType].loading = true;
       if (this.buzzListData[listType].data.length > 0) {
         this.buzzListData[listType].currentPage++
@@ -289,17 +259,12 @@ export default {
   watch: {
     // 切换 Tab
     'curListType': {
-      handler: function(val) {
-        console.info('watch')
-        this.curListType = val
+      handler: function(val, old) {
+        // console.info('watch', val, old)
         this.buzzListData[this.curListType].currentPage = 1
         this.buzzListData[this.curListType].data = []
-        if (val === 'search') {
-          this.buzzListData[this.curListType].loading = false
-        } else {
-          this.getCurBuzzList(val)
-        }
-        if (this.$route.path !== `/pub/${val}` && val !== 'follow' && val !== 'my') {
+        this.getCurBuzzList(val)
+        if (this.$route.path !== `/pub/${val}` && !/follow|my/.test(val) && old) {
           this.$router.push({ path: `/pub/${val}` })
         }
       },
@@ -311,16 +276,11 @@ export default {
         this.getCurBuzzList()
       }, 400)
     },
-    'currentPage': function(val) {
-      if (this.curListType === 'search' && this.keywords !== '') {
-        this.getCurBuzzList()
-      }
-    }
   },
   created() {
     const { params } = this.$route
     if (params.type && params.type !== this.curListType) {
-      console.log('created listType changed')
+      // console.log('created listType changed')
       this.curListType = params.type
     }
   },
