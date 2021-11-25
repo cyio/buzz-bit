@@ -2,7 +2,11 @@
   <div class="item-container" :class="['mode-' + mode]">
     <div class="item-inner" @click="goDetail">
       <buzz-header :buzz="buzz" />
-      <div class="content" v-html="displayContent(buzz.content, mode === 'list')"></div>
+      <div v-if="mode === 'list' && buzz.encrypt === '1'">私密内容，进入查看</div>
+      <template v-else>
+        <van-loading v-show="loading">解密中</van-loading>
+        <div class="content" v-if="!loading" v-html="displayContent(buzz.content, mode === 'list')"></div>
+      </template>
       <div class="media">
         <div class="media-item" v-for="(metafile, index) in buzz.attachments" :key="index">
           <file-decode v-if="isShareFile(buzz)" :txId="buzz.attachments[0] | parseTxId"
@@ -60,6 +64,7 @@ import FileDecode from '@/components/FileDecode'
 import mixin from './BuzzPart/mixin'
 import { mapState } from 'vuex'
 import { useI18n } from 'vue-i18n-composable/src/index'
+import SDKInit from '@/utils/sdk';
 
 function imgFix(str) {
   str = str.split('.')
@@ -89,9 +94,7 @@ export default Vue.extend({
       show: false,
       index: 0,
       images: [],
-      showCommentBox: false,
-      content: '',
-      doType: 'forward'
+      loading: false,
     };
   },
   setup() {
@@ -149,6 +152,28 @@ export default Vue.extend({
     parseTxId(str) {
       let arr = str.split('/')
       return arr[arr.length - 1]
+    }
+  },
+  async created() {
+    const self = this
+    if (this.buzz.encrypt === '1' && this.mode !== 'list') {
+      // console.log(this.buzz.data || this.buzz.content)
+      this.loading = true
+      const config = {
+        accessToken: this.accessToken,
+        data: this.buzz.data,
+        callback: (res) => {
+          self.loading = false
+          if (res.code === 200) {
+            let ret = JSON.parse(res.data.data)
+            self.buzz.content = ret.content
+          } else {
+            console.error('解析异常', res)
+          }
+        }
+      }
+      await SDKInit()
+      window.__metaIdJs.eciesDecryptData(config);
     }
   }
 });

@@ -3,7 +3,7 @@
     <div
       v-for="(buzz, index) in buzzListData"
       :key="buzz.txId + index"
-    >
+    > 
       <quote-item
         v-if="buzz.protocol && buzz.protocol.toLowerCase() === 'simplerepost'"
         :buzz="buzz"

@@ -19,7 +19,7 @@ Vue.use(Button);
 Vue.use(Loading);
 Vue.use(Toast);
 
-Vue.prototype.$version = '1.2.3'
+Vue.prototype.$version = '1.3.0'
 Vue.prototype.$chargeAddress = privateConfig.chargeAddress
 Vue.prototype.$SDKInit = SDKInit
 Vue.prototype.$isMobile = isMobile()

@@ -47,7 +47,7 @@ export default ({
     const txId = this.$route.params.txId
     let buzzCache = localStorage.getItem('buzz') || '{}'
     buzzCache = JSON.parse(buzzCache)
-    if (buzzCache.txId === txId) {
+    if (buzzCache.txId === txId && buzzCache.encrypt === '0') {
       this.buzz = buzzCache
       if (this.buzz.content.endsWith('...')) {
         this.getFull(txId)
