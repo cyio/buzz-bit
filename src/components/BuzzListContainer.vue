@@ -187,7 +187,7 @@ export default {
         }
       })
     },
-    async getCurBuzzList(listType) {
+    async getCurBuzzList(listType, addLatest = false) {
       // console.log('real get buzz:', this.curListType)
       const _listType = listType || this.curListType
       const map = {
@@ -202,7 +202,11 @@ export default {
       if (list.length === 0) {
         this.buzzListData[_listType].finished = true
       } else {
-        this.buzzListData[_listType].data.push(...list)
+        if (addLatest) {
+          this.buzzListData[_listType].data.unshift(list[0])
+        } else {
+          this.buzzListData[_listType].data.push(...list)
+        }
         // .filter(i => i.encrypt === '0')
       }
     },
@@ -273,7 +277,7 @@ export default {
     // 用户发帖后，刷新
     'lastBuzzTime': function(val) {
       setTimeout(() => {
-        this.getCurBuzzList()
+        this.getCurBuzzList('', true)
       }, 400)
     },
   },

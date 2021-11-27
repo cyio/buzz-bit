@@ -19,29 +19,22 @@
           />
         </label>
       </button>
-      <!-- <span> 共 {{previewImages.length}} 个 </span> -->
-      <div class="file-meta" v-if="images.length">
-          <div class="size">文件大小：{{images[0].fileName}}</div>
-          <div class="size">文件类型：{{images[0].fileType}}</div>
-      </div>
-      <button @click="clear">清除选择</button>
-      <div class="img-options" v-if="0">
-        <div class="img-option-item">
-          <input type="checkbox" id="useOriginal" v-model="useOriginal">
-          <label for="useOriginal">使用原图</label>
-        </div>
-        <div class="img-option-item">
-          <input type="checkbox" id="useOriginalWidth" v-model="useOriginalWidth">
-          <label for="useOriginalWidth">压缩时，保持原图宽高</label>
+      <button @click="clear" class="clear-btn">清除选择</button>
+      <div class="file-options">
+        <div class="file-option-item">
+          <label for="useLargeFile">文件分片(支持 > 10MB)</label>
+          <input type="checkbox" id="useLargeFile" v-model="useLargeFile">
+          <span class="slice-about" v-show="useLargeFile">说明：会分割成 1MB 大小上传，信息流不可见、不可预览。仅用于测试。
+            上传大于 10MB 的文件，点击发送后，可能需要等待 1 分钟以上时间
+          </span>
         </div>
       </div>
-    </div>
-    <div class="image-preview" v-if="0">
-      <div class="item" v-for="(image, index) in previewImages" :key="index">
-        <div class="info">
-            原图：{{image.input.size|formatSize}} 压缩后：{{image.output.size|formatSize}} 压缩率：{{(image.output.size/image.input.size)|formatPercent}}</div>
-        <img :src="image.url" :alt="image.input.name" />
-        <button @click="removeImg(index)" class="remove-btn">X</button>
+      <div class="file-list" v-if="files && files.length">
+        <van-loading v-show="files.length !== totalFilesNum">处理中</van-loading>
+        文件列表：{{files.length}}/{{totalFilesNum}} 大小：{{files | computeSize}}
+        <div class="item" v-for="(file, index) in files" :key="index">
+            <div class="size">文件名：{{file.name}} {{index}} 类型：{{file.type}} 大小：{{file.size}}byte</div>
+        </div>
       </div>
     </div>
   </div>
@@ -49,8 +42,7 @@
 
 <script>
 import Vue from "vue";
-import Compressor from "compressorjs";
-import { formatBytes, getExtension } from '@/utils/index'
+import { formatBytes, getExtension, sliceFile } from '@/utils/index'
 
 export default Vue.extend({
   name: "FileUploader",
@@ -59,22 +51,26 @@ export default Vue.extend({
   },
   data() {
     return {
-      images: [],
+      files: [],
+      totalFilesNum: 0,
       previewImages: [],
       useOriginal: false,
-      useOriginalWidth: false
+      useOriginalWidth: false,
+      useLargeFile: false
     };
   },
   methods: {
     removeImg(index) {
-      this.images.splice(index, 1)
+      this.files.splice(index, 1)
       this.previewImages.splice(index, 1)
       this.$refs.selectInput.value = ''
     },
     clear() {
-      this.images = []
+      this.files = []
       this.previewImages = []
       this.$refs.selectInput.value = ''
+      this.totalFilesNum = 0
+      this.$emit('clear')
     },
     change: function (e) {
       this.handleFiles(e.target.files);
@@ -92,44 +88,54 @@ export default Vue.extend({
       } = e;
       this.handleFiles(files);
     },
-    optimizeOptions(file) {
-      const options = {}
-      // 仅大图需要转 webp，小图延用原格式
-      if (file.size < 10 * 1024) return options
-      const commonOptions = {
-        maxWidth: this.useOriginalWidth ? Infinity : 1080,
-        mimeType: 'image/webp',
-      }
-      return commonOptions
-    },
-    processImage(input) {
+    // 文件转换成 附件要求 格式，hex
+    processFile(input, {name, chunkIndex, chunkSize} = {}) {
       const self = this
-      const _options = this.optimizeOptions(input)
       return new Promise(async (resolve, reject) => {
-        const blobUrl = URL.createObjectURL(input)
         const binary = await this.blobToBinary(input); // Buffer
-        const imageObj = {
-          fileName: input.name,
-          fileType: input.type || getExtension(input.name),
-          data: binary.toString("hex"),
+        const fileObj = {
+          name: name || input.name,
+          type: input.type || getExtension(input.name),
+          hex: binary.toString("hex"),
+          size: input.size
         };
-        const previewObj = {
-          url: blobUrl,
-          input,
-          output: input
+        if (chunkIndex > -1) {
+          fileObj.chunkIndex = chunkIndex
         }
-        resolve({imageObj, previewObj});
+        console.log(fileObj.hex.length)
+        resolve({fileObj});
       });
     },
     async handleFiles(files) {
       if (!files) {
-        console.log('未选择有效文件')
+        this.$toast('请选择文件')
         return
       }
-      for (let i = 0; i < files.length && i < 9; i++) {
-        const {imageObj, previewObj} = await this.processImage(files[i]);
-        this.images.push(imageObj);
-        this.previewImages.push(previewObj);
+      this.totalFilesNum = files.length
+      for (let i = 0; i < files.length; i++) {
+        // 单文件大于 10MB'
+        const file = files[i]
+        if (this.useLargeFile) {
+        // if (files[i].size > 1024) {
+          // console.log(files[i] instanceof Blob)
+          const chunkSize = 1024 * 1024 * 1
+          let chunks = sliceFile(file, chunkSize)
+          this.totalFilesNum = chunks.length
+          // console.log('chunks: ', chunks.length)
+          for (let j = 0; j < chunks.length; j++) {
+            const {fileObj} = await this.processFile(chunks[j], {
+              name: file.name,
+              chunkIndex: j,
+              chunkSize
+            });
+            this.files.push(fileObj);
+          }
+          // console.log(this.files)
+        } else {
+          const {fileObj, previewObj} = await this.processFile(file);
+          this.files.push(fileObj);
+        }
+        // this.previewImages.push(previewObj);
       }
     },
     blobToBinary(fileBlob) {
@@ -154,13 +160,25 @@ export default Vue.extend({
     formatPercent(percent) {
       return (percent * 100).toFixed(2) + '%';
     },
+    computeSize(files) {
+      const fileSize = files.reduce((acc, cur) => acc + cur.size, 0)
+      return formatBytes(fileSize)
+    }
   },
   watch: {
-    'images': {
+    'files': {
         handler: function(newValue) {
-          this.$emit("change", this.images);
+          this.$emit("change", {
+            files: this.files
+          });
         },
         deep: true
+    },
+    'useLargeFile': function(val) {
+      if (val) {
+        this.clear()
+        this.$toast('请选择文件')
+      }
     }
   }
 });
@@ -197,6 +215,7 @@ a {
     background-color: #f8f9fa;
     height: 150px;
     border: 2px dashed #d8d2d2;
+    overflow-y: scroll;
     .select-input {
       visibility: hidden;
     }
@@ -223,11 +242,26 @@ a {
       }
     }
   }
-  .img-options {
+  .file-options {
     display: flex;
-    .img-option-item {
+    .file-option-item {
       margin-right: 10px;
     }
+  }
+  .slice-about {
+    color: #4e4d4d;
+    font-size: 12px;
+    margin-left: 10px;
+    margin-top: 10px;
+  }
+  .file-list {
+    color: #4e4d4d;
+    margin-left: 10px;
+    margin-top: 10px;
+    font-size: 12px;
+  }
+  .clear-btn {
+    margin-left: 10px;
   }
 }
 </style>

@@ -123,6 +123,9 @@ export default defineComponent({
         } else if (res.error_description) {
           this.$toast(res.error_description)
         }
+      }).catch((e) => {
+        window.location.clear()
+        window.location.href = '/'
       })
     },
     updateAccessToken(res) {
@@ -173,12 +176,11 @@ export default defineComponent({
     //  是否存在 user cache
     //    并行初始化 sdk
     //  sdk 是否初始化
-    if (!this.hasToken && this.$route.path === '/user' && this.code) {
+    if (this.code) {
+      // !this.hasToken && this.$route.path === '/user' &&
+      this.$toast('请等待...')
       this.getAccessToken(this.code).then(() => {
-        if (this.hasToken) {
-          // 初始化 SDK 并获取用户数据
-          this.initSDK()
-        }
+        window.location.href = '/user'
       })
     } else {
       const userCache = Storage.getObj('user') || '{}'
@@ -186,6 +188,9 @@ export default defineComponent({
         this.$store.commit('SET_USER', userCache);
         this.initSDK(false)
       } else {
+        if (this.hasToken && this.$route.path === '/user') {
+          this.initSDK()
+        }
       }
     }
   }

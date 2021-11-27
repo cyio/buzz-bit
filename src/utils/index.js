@@ -127,9 +127,24 @@ const shared = {
   isZh: /zh/.test(window.navigator.language || window.navigator.userLanguage),
 }
 
-function getExtension(str) {
+function getExtension(str = '') {
   let arr = str.split('.')
   return arr[arr.length - 1] || 'unknown'
+}
+
+const sliceFile = (fileBlob, chunkSize = 1024) => {
+  let chunks = []
+  const chunksAmount = Math.ceil(fileBlob.size / chunkSize)
+
+  for (let i = 0; i < chunksAmount; i += 1) {
+     const start = chunkSize * i
+     const end = chunkSize * (i + 1)
+
+     const chunk = fileBlob.slice(start, end, fileBlob.type)
+     chunks.push(chunk)
+  }
+
+  return chunks
 }
 
 export {
@@ -142,5 +157,6 @@ export {
   isSupportPDF,
   isMobile,
   shared,
-  getExtension
+  getExtension,
+  sliceFile
 }

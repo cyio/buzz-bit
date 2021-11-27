@@ -108,9 +108,9 @@ export default Vue.extend({
           const blobUrl = URL.createObjectURL(input)
           const binary = await this.blobToBinary(input);
           const imageObj = {
-            fileName: input.name,
-            fileType: input.type,
-            data: binary.toString("hex"),
+            name: input.name,
+            type: input.type,
+            hex: binary.toString("hex"),
           };
           const previewObj = {
             url: blobUrl,
@@ -129,9 +129,9 @@ export default Vue.extend({
               const binary = await this.blobToBinary(result);
 
               const imageObj = {
-                fileName: result.name,
-                fileType: result.type,
-                data: binary.toString("hex"),
+                name: result.name,
+                type: result.type,
+                hex: binary.toString("hex"),
               };
               const previewObj = {
                 url: blobUrl,
@@ -153,7 +153,7 @@ export default Vue.extend({
     },
     async handleFiles(files) {
       if (!files) {
-        console.log('未选择有效文件')
+        this.$toast('请选择文件')
         return
       }
       for (let i = 0; i < files.length && i < 9; i++) {
@@ -188,7 +188,9 @@ export default Vue.extend({
   watch: {
     'images': {
         handler: function(newValue) {
-          this.$emit("change", this.images);
+          this.$emit("change", {
+            files: this.images
+          });
         },
         deep: true
     }

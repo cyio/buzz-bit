@@ -15,7 +15,7 @@
     <div class="input-operation">
       <div class="text-option">
         <input type="checkbox" id="useEncrypt" v-model="useEncrypt">
-        <label for="useEncrypt">私密</label>
+        <label for="useEncrypt">加密</label>
         <input type="checkbox" id="showImgSelect" v-model="showImgSelect">
         <label for="showImgSelect">{{t('btn.image')}}</label>
         <input type="checkbox" id="showFileSelect" v-model="showFileSelect">
@@ -26,8 +26,8 @@
         :loading="!isSDKLoaded"
       >{{t('btn.send')}}</van-button>
     </div>
-    <uploader v-show="showImgSelect" ref="uploader" @change="handleMetafileChange" />
-    <file-Uploader v-show="showFileSelect" ref="uploader" @change="handleMetafileChange" />
+    <uploader v-show="showImgSelect" ref="imgUploader" @change="handleMetafileChange" />
+    <file-Uploader v-show="showFileSelect" ref="fileUploader" @change="handleMetafileChange" @clear="onClearFile" />
     <buzz-list-container
       scene="priv"
       :user="user"
@@ -52,6 +52,7 @@ import { useI18n } from 'vue-i18n-composable/src/index'
 function setLocal(key, val) {
   return window.localStorage.setItem(key, val)
 }
+const sliceTag = '#文件分片测试'
 
 export default {
   name: "Home",
@@ -117,7 +118,7 @@ export default {
       const mineFeeRate = 0.5
       const postImgFeeRate = 0.05
       const compressFeeRate = 0.005
-      const imgs = this.$refs.uploader.previewImages
+      const imgs = this.$refs.imgUploader.previewImages
       const fileSize = imgs.reduce((acc, cur) => acc + cur.output.size, 0)
       const savedSize = imgs.reduce((acc, cur) => acc + cur.input.size - cur.output.size, 0)
       // 基础体积费用 + 节省体积费用
@@ -125,6 +126,18 @@ export default {
       const savedSizeFee = Math.floor(savedSize * mineFeeRate * compressFeeRate)
       console.log('fee', { postFee, basicSizeFee, savedSizeFee})
       return { postFee, basicSizeFee, savedSizeFee }
+    },
+    computeFileFees() {
+      const postFee = 1000
+      const mineFeeRate = 0.5
+      const postFeeRate = 0.05
+      const files = this.showFileSelect
+        ? this.$refs.fileUploader.files
+        : this.$refs.imgUploader.previewImages.map(i => i.output)
+      const fileSize = files.reduce((acc, cur) => acc + cur.size, 0)
+      const fileSizeFee = Math.floor(fileSize * mineFeeRate * postFeeRate)
+      console.log('fee', { postFee, fileSizeFee })
+      return { postFee, fileSizeFee }
     },
     updateAttachmentsEncrypt() {
       if (this.useEncrypt) {
@@ -134,6 +147,10 @@ export default {
       }
     },
     send() {
+      let useSelfPath = false
+      if (this.isSlice) {
+        useSelfPath = true
+      }
       const buzzData = {
         createTime: new Date().getTime(),
         content: this.content,
@@ -149,7 +166,8 @@ export default {
         }),
         // mention: [],
       }
-      const feeMap = this.computeAppFees()
+      // const feeMap = this.attachments[0]?.fileType.includes('image') ? this.computeAppFees() : this.computeFileFees()
+      const feeMap = this.computeFileFees()
       const payTo = Object.keys(feeMap).map(key => ({
         amount: feeMap[key],
         address: this.$chargeAddress[key]
@@ -163,7 +181,7 @@ export default {
         encrypt: +this.useEncrypt,
         payCurrency: "BSV",
         payTo,
-        path: "/Protocols/SimpleMicroblog",
+        path: useSelfPath ? '/Protocols/SimpleMicroblog/self' : '/Protocols/SimpleMicroblog',
         dataType: "application/json",
         attachments: this.attachments,
         // attachments: [
@@ -183,11 +201,15 @@ export default {
             console.log(res.data.txId);
             this.content = ''
             this.attachments = []
-            this.$refs.uploader.clear()
+            this.clearFiles()
             this.lastBuzzTime = +new Date()
-            // this.getCurBuzzList()
+            this.$toast('发送成功')
           } else {
             new Error(res.data.message);
+            this.$toast(res.data.message)
+            if (res.code === 400) {
+              window.localStorage.clear()
+            }
           }
         },
         onCancel(res) {
@@ -214,14 +236,35 @@ export default {
         },
       })
     },
-    handleMetafileChange(files) {
-      this.attachments = files
+    handleMetafileChange({files}) {
+      this.attachments = files.map(file => {
+        let res = {
+          fileName: file.name,
+          fileType: file.type,
+          data: file.hex
+        }
+        if (file.chunkIndex > -1) {
+          res.chunkIndex = file.chunkIndex
+        }
+        return res
+      })
       if (this.showFileSelect && this.attachments.length) {
-        let { fileName, data: txId } = this.attachments[0]
-        this.content += `#分享文件 ${fileName}`
-        console.log(txId)
+        let { fileName, data } = this.attachments[0]
+        if (files[0].chunkIndex > -1) {
+          this.content = `${sliceTag}:${fileName}`
+        } else {
+          this.content += `#分享文件 ${fileName}`
+        }
+        // console.log(txId)
       }
     },
+    onClearFile() {
+      this.content = ''
+    },
+    clearFiles() {
+      this.$refs.imgUploader.clear()
+      this.$refs.fileUploader.clear()
+    }
   },
   computed: {
     ...mapState({
@@ -231,11 +274,30 @@ export default {
     }),
     isLogined() {
       return !!this.accessToken
+    },
+    isSlice() {
+      return this.attachments[0]?.chunkIndex > -1
     }
   },
   created() {
   },
   watch: {
+    'showFileSelect': function(val) {
+      if (val === false) {
+        // this.content = ''
+      } else {
+        this.showImgSelect = false
+      }
+      this.attachments = []
+    },
+    'showImgSelect': function(val) {
+      if (val === false) {
+        // this.content = ''
+      } else {
+        this.showFileSelect = false
+      }
+      this.attachments = []
+    },
   },
   mounted() {
   }

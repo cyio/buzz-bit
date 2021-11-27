@@ -2,7 +2,7 @@
   <div class="item-container" :class="['mode-' + mode]">
     <div class="item-inner" @click="goDetail">
       <buzz-header :buzz="buzz" />
-      <div v-if="mode === 'list' && buzz.encrypt === '1'">私密内容，进入查看</div>
+      <div v-if="mode === 'list' && buzz.encrypt === '1'">加密内容，进入查看</div>
       <template v-else>
         <van-loading v-show="loading">解密中</van-loading>
         <div class="content" v-if="!loading" v-html="displayContent(buzz.content, mode === 'list')"></div>
