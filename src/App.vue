@@ -181,6 +181,7 @@ export default defineComponent({
       this.$toast('请等待...')
       this.getAccessToken(this.code).then(() => {
         window.history.replaceState({},'', location.pathname)
+        this.initSDK()
       })
     } else {
       const userCache = Storage.getObj('user') || '{}'

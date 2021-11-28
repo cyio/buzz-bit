@@ -1,5 +1,5 @@
 <template>
-  <div class="buzz-item" :class="['mode-' + mode]">
+  <div class="buzz-item" :class="['mode-' + mode, ...classList]">
     <div class="item-left">
       <buzz-side :avatarTxId="buzz.avatarTxId" :userTxId="buzz.metaId" />
     </div>
@@ -83,6 +83,10 @@ export default Vue.extend({
     mode: {
       type: String,
       default: 'detail'
+    },
+    classList: {
+      type: Array,
+      default: () => ([])
     }
   },
   data() {
@@ -180,12 +184,17 @@ export default Vue.extend({
   padding: 10px 8px;
   overflow: hidden;
   display: flex;
-  &.mode-list:hover {
-    cursor: pointer;
-    background-color: #f7f7f7;
+  &.mode-list {
+    :hover {
+      cursor: pointer;
+      background-color: #f7f7f7;
+    }
     .media {
       max-height: 200px;
     }
+  }
+  &.is-original {
+    border-top: none;
   }
   .content {
     word-wrap: break-word;
@@ -205,7 +214,9 @@ export default Vue.extend({
     }
     img { 
       width: 130px;
-      // width: 100%;
+      min-height: 90px;
+      min-width: 130px;
+      background-color: #eee;
     }
     video {
       height: 210px;

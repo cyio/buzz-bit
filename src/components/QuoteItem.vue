@@ -16,6 +16,7 @@
         :show-footer="buzzData.data.rePostComment === ''"
         :show-avatar="buzzData.data.rePostComment === ''"
         :mode="mode"
+        :classList="['is-original']"
       />
       <div v-else class="content-reject">内容无权访问</div>
     </div>
@@ -126,9 +127,10 @@ export default ({
     margin-bottom: 10px;
   }
   .item-original {
-    background: #f7f8fb;
-    margin-left: 24px;
+    margin-left: 50px;
     margin-top: 12px;
+    border-radius: 20px;
+    border: 1px solid #cfd9de;
   }
   .footer {
     margin-top: 10px;

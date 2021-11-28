@@ -1,5 +1,5 @@
 <template>
-  <div class="wrap">
+  <div class="list-wrap">
     <div
       v-for="(buzz, index) in buzzListData"
       :key="buzz.txId + index"
@@ -36,9 +36,10 @@ export default Vue.extend({
 </script>
 
 <style scoped lang="scss">
-.wrap {
-  min-height: 300px;
-  // border: 1px solid #eae7e7;
+.list-wrap {
+  min-height: calc(100vh - 300px);
+  border: 1px solid #eae7e7;
   border-top: 0;
+  border-bottom: 0;
 }
 </style>

@@ -269,6 +269,7 @@ export default {
         // console.info('watch', val, old)
         this.buzzListData[this.curListType].currentPage = 1
         this.buzzListData[this.curListType].data = []
+        // this.buzzListData[this.curListType].loading = true;
         this.getCurBuzzList(val)
         if (this.$route.path !== `/pub/${val}` && !/follow|my/.test(val) && old) {
           this.$router.push({ path: `/pub/${val}` })
