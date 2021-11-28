@@ -19,7 +19,24 @@ module.exports = {
             test:/\.mjs$/,
             include: /node_modules/,
             type: "javascript/auto"  
-          }
+          },
+          // not work?
+          // {
+          //   test: /\.less$/,
+          //   use: [
+          //     {
+          //       loader: 'less-loader',
+          //       options: {
+          //         lessOptions: {
+          //           modifyVars: {
+          //             '@button-default-background-color': 'red',
+          //             '@tabs-bottom-bar-color': 'red'
+          //           },
+          //         },
+          //       },
+          //     },
+          //   ],
+          // },
         ]
       },
     },

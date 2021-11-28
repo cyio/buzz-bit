@@ -8,7 +8,7 @@
       <buzz-item :buzz="buzz" v-else />
     </template>
     <div class="title">评论：</div>
-    <van-loading v-show="curBuzzListData.loading" color="#1989fa" class="loading" />
+    <van-loading v-show="curBuzzListData.loading" color="var(--theme-color)" class="loading" />
     <div v-show="!loading">
       <buzz-list v-if="curBuzzListData.length" :buzzListData="curBuzzListData" class="comment-wrap" />
       <div v-else class="no-comment">暂无评论</div>

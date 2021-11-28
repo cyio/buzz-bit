@@ -5,7 +5,7 @@ export default {
       public: '广场',
       decode: '解码',
       setting: '设置',
-      about: '关于',
+      about: '费用说明',
       follow: '关注',
       my: '我的',
       hot: '热门',

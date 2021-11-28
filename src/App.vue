@@ -8,16 +8,19 @@
         >{{`${$isMobile ? '' : 'MetaID框架...'}`}}</van-loading>
       </div>
       <div class="links">
-        <router-link to="/user" v-if="hasToken || user.name">{{t('nav.home')}}</router-link>
-        <router-link to="/pub/hot">{{t('nav.public')}}</router-link>
-        <router-link to="/search">{{t('nav.search')}}</router-link>
-        <router-link to="/decode">{{t('nav.decode')}}</router-link>
-        <router-link to="/setting">{{t('nav.setting')}}</router-link>
-        <router-link to="/about">{{t('nav.about')}}</router-link>
+        <div class="link" v-for="item of links" :key="item.name">
+          <!-- hasToken || user.name -->
+          <router-link :to="item.to" v-if="item.enable" >
+            <!-- {{t('nav.home')}} -->
+            <!-- @click="activeNavName = item.name"  -->
+            <!-- :is-active="item.name === activeNavName"  -->
+            <nav-item :name="item.name" :is-active="item.name === currentRouteName" />
+          </router-link>
+        </div>
         <div class="user">
           <div v-if="hasToken || user.name" @click="authConfirm">
             <span v-if="user.name">{{user.name}}</span>
-            <!-- <van-loading v-else color="#1989fa" class="loading" /> -->
+            <!-- <van-loading v-else color="var(--theme-color)" class="loading" /> -->
           </div>
           <button @click="auth" v-else>{{t('btn.login')}}</button>
         </div>
@@ -38,6 +41,7 @@ import { Dialog } from 'vant';
 import { Storage } from '@/utils/index';
 import SDKInit from '@/utils/sdk';
 import { useI18n } from 'vue-i18n-composable/src/index'
+import NavItem from '@/components/NavItem.vue'
 
 function setLocal(key, val) {
   return window.localStorage.setItem(key, val)
@@ -50,17 +54,18 @@ export default defineComponent({
   props: {
   },
   components: {
+    NavItem
     // Search
-  },
-  setup() {
-    return {
-      ...useI18n(),
-    }
   },
   data() {
     return {
       showPub: location.host.includes('localhost'),
     };
+  },
+  setup() {
+    return {
+      ...useI18n(),
+    }
   },
   computed: {
     ...mapState({
@@ -70,7 +75,34 @@ export default defineComponent({
     }),
     hasToken() {
       return !!this.accessToken
-    }
+    },
+    currentRouteName() {
+      return this.$route.name;
+    },
+    links() {
+      return [
+        {
+          to: '/user',
+          name: 'User',
+          enable: this.hasToken || this.user.name
+        },
+        {
+          to: '/pub/hot',
+          name: 'PubList',
+          enable: true
+        },
+        {
+          to: '/search',
+          name: 'Search',
+          enable: true
+        },
+        {
+          to: '/setting',
+          name: 'Setting',
+          enable: true
+        },
+      ]
+    } 
   },
   methods: {
     resetState() {
@@ -168,7 +200,7 @@ export default defineComponent({
       if (!hasUserInfo) {
         this.getUser()
       }
-    }
+    },
   },
   created() {
     this.code = getUrlParameterByName('code')
@@ -194,6 +226,8 @@ export default defineComponent({
         }
       }
     }
+  },
+  mounted() {
   }
 });
 </script>
@@ -214,6 +248,7 @@ export default defineComponent({
   align-items: center;
   .title {
     cursor: pointer;
+    font-weight: bold;
   }
   .ver {
     margin-left: 5px;
@@ -234,6 +269,9 @@ export default defineComponent({
     margin-right: 6px;
     white-space: nowrap;
   }
+  .link {
+    margin-right: 6px;
+  }
 }
 
 .user {
@@ -243,9 +281,11 @@ export default defineComponent({
 }
 
 </style>
-<style>
+<style lang="scss">
 :root {
-  --theme-color: #ab490d;
+  --theme-color: #c68230;
+  --theme-deeper-color: #ab490d;
+  /* --theme-deeper-color: #83380a; */
 }
 #app {
   -webkit-font-smoothing: antialiased;
@@ -253,5 +293,9 @@ export default defineComponent({
   padding: 8px;
   max-width: 600px;
   margin: 0 auto;
+  .van-pagination__item--active {
+    background-color: var(--theme-color)!important;
+  }
 }
+
 </style>

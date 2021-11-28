@@ -1,15 +1,10 @@
 {
-  "name": "BuzzBit - Permanent Record",
+  "name": "BuzzBit",
   "short_name": "BuzzBit",
   "icons": [
     {
       "src": "favicon.png",
-      "sizes": "192x192",
-      "type": "image/png"
-    },
-    {
-      "src": "favicon.png",
-      "sizes": "512x512",
+      "sizes": "128x128",
       "type": "image/png"
     }
   ],

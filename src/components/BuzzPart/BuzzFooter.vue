@@ -38,7 +38,7 @@
           </div>
         </div>
         <div class="card-footer">
-          <van-button color="#1989fa"
+          <van-button color="var(--theme-color)"
             @click="doType === 'forward' ? doHandle('doForward') : doHandle('doComment')" size="small"
             class="send"
           >

@@ -1,6 +1,6 @@
 <template>
   <div class="file-decode">
-    <van-loading v-show="loading" color="#1989fa" class="loading" />
+    <van-loading v-show="loading" color="var(--theme-color)" class="loading" />
     <div v-if="!loading">
       <buzz-item v-if="buzz" :buzz="buzz" />
       <template v-else>

@@ -38,8 +38,8 @@
       :items="images"
       :index="index"
       @close="index = null"
-      :useZoomBar="true"
       closeOnClickOutsideMobile
+      enableWheelEvent
     ></cool-light-box>
   </div>
 </template>

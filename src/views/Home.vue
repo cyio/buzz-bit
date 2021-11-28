@@ -22,10 +22,13 @@
         <input type="checkbox" id="showFileSelect" v-model="showFileSelect">
         <label for="showFileSelect">{{t('btn.file')}}</label>
       </div>
-      <van-button color="#1989fa" @click="send" size="small"
+      <van-button color="var(--theme-color)" @click="send" size="small"
         :disabled='!isSDKLoaded || content === ""' class="send"
         :loading="!isSDKLoaded"
-      >{{t('btn.send')}}</van-button>
+      >
+        <!-- {{t('btn.send')}} -->
+        <van-icon name="guide-o" size="25" />
+      </van-button>
     </div>
     <uploader v-show="showImgSelect" ref="imgUploader" @change="handleMetafileChange" />
     <file-Uploader v-show="showFileSelect" ref="fileUploader" @change="handleMetafileChange" @clear="onClearFile" />

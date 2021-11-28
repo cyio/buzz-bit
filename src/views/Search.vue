@@ -7,9 +7,9 @@
         class="search-input"
         autofocus
       />
-      <van-button color="#1989fa" @click="onSearch" size="small" :disabled='keywords === ""' class="search-btn">搜 索</van-button>
+      <van-button color="var(--theme-color)" @click="onSearch" size="small" :disabled='keywords === ""' class="search-btn">搜 索</van-button>
     </div>
-    <van-loading v-show="buzzListData[curListType].loading" color="#1989fa" class="loading" />
+    <van-loading v-show="buzzListData[curListType].loading" color="var(--theme-color)" class="loading" />
     <BuzzList :buzzListData="curBuzzListData" v-show="!buzzListData[curListType].loading" />
     <van-pagination
       v-show="curBuzzListData.length > 0 && !buzzListData[curListType].loading"

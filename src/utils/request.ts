@@ -151,15 +151,15 @@ export class HttpRequests implements Http {
         return JSON.parse(fmtText)
         // return LosslessJSON.parse(resText, reviver)
       // } else if (response.status === 400) {
-      //   Vue.toasted.error('Unauthorized！').goAway(3000)
+      //   Vue.$toasted.fail('Unauthorized！').goAway(3000)
       //   throw new Error('Unauthorized！')
       // } else if (response.status === 401) {
-      //   Vue.toasted.error('Unauthorized！').goAway(3000)
+      //   Vue.$toasted.fail('Unauthorized！').goAway(3000)
       //   throw new Error('Unauthorized！')
       } else {
         // console.log(response)
         // alert("服务器繁忙，请稍后再试；\r\nCode:" + response.status);
-        // Vue.toasted.error('服务器繁忙，请稍后再试；\r\nCode:' + response.status)
+        // Vue.$toasted.fail('服务器繁忙，请稍后再试；\r\nCode:' + response.status)
         throw new CustomError(response.status, response)
       }
     }).then<R>((response) => {
@@ -169,13 +169,13 @@ export class HttpRequests implements Http {
     }).catch<R>((error) => {
       // alert("当前网络不可用，请检查网络设置！");
       if (error.code === 400) {
-        Vue.toasted.error('Unauthorized！').goAway(3000)
+        Vue.$toasted.fail('Unauthorized！').goAway(3000)
       } else if (error.code === 401) {
-        Vue.toasted.error('Unauthorized！').goAway(3000)
+        Vue.$toasted.fail('Unauthorized！').goAway(3000)
       } else if (error.code === 500) {
-        Vue.toasted.error('网络请求失败！').goAway(3000)
+        Vue.$toasted.fail('网络请求失败！').goAway(3000)
       } else {
-        Vue.toasted.error('当前网络不可用，请检查网络设置！').goAway(3000)
+        Vue.$toasted.fail('当前网络不可用，请检查网络设置！').goAway(3000)
       }
       return error
     })
@@ -198,14 +198,14 @@ export const callApi = async (config: ApiRequestTypes): Promise<ApiResultTypes> 
     return res
   } else if (res.c === 409) {
     setLocal('accessToken', '')
-    // Vue.toasted.error('登录信息已过期，请重新登录。').goAway(3000)
+    // Vue.$toasted.fail('登录信息已过期，请重新登录。').goAway(3000)
     setTimeout(() => {
       window.location.replace('/user/login')
     }, 3000)
     return res
   } else {
     if (res.m) {
-      // Vue.toasted.error(res.m).goAway(3000)
+      // Vue.$toasted.fail(res.m).goAway(3000)
     }
     throw res
   }

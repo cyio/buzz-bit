@@ -1,10 +1,11 @@
 <template>
   <div class="detail">
     <div class="head">
-      <button @click="$router.go(-1) ">{{t('btn.back')}}</button>
+      <van-icon class="back" name="arrow-left" @click="$router.go(-1)" />
+      <!-- <button >{{t('btn.back')}}</button> -->
     </div>
     <buzz-detail :buzz="buzz" v-if="buzz.protocol" />
-    <van-loading v-else color="#1989fa" class="loading" />
+    <van-loading v-else color="var(--theme-color)" class="loading" />
   </div>
 </template>
 
@@ -63,6 +64,15 @@ export default ({
 .detail {
   .head {
     margin-bottom: 15px;
+    .back {
+      width: 60px;
+      height: 40px;
+      background: #eee;
+      border-radius: 6px;
+      text-align: center;
+      line-height: 40px;
+      cursor: pointer;
+    }
   }
 }
 </style>

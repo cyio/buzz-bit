@@ -1,6 +1,6 @@
 <template>
   <div class="list-container">
-    <van-tabs v-model="curListType" color="#1989fa">
+    <van-tabs v-model="curListType" color="var(--theme-color)">
       <van-tab
         v-for="item in navDataComputed"
         :title="item.title"
@@ -13,7 +13,7 @@
             placeholder="请输入关键词" @search="onSearch"
             class="search-input"
           />
-          <van-button color="#1989fa" @click="onSearch" size="small" :disabled='keywords === ""' class="search-btn">搜 索</van-button>
+          <van-button color="var(--theme-color)" @click="onSearch" size="small" :disabled='keywords === ""' class="search-btn">搜 索</van-button>
         </div>
         <!-- <van-pull-refresh v-model="buzzListData[curListType].refreshing" @refresh="onRefresh"> -->
         <van-list

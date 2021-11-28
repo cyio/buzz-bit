@@ -1,6 +1,6 @@
 <template>
   <div class="user-detail">
-    <van-loading v-show="loading" color="#1989fa" class="loading" />
+    <van-loading v-show="loading" color="var(--theme-color)" class="loading" />
     <template v-if="!loading && curBuzzListData.length">
       <div class="head">
         <buzz-side :avatarTxId="curBuzzListData[0].avatarTxId" :userTxId="curBuzzListData[0].metaId" size="large" />
@@ -25,7 +25,7 @@
           <button class="tip" @click="tip">打赏 Buzz 主</button>
         </div>
       </div>
-      <van-loading v-show="buzzListData[curListType].loading" color="#1989fa" class="loading" />
+      <van-loading v-show="buzzListData[curListType].loading" color="var(--theme-color)" class="loading" />
       <BuzzList :buzzListData="curBuzzListData" v-show="!buzzListData[curListType].loading" />
       <van-pagination
         v-show="curBuzzListData.length > 0 && !buzzListData[curListType].loading"
