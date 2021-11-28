@@ -9,6 +9,7 @@
         type="textarea"
         :placeholder="t('post.inputPlaceholder')"
         clearable
+        @keydown="handleCmdEnter($event)"
       />
       <div class="word-count">{{content.length || ''}}</div>
     </div>
@@ -264,6 +265,11 @@ export default {
     clearFiles() {
       this.$refs.imgUploader.clear()
       this.$refs.fileUploader.clear()
+    },
+    handleCmdEnter(e) {
+      if (e && (e.metaKey || e.ctrlKey) && e.keyCode == 13) {
+        this.send()
+      }
     }
   },
   computed: {

@@ -124,7 +124,7 @@ export default defineComponent({
           this.$toast(res.error_description)
         }
       }).catch((e) => {
-        window.location.clear()
+        window.localStorage.clear()
         window.location.href = '/'
       })
     },
@@ -180,7 +180,7 @@ export default defineComponent({
       // !this.hasToken && this.$route.path === '/user' &&
       this.$toast('请等待...')
       this.getAccessToken(this.code).then(() => {
-        window.location.href = '/user'
+        window.history.replaceState({},'', location.pathname)
       })
     } else {
       const userCache = Storage.getObj('user') || '{}'

@@ -1,6 +1,9 @@
 <template>
   <div class="item-container" :class="['mode-' + mode]">
-    <div class="item-inner" @click="goDetail">
+    <div class="item-left">
+      <buzz-side :avatarTxId="buzz.avatarTxId" :userTxId="buzz.metaId" />
+    </div>
+    <div class="item-main" @click="goDetail">
       <buzz-header :buzz="buzz" />
       <div v-if="mode === 'list' && buzz.encrypt === '1'">加密内容，进入查看</div>
       <template v-else>
@@ -59,6 +62,7 @@ import Vue from "vue";
 import AppConfig from '@/config/'
 import { ImagePreview } from 'vant';
 import BuzzHeader from './BuzzPart/BuzzHeader.vue'
+import BuzzSide from './BuzzPart/BuzzAvatar.vue'
 import BuzzFooter from './BuzzPart/BuzzFooter.vue'
 import FileDecode from '@/components/FileDecode'
 import mixin from './BuzzPart/mixin'
@@ -78,6 +82,7 @@ export default Vue.extend({
   components: {
     [ImagePreview.Component.name]: ImagePreview.Component,
     BuzzHeader,
+    BuzzSide,
     BuzzFooter,
     FileDecode
   },
@@ -144,6 +149,9 @@ export default Vue.extend({
       isSDKLoaded: 'isSDKLoaded',
       accessToken: 'accessToken'
     }),
+    avatarUrl() {
+      return `https://showman.showpay.io/metafile/avatar/${this.buzz.avatarTxId}?timestamp=${+new Date()}`
+    }
   },
   filters: {
     parseVideoUrl: function(t) {
@@ -185,6 +193,7 @@ export default Vue.extend({
   border-top: 1px solid #eae7e7;
   padding: 10px 8px;
   overflow: hidden;
+  display: flex;
   &.mode-list:hover {
     cursor: pointer;
     background-color: #f7f7f7;
@@ -200,6 +209,7 @@ export default Vue.extend({
     display: flex;
     flex-wrap: wrap;
     margin-top: 10px;
+    max-height: 200px;
     .media-item {
       margin-right: 8px;
       // max-height: 281.25px;
@@ -230,6 +240,14 @@ export default Vue.extend({
   img {
     width: 100%;
     // margin-top: 10px;
+  }
+  .item-main {
+    margin-left: 12px;
+    width: 100%;
+    overflow: hidden;
+  }
+  .item-left {
+    width: 40px;
   }
 }
 </style>

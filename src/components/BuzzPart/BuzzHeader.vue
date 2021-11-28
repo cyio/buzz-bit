@@ -61,6 +61,9 @@ export default ({
   .userinfo {
     display: flex;
     align-items: center;
+    .username {
+      font-weight: bold;
+    }
     .time {
       color: #909399;
       font-size: 12px;

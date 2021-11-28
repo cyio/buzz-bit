@@ -3,6 +3,7 @@
     <van-loading v-show="loading" color="#1989fa" class="loading" />
     <template v-if="!loading && curBuzzListData.length">
       <div class="head">
+        <buzz-side :avatarTxId="curBuzzListData[0].avatarTxId" :userTxId="curBuzzListData[0].metaId" size="large" />
         <div class="username">{{curBuzzListData[0].userName}}</div>
       </div>
       <div class="wallet" v-if="check()">
@@ -24,7 +25,13 @@
           <button class="tip" @click="tip">打赏 Buzz 主</button>
         </div>
       </div>
-      <BuzzList :buzzListData="curBuzzListData" />
+      <van-loading v-show="buzzListData[curListType].loading" color="#1989fa" class="loading" />
+      <BuzzList :buzzListData="curBuzzListData" v-show="!buzzListData[curListType].loading" />
+      <van-pagination
+        v-show="curBuzzListData.length > 0 && !buzzListData[curListType].loading"
+        v-model="buzzListData[curListType].currentPage" :total-items="10000" :items-per-page="10"
+        force-ellipses
+      />
     </template>
   </div>
 </template>
@@ -32,11 +39,16 @@
 <script>
 import BuzzList from "@/components/BuzzList.vue";
 import { getBuzzList } from '@/api/buzz.ts'
+import { List, Pagination } from 'vant';
+import BuzzSide from '@/components/BuzzPart/BuzzAvatar.vue'
 
 export default ({
   name: "UserDetail",
   components: {
-    BuzzList
+    BuzzList,
+    BuzzSide,
+    [List.name]: List,
+    [Pagination.name]: Pagination,
   },
   data() {
     return {
@@ -44,7 +56,11 @@ export default ({
       curListType: 'user',
       buzzListData: {
         user: {
-          data: []
+          data: [],
+          loading: false,
+          refreshing: false,
+          finished: false,
+          currentPage: 1,
         }
       },
       currentPage: 1,
@@ -57,7 +73,7 @@ export default ({
     };
   },
   methods: {
-    getBuzzList() {
+    getUserBuzzList() {
       const metaId = this.$route.params.id
       const params = {
         Protocols: ['SimpleMicroblog'],
@@ -67,14 +83,31 @@ export default ({
         timestamp: 0
       }
       this.buzzListData[this.curListType].loading = true
-      getBuzzList(params).then(res => {
+      return getBuzzList(params).then(res => {
         this.buzzListData[this.curListType].loading = false
         const { code, data } = res
         if (code === 0) {
           const items = res.data.results?.items || []
-          this.buzzListData.user.data = items.filter(i => i.encrypt === '0')
+          return items.filter(i => i.encrypt === '0')
         }
       })
+    },
+    async getCurBuzzList(listType) {
+      console.log('real get buzz:', this.curListType)
+      const _listType = listType || this.curListType
+      const map = {
+        'user': 'getUserBuzzList',
+      }
+      this.buzzListData[_listType].loading = true
+      let list = await this[map[_listType]]()
+      this.buzzListData[_listType].loading = false
+      this.buzzListData[_listType].refreshing = false
+      if (list.length === 0) {
+        this.buzzListData[_listType].finished = true
+      } else {
+        this.buzzListData[_listType].data = list
+        // .filter(i => i.encrypt === '0')
+      }
     },
     check() {
       if (typeof window.sensilet == 'undefined') {
@@ -151,8 +184,13 @@ export default ({
       return this.selectedFT === 'BSV' ? this.amount * 0.00000001 : this.amount
     }
   },
+  watch: {
+    'buzzListData.user.currentPage': function(val) {
+      this.getCurBuzzList()
+    }
+  },
   created() {
-    this.getBuzzList()
+    this.getCurBuzzList()
     if (this.check()) {
       this.init()
     } else {
@@ -165,11 +203,13 @@ export default ({
 <style lang="scss" scoped>
 .user-detail {
   .head {
-    // display: flex;
+    display: flex;
+    margin-bottom: 14px;
     .username {
       font-size: 24px;
       font-weight: bold;
-      margin-bottom: 16px;
+      margin-left: 12px;
+      line-height: 40px;
     }
     .tip {
       margin-left: 16px;

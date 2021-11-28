@@ -203,7 +203,9 @@ export default {
         this.buzzListData[_listType].finished = true
       } else {
         if (addLatest) {
-          this.buzzListData[_listType].data.unshift(list[0])
+          if (list[0].txId !== this.buzzListData[_listType].data[0].txId) {
+            this.buzzListData[_listType].data.unshift(list[0])
+          }
         } else {
           this.buzzListData[_listType].data.push(...list)
         }

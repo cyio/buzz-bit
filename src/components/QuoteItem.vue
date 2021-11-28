@@ -1,8 +1,13 @@
 <template>
   <div class="quote-item" :class="['mode-' + mode]">
-    <div class="item-inner" @click="goDetail">
-      <buzz-header :buzz="buzz" />
-      <div class="content" v-html="displayContent(buzz.content)"></div>
+    <div class="quote-wrap">
+      <div class="item-left">
+        <buzz-side :avatarTxId="buzz.avatarTxId" :userTxId="buzz.metaId" />
+      </div>
+      <div class="item-main" @click="goDetail">
+        <buzz-header :buzz="buzz" />
+        <div class="content" v-html="displayContent(buzz.content)"></div>
+      </div>
     </div>
     <div class="item-original" v-if="buzzData.quoteItem">
       <buzz-item
@@ -22,6 +27,7 @@
 import { getBuzzRelationData, getBuzz } from '@/api/buzz'
 import BuzzItem from './BuzzItem.vue'
 import BuzzHeader from './BuzzPart/BuzzHeader.vue'
+import BuzzSide from './BuzzPart/BuzzAvatar.vue'
 import BuzzFooter from './BuzzPart/BuzzFooter.vue'
 import mixin from './BuzzPart/mixin'
 
@@ -39,6 +45,7 @@ export default ({
   components: {
     BuzzItem,
     BuzzHeader,
+    BuzzSide,
     BuzzFooter
   },
   data() {
@@ -56,6 +63,9 @@ export default ({
     }
   },
   computed: {
+    avatarUrl() {
+      return `https://showman.showpay.io/metafile/avatar/${this.buzz.avatarTxId}?timestamp=${+new Date()}`
+    }
   },
   created() {
     this.buzzData = Object.assign(this.buzzData, this.buzz)
@@ -109,15 +119,27 @@ export default ({
     cursor: pointer;
     background-color: #f7f7f7;
   }
+  .quote-wrap {
+    display: flex;
+  }
   .item-inner {
     margin-bottom: 10px;
   }
   .item-original {
     background: #f7f8fb;
     margin-left: 24px;
+    margin-top: 12px;
   }
   .footer {
     margin-top: 10px;
+  }
+  .item-main {
+    margin-left: 12px;
+    width: 100%;
+    overflow: hidden;
+  }
+  .item-left {
+    width: 40px;
   }
 }
 </style>
