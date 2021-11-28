@@ -90,6 +90,25 @@ const routes = [
 const router = new VueRouter({
   mode: 'history',
   routes,
+  // scrollBehavior (to, from, savedPosition) {
+  //   return new Promise((resolve, reject) => {
+  //     let pos = { x: 0, y: 0, behavior: 'smooth' }
+  //     if (savedPosition) {
+  //       pos = {...pos, ...savedPosition }
+  //     }
+  //     setTimeout(() => {
+  //       resolve(pos)
+  //       // scrollTo(0, pos.y)
+  //       // console.log(window.pageYOffset, pos.y)
+  //       // if (window.pageYOffset < pos.y) {
+  //       //   setTimeout(() => {
+  //       //     scrollTo(0, pos.y)
+  //       //     console.log(window.pageYOffset, pos.y)
+  //       //   }, 400)
+  //       // }
+  //     }, 500)
+  //   })
+  // }
 });
 
 export default router;
