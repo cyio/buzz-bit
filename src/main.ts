@@ -6,7 +6,7 @@ import router from "./router";
 import store from "./store";
 import "./registerServiceWorker";
 import { Button, Loading, Toast } from 'vant';
-import '@vant/touch-emulator';
+// import '@vant/touch-emulator';
 import privateConfig from '../private-config.json'
 import SDKInit from '@/utils/sdk';
 import { isMobile, shared } from '@/utils/'
@@ -19,7 +19,7 @@ Vue.use(Button);
 Vue.use(Loading);
 Vue.use(Toast);
 
-Vue.prototype.$version = '1.4.8'
+Vue.prototype.$version = '1.5.0'
 Vue.prototype.$chargeAddress = privateConfig.chargeAddress
 Vue.prototype.$SDKInit = SDKInit
 Vue.prototype.$isMobile = isMobile()

@@ -1,5 +1,5 @@
 <template>
-  <div class="item-container" :class="['mode-' + mode]">
+  <div class="buzz-item" :class="['mode-' + mode]">
     <div class="item-left">
       <buzz-side :avatarTxId="buzz.avatarTxId" :userTxId="buzz.metaId" />
     </div>
@@ -34,33 +34,19 @@
       </div>
       <buzz-footer :buzz="buzz" v-if="showFooter && buzz.txId" />
     </div>
-    <van-image-preview v-model="show" :images="images" 
-      :start-position="index"
-      @change="onChange" closeable
-      swipeDuration="100"
-    >
-      <template v-slot:index>
-        <div class="img-custom" v-show="images.length > 1">
-          <div class="img-nums">{{ index + 1 }}/{{images.length}}</div>
-          <div class="switch-btns" v-if="!$isMobile">
-            <div class="btn prev" :class="{'disabled': index <= 0}" @click="index = Math.max(index - 1, 0)">
-              {{index <= 0 ? '' : '上一个'}}
-            </div>
-            <div class="btn next" :class="{'disabled': index >= images.length - 1}" @click="index = Math.min(index + 1, images.length - 1)">
-              {{index >= images.length - 1 ? '' : '下一个'}}
-            </div>
-          </div>
-        </div>
-      </template>
-    </van-image-preview>
-    <!-- :overlay="false" -->
+    <cool-light-box
+      :items="images"
+      :index="index"
+      @close="index = null"
+      :useZoomBar="true"
+      closeOnClickOutsideMobile
+    ></cool-light-box>
   </div>
 </template>
 
 <script>
 import Vue from "vue";
 import AppConfig from '@/config/'
-import { ImagePreview } from 'vant';
 import BuzzHeader from './BuzzPart/BuzzHeader.vue'
 import BuzzSide from './BuzzPart/BuzzAvatar.vue'
 import BuzzFooter from './BuzzPart/BuzzFooter.vue'
@@ -69,6 +55,8 @@ import mixin from './BuzzPart/mixin'
 import { mapState } from 'vuex'
 import { useI18n } from 'vue-i18n-composable/src/index'
 import SDKInit from '@/utils/sdk';
+import CoolLightBox from 'vue-cool-lightbox'
+import 'vue-cool-lightbox/dist/vue-cool-lightbox.min.css'
 
 function imgFix(str) {
   str = str.split('.')
@@ -80,11 +68,11 @@ export default Vue.extend({
   name: "BuzzItem",
   mixins: [mixin],
   components: {
-    [ImagePreview.Component.name]: ImagePreview.Component,
     BuzzHeader,
     BuzzSide,
     BuzzFooter,
-    FileDecode
+    FileDecode,
+    CoolLightBox
   },
   props: {
     buzz: Object,
@@ -92,12 +80,14 @@ export default Vue.extend({
       type: Boolean,
       default: true
     },
-    mode: String
+    mode: {
+      type: String,
+      default: 'detail'
+    }
   },
   data() {
     return {
-      show: false,
-      index: 0,
+      index: null,
       images: [],
       loading: false,
     };
@@ -124,10 +114,6 @@ export default Vue.extend({
     handlePreviewImg(arr, index) {
       const images = arr.map(i => this.getAssetUrl(i))
       this.images = images
-      this.index = index
-      this.show = !this.show
-    },
-    onChange(index) {
       this.index = index
     },
     isShareFile(buzz) {
@@ -188,7 +174,7 @@ export default Vue.extend({
 </script>
 
 <style scoped lang="scss">
-.item-container {
+.buzz-item {
   text-align: left;
   border-top: 1px solid #eae7e7;
   padding: 10px 8px;
@@ -197,6 +183,9 @@ export default Vue.extend({
   &.mode-list:hover {
     cursor: pointer;
     background-color: #f7f7f7;
+    .media {
+      max-height: 200px;
+    }
   }
   .content {
     word-wrap: break-word;
@@ -209,7 +198,6 @@ export default Vue.extend({
     display: flex;
     flex-wrap: wrap;
     margin-top: 10px;
-    max-height: 200px;
     .media-item {
       margin-right: 8px;
       // max-height: 281.25px;
