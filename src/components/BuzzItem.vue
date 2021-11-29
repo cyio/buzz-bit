@@ -1,5 +1,5 @@
 <template>
-  <div class="buzz-item" :class="['mode-' + mode, ...classList]">
+  <div class="buzz-item" :class="['mode-' + mode, isOriginal ? 'is-original' : '']">
     <div class="item-left">
       <buzz-side :avatarTxId="buzz.avatarTxId" :userTxId="buzz.metaId" />
     </div>
@@ -84,10 +84,14 @@ export default Vue.extend({
       type: String,
       default: 'detail'
     },
-    classList: {
-      type: Array,
-      default: () => ([])
-    }
+    isOriginal: {
+      type: Boolean,
+      default: false
+    },
+    // classList: {
+    //   type: Array,
+    //   default: () => ([])
+    // }
   },
   data() {
     return {
@@ -124,7 +128,7 @@ export default Vue.extend({
       return buzz.content.includes('#分享文件')
     },
     goDetail() {
-      if (this.mode === 'list') {
+      if (this.mode === 'list' || (this.mode === 'detail' && this.isOriginal)) {
         this.$router.push({ path: `/detail/${this.buzz.txId}` })
         if (this.buzz.comment) {
           localStorage.setItem('buzz', JSON.stringify(this.buzz))
@@ -184,7 +188,7 @@ export default Vue.extend({
   padding: 10px 8px;
   overflow: hidden;
   display: flex;
-  &.mode-list {
+  &.mode-list, &.is-original {
     :hover {
       cursor: pointer;
       background-color: #f7f7f7;

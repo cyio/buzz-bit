@@ -28,7 +28,7 @@
       </div>
     </div>
     <keep-alive exclude="Detail">
-      <router-view />
+      <router-view :key="$route.fullPath" />
     </keep-alive>
   </div>
 </template>

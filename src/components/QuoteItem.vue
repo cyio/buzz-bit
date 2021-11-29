@@ -16,7 +16,7 @@
         :show-footer="buzzData.data.rePostComment === ''"
         :show-avatar="buzzData.data.rePostComment === ''"
         :mode="mode"
-        :classList="['is-original']"
+        :is-original="true"
       />
       <div v-else class="content-reject">内容无权访问</div>
     </div>
@@ -37,7 +37,10 @@ export default ({
   mixins: [mixin],
   props: {
     buzz: Object,
-    mode: String,
+    mode: {
+      type: String,
+      default: 'detail'
+    },
     showFooter: {
       type: Boolean,
       default: true

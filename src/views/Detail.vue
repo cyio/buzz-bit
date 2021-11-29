@@ -4,7 +4,7 @@
       <van-icon class="back" name="arrow-left" @click="$router.go(-1)" />
       <!-- <button >{{t('btn.back')}}</button> -->
     </div>
-    <buzz-detail :buzz="buzz" v-if="buzz.protocol" />
+    <buzz-detail :buzz="buzz" v-if="!showLoading" />
     <van-loading v-else color="var(--theme-color)" class="loading" />
   </div>
 </template>
@@ -22,7 +22,8 @@ export default ({
   data() {
     return {
       // txId: '',
-      buzz: {}
+      buzz: {},
+      showLoading: false,
     };
   },
   setup() {
@@ -32,12 +33,17 @@ export default ({
   },
   methods: {
     getFull(txId) {
+      this.showLoading = true
       getBuzz({txId}).then(res => {
+        this.showLoading = false
         const { code, data } = res
         if (code === 0) {
-          this.dataDone = true
           const items = data.results?.items || []
-          this.buzz = items[0] || {}
+          if (items.length) {
+            this.buzz = items[0] || {}
+          } else {
+            this.$toast('数据未查询到，请稍后再试')
+          }
         }
       })
     }
