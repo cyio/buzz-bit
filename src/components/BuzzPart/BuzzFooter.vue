@@ -12,9 +12,12 @@
       <div class="item forward" @click.stop="showCommentBox = true;doType = 'forward'">{{t('post.forward')}}</div>
       <div class="item comment" @click.stop="showCommentBox = true;doType = 'comment'">{{t('post.comment')}}</div>
     </div>
-    <van-popup v-model="showCommentBox" closeable
-      duration="0"
+    <van-popup
+      v-model="showCommentBox"
+      closeable
+      :duration="0"
       class="forward-popup"
+      @click.stop=""
     >
       <div class="card forward-card">
         <div class="card-header">
@@ -25,24 +28,34 @@
             <!-- <avatar :src="hexToBase64Img(userInfo.headUrl)" :size="40" /> -->
             <!-- <avatar :tx="userInfo.avatarTxId" :size="40" /> -->
             <div class="field">
-              <textarea v-model="content" placeholder="添加评论" autofocus />
+              <van-field
+                v-model="content"
+                rows="2"
+                autosize
+                label=""
+                type="textarea"
+                :placeholder="t('post.inputPlaceholder')"
+                clearable
+                @keydown="handleCmdEnter($event)"
+              />
+              <!-- <div class="word-count">{{content.length || ''}}</div> -->
             </div>
           </div>
-          <div class="forward-buzz">
+          <!-- <div class="forward-buzz">
             <buzz-item
               v-if="showCommentBox"
               :buzz="buzz"
               :show-footer="false"
               :show-relation="false"
             />
-          </div>
+          </div> -->
         </div>
         <div class="card-footer">
           <van-button color="var(--theme-color)"
-            @click="doType === 'forward' ? doHandle('doForward') : doHandle('doComment')" size="small"
+            @click="send" size="small"
             class="send"
           >
-            发送
+            <van-icon name="guide-o" size="25" />
           </van-button>
         </div>
       </div>
@@ -53,15 +66,16 @@
 <script>
 import { mapState } from 'vuex'
 import { useI18n } from 'vue-i18n-composable/src/index'
-import { Popup } from 'vant';
+import { Popup, Field } from 'vant';
 
 export default ({
-  name: "BuzzHeader",
+  name: "BuzzFooter",
   props: {
     buzz: Object
   },
   components: {
     [Popup.name]: Popup,
+    [Field.name]: Field,
   },
   data() {
     return {
@@ -170,6 +184,14 @@ export default ({
       this.content = ''
       this.showCommentBox = false
     },
+    handleCmdEnter(e) {
+      if (e && (e.metaKey || e.ctrlKey) && e.keyCode == 13) {
+        this.send()
+      }
+    },
+    send() {
+      this.doType === 'forward' ? this.doHandle('doForward') : this.doHandle('doComment')
+    },
   },
   computed: {
     ...mapState({
@@ -222,6 +244,11 @@ export default ({
     .send {
       width: 80px;
     }
+  }
+  .van-field {
+    border: 1px solid #e4e0e0;
+    border-radius: 6px;
+    margin-bottom: 16px;
   }
 }
 </style>
