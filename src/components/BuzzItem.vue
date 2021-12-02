@@ -8,7 +8,7 @@
       <div v-if="mode === 'list' && buzz.encrypt === '1'">加密内容，进入查看</div>
       <template v-else>
         <van-loading v-show="loading">解密中</van-loading>
-        <div class="content" v-if="!loading" v-html="displayContent(buzz.content, mode === 'list')"></div>
+        <div class="content" v-if="!loading" v-html="displayContent(buzz.content || buzz.publicContent, mode === 'list')"></div>
       </template>
       <div class="media">
         <div class="media-item" v-for="(metafile, index) in buzz.attachments" :key="index">
@@ -34,13 +34,34 @@
       </div>
       <buzz-footer :buzz="buzz" v-if="showFooter && buzz.txId" />
     </div>
-    <cool-light-box
+    <van-image-preview
+      v-model="show"
+      :images="images" 
+      :start-position="index"
+      @change="onChange" closeable
+      :swipeDuration="100"
+    >
+      <template v-slot:index>
+        <div class="img-custom" v-show="images.length > 1">
+          <div class="img-nums">{{ index + 1 }}/{{images.length}}</div>
+          <div class="switch-btns" v-if="!$isMobile">
+            <div class="btn prev" :class="{'disabled': index <= 0}" @click="index = Math.max(index - 1, 0)">
+              {{index <= 0 ? '' : '上一个'}}
+            </div>
+            <div class="btn next" :class="{'disabled': index >= images.length - 1}" @click="index = Math.min(index + 1, images.length - 1)">
+              {{index >= images.length - 1 ? '' : '下一个'}}
+            </div>
+          </div>
+        </div>
+      </template>
+    </van-image-preview>
+    <!-- <cool-light-box
       :items="images"
       :index="index"
       @close="index = null"
       closeOnClickOutsideMobile
       enableWheelEvent
-    ></cool-light-box>
+    ></cool-light-box> -->
   </div>
 </template>
 
@@ -55,8 +76,9 @@ import mixin from './BuzzPart/mixin'
 import { mapState } from 'vuex'
 import { useI18n } from 'vue-i18n-composable/src/index'
 import SDKInit from '@/utils/sdk';
-import CoolLightBox from 'vue-cool-lightbox'
-import 'vue-cool-lightbox/dist/vue-cool-lightbox.min.css'
+// import CoolLightBox from 'vue-cool-lightbox'
+// import 'vue-cool-lightbox/dist/vue-cool-lightbox.min.css'
+import { ImagePreview } from 'vant';
 
 function imgFix(str) {
   str = str.split('.')
@@ -72,7 +94,8 @@ export default Vue.extend({
     BuzzSide,
     BuzzFooter,
     FileDecode,
-    CoolLightBox
+    // CoolLightBox,
+    [ImagePreview.Component.name]: ImagePreview.Component,
   },
   props: {
     buzz: Object,
@@ -95,7 +118,9 @@ export default Vue.extend({
   },
   data() {
     return {
-      index: null,
+      show: false,
+      index: 0,
+      // index: null,
       images: [],
       loading: false,
     };
@@ -122,6 +147,10 @@ export default Vue.extend({
     handlePreviewImg(arr, index) {
       const images = arr.map(i => this.getAssetUrl(i))
       this.images = images
+      this.index = index
+      this.show = !this.show
+    },
+    onChange(index) {
       this.index = index
     },
     isShareFile(buzz) {
@@ -191,7 +220,7 @@ export default Vue.extend({
   &.mode-list, &.is-original {
     :hover {
       cursor: pointer;
-      background-color: #f7f7f7;
+      // background-color: #f7f7f7;
     }
     .media {
       max-height: 200px;

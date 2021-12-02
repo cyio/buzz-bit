@@ -19,8 +19,12 @@
     <div class="preview">
       解析结果：
       <div class="size"></div>
-      <file-decode v-if="txId" :txId="txId" :apiService="selected"
+      <file-decode
+        v-if="txId"
+        :txId="txId"
+        :apiService="selected"
         :showMetaInfo="true"
+        :key="txId"
        />
     </div>
   </div>

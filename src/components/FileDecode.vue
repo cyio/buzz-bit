@@ -1,7 +1,7 @@
 <template>
   <div class="file-decode">
-    <van-loading v-show="loading" color="var(--theme-color)" class="loading" />
-    <div v-if="!loading">
+    <van-loading v-if="loading" color="var(--theme-color)" class="loading" />
+    <div v-else>
       <buzz-item v-if="buzz" :buzz="buzz" />
       <template v-else>
         <div class="size" v-show="showMetaInfo">文件大小：{{blob.size}} 文件类型：{{blob.type}}</div>
@@ -53,7 +53,7 @@ export default ({
   },
   components: {
     FilePreview,
-    BuzzItem
+    'buzz-item': BuzzItem
   },
   data() {
     return {
@@ -81,9 +81,9 @@ export default ({
       let arr = asm.split(' ')
       if (1) {
         console.log(arr)
-        let res = arr.map(i => i.length <= 1000 ? i : 'too long')
+        let res = arr.map(i => i.length <= 100000 ? i : 'too long')
           .map(i => hexToUtf8(i))
-        if (res[6].includes('SimpleMicroblog')) {
+        if (res[6].includes('SimpleMicroblog') || res[6].includes('MetaAccessContent')) {
           this.buzz = JSON.parse(res[7])
           this.buzz.timestamp = this.buzz.createTime
         }
@@ -95,7 +95,7 @@ export default ({
       let binaryStr = hexToUtf8(arr[arr.length - 1])
       let isBinary = binaryStr === 'binary'
       if (!isBinary) {
-        this.$toast('不是文件')
+        // this.$toast('不是文件')
         return
       }
       // console.log(arr)
