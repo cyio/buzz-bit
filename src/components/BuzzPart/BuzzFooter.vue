@@ -15,7 +15,7 @@
         <inline-svg :src="require('@/assets/icons/like.svg')"/>
         <div class="num">{{buzz.like.length}}</div>
       </div>
-      <div class="item donate">
+      <div class="item donate" @click.stop="showTipsPopup = true">
         <inline-svg :src="require('@/assets/icons/bitcoin2.svg')"/>
         <div class="num">{{buzz.donate.length}}</div>
       </div>
@@ -73,6 +73,15 @@
         </div>
       </div>
     </van-popup>
+    <van-popup
+      v-model="showTipsPopup"
+      closeable
+      :duration="0"
+      class="tips-popup"
+      @click.stop=""
+    >
+      <buzz-tips @amount-selected="handleAmountSelected" />
+    </van-popup>
   </div>
 </template>
 
@@ -80,6 +89,7 @@
 import { mapState } from 'vuex'
 import { useI18n } from 'vue-i18n-composable/src/index'
 import { Popup, Field } from 'vant';
+import BuzzTips from '@/components/BuzzPart/BuzzTips.vue'
 
 export default ({
   name: "BuzzFooter",
@@ -89,10 +99,12 @@ export default ({
   components: {
     [Popup.name]: Popup,
     [Field.name]: Field,
+    BuzzTips
   },
   data() {
     return {
       showCommentBox: false,
+      showTipsPopup: false,
       content: '',
       doType: 'forward'
     };
@@ -153,9 +165,9 @@ export default ({
       console.log(config)
       window.__metaIdJs.addProtocolNode(config);
     },
-    doHandle(func) {
+    doHandle(func, ...rest) {
       if (this.isSDKLoaded) {
-        this[func]()
+        this[func](...rest)
       } else {
         this.$toast('请等待 MetaID框架 加载完成');
       }
@@ -185,6 +197,45 @@ export default ({
         callback: (res) => {
           if (res.code === 200) {
             this.buzz.like.push({})
+          } else {
+            new Error(res.data.message);
+          }
+        }
+      }
+      console.log(config)
+      window.__metaIdJs.addProtocolNode(config);
+    },
+    handleAmountSelected(amount) {
+      this.showTipsPopup = false
+      this.doHandle('doDonate', amount)
+    },
+    doDonate(amount) {
+      const accessToken = window.localStorage.getItem('access_token')
+      const config = {
+        nodeName: "SimpleArticleDonate",
+        metaIdTag: "MetaId",
+        brfcId: "5c7afdb85de5",
+        accessToken: accessToken,
+        encrypt: 0,
+        payCurrency: "BSV",
+        payTo: [
+          { amount, address: this.buzz.zeroAddress },
+          { amount: amount * 0.1, address: this.$chargeAddress.tipsFee },
+        ],
+        dataType: 'applicaition/json',
+        path: "/Protocols/SimpleArticleDonate",
+        data: JSON.stringify({
+          createTime: +new Date(),
+          amount: "" + amount,
+          recipientAddress: this.buzz.zeroAddress,
+          recipientID: this.buzz.metaId,
+          targetID: this.buzz.txId,
+          // message: "hi" // showapp 消息目前不支持
+        }),
+        callback: (res) => {
+          if (res.code === 200) {
+            this.buzz.donate.push({})
+            this.$toast('发送成功！');
           } else {
             new Error(res.data.message);
           }

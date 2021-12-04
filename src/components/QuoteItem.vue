@@ -137,6 +137,7 @@ export default ({
   }
   .footer {
     margin-top: 10px;
+    padding-left: 50px;
   }
   .item-main {
     margin-left: 12px;
