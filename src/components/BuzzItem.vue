@@ -32,7 +32,11 @@
           />
         </div>
       </div>
-      <buzz-footer :buzz="buzz" v-if="showFooter && buzz.txId" />
+      <buzz-footer
+        v-if="showFooter && buzz.txId"
+        :buzz="buzz"
+        v-on="$listeners"
+      />
     </div>
     <van-image-preview
       v-model="show"
@@ -87,7 +91,7 @@ function imgFix(str) {
 }
 
 export default Vue.extend({
-  name: "BuzzItem",
+  name: "buzz-item",
   mixins: [mixin],
   components: {
     BuzzHeader,

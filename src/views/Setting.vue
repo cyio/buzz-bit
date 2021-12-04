@@ -8,12 +8,12 @@
       <router-link to="/decode">{{t('nav.decode')}}</router-link>
     </div>
     <div class="item">
-      应用版本  {{$version}}
-      <button @click="refresh">强制更新</button>
-      <button @click="reset">清除缓存(如遇登录问题)</button>
+      <router-link to="/about">{{t('nav.about')}}</router-link>
     </div>
     <div class="item">
-      <router-link to="/about">{{t('nav.about')}}</router-link>
+      应用版本  {{$version}}
+      <van-button @click="refresh" color="var(--theme-color)" size="small">强制更新</van-button>
+      <van-button @click="reset" color="var(--theme-color)" size="small">清除缓存</van-button>
     </div>
   </div>
 </template>
@@ -76,6 +76,9 @@ export default ({
   margin-bottom: 15px;
   .item {
     margin-bottom: 16px;
+  }
+  button {
+    margin-left: 12px;
   }
 }
 </style>

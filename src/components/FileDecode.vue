@@ -26,7 +26,7 @@
 <script>
 import { Script } from 'bsv'
 import FilePreview from '@/components/FilePreview'
-import BuzzItem from "@/components/BuzzItem";
+// import BuzzItem from "@/components/BuzzItem";
 import {queryHex} from '@/api/'
 
 function hexToUtf8(s){
@@ -53,7 +53,7 @@ export default ({
   },
   components: {
     FilePreview,
-    'buzz-item': BuzzItem
+    BuzzItem: () => import('@/components/BuzzItem')
   },
   data() {
     return {

@@ -3,7 +3,7 @@
     <div class="title">支持 Metafile 协议 1.0</div>
     <!-- 请导入交易原始文件（hex） -->
     <input type="text" name=""
-        id="" placeholder="输入 metafile:// 地址" v-model="txUrl">
+        id="" placeholder="输入含有有效 txid 的地址，或仅 txid" v-model="txUrl">
     <button @click="checkInput">获取</button>
     <button @click="clear">清除</button>
     <div class="form">

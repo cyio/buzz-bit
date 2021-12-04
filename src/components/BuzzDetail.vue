@@ -5,7 +5,11 @@
         v-if="buzz.protocol.toLowerCase() === 'simplerepost'"
         :buzz="buzz"
       />
-      <buzz-item :buzz="buzz" v-else />
+      <buzz-item
+        v-else
+        :buzz="buzz"
+        @sent="onSent"
+      />
     </template>
     <div class="title">评论：</div>
     <van-loading v-show="curBuzzListData.loading" color="var(--theme-color)" class="loading" />
@@ -66,6 +70,9 @@ export default ({
         }
       })
     },
+    onSent() {
+      this.getInteractiveBuzzList()
+    }
   },
   computed: {
     curBuzzListData() {

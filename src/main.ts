@@ -11,6 +11,7 @@ import privateConfig from '../private-config.json'
 import SDKInit from '@/utils/sdk';
 import { isMobile, shared } from '@/utils/'
 import translations from './i18n'
+import InlineSvg from 'vue-inline-svg';
 
 Vue.config.productionTip = false;
 
@@ -19,8 +20,9 @@ Vue.use(Button);
 Vue.use(Loading);
 Vue.use(Toast);
 Vue.use(Icon);
+Vue.component('inline-svg', InlineSvg);
 
-Vue.prototype.$version = '1.5.10'
+Vue.prototype.$version = '1.6.0'
 Vue.prototype.$chargeAddress = privateConfig.chargeAddress
 Vue.prototype.$SDKInit = SDKInit
 Vue.prototype.$isMobile = isMobile()

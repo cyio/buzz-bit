@@ -1,11 +1,24 @@
 <template>
   <div class="item-footer">
-    <div class="left"></div>
+    <!-- <div class="left"></div> -->
     <div class="right" v-if="buzz.comment">
-      <div class="item forward" @click.stop="showCommentBox = true;doType = 'forward'">{{t('post.forward')}}[{{buzz.rePost.length}}]</div>
-      <div class="item comment" @click.stop="showCommentBox = true;doType = 'comment'">{{t('post.comment')}}[{{buzz.comment.length}}]</div>
-      <div class="item like" @click.stop="doHandle('doLike')">{{t('post.like')}}[{{buzz.like.length}}]</div>
-      <div class="item donate">{{t('post.tip')}}[{{buzz.donate.length}}]</div>
+      <div class="item comment" @click.stop="showCommentBox = true;doType = 'comment'">
+        <!-- {{t('post.comment')}} -->
+        <inline-svg :src="require('@/assets/icons/comment.svg')"/>
+        <div class="num">{{buzz.comment.length}}</div>
+      </div>
+      <div class="item forward" @click.stop="showCommentBox = true;doType = 'forward'">
+        <inline-svg :src="require('@/assets/icons/forward.svg')"/>
+        <div class="num">{{buzz.rePost.length}}</div>
+      </div>
+      <div class="item like" @click.stop="doHandle('doLike')">
+        <inline-svg :src="require('@/assets/icons/like.svg')"/>
+        <div class="num">{{buzz.like.length}}</div>
+      </div>
+      <div class="item donate">
+        <inline-svg :src="require('@/assets/icons/bitcoin2.svg')"/>
+        <div class="num">{{buzz.donate.length}}</div>
+      </div>
     </div>
     <!-- 搜索页数据不一致 -->
     <div class="right" v-else>
@@ -183,6 +196,7 @@ export default ({
     handleForward(res) {
       this.content = ''
       this.showCommentBox = false
+      this.$emit('sent')
     },
     handleCmdEnter(e) {
       if (e && (e.metaKey || e.ctrlKey) && e.keyCode == 13) {
@@ -217,14 +231,30 @@ export default ({
   color: #666667;
   font-size: 12px;
   display: flex;
+  margin-top: 5px;
   a {
     color: inherit;
   }
   .right {
     display: flex;
+    width: 100%;
+    justify-content: space-between;
   }
   .item  {
     margin-right: 6px;
+    display: flex;
+    align-items: center;
+    padding: 6px;
+    transition-duration: 0.2s;
+    transition-property: background-color, box-shadow;
+    svg {
+      width: 19px;
+      margin-right: 10px;
+    }
+    &:hover {
+      background-color: rgb(198 130 48 / 20%);
+      border-radius: 30px;
+    }
   }
   .forward:hover , .comment:hover, .like:hover {
     cursor: pointer;

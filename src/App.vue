@@ -22,7 +22,7 @@
             <span v-if="user.name">{{user.name}}</span>
             <!-- <van-loading v-else color="var(--theme-color)" class="loading" /> -->
           </div>
-          <button @click="auth" v-else>{{t('btn.login')}}</button>
+          <van-button @click="auth" v-else color="var(--theme-color)" size="small">{{t('btn.login')}}</van-button>
         </div>
         <!-- <search /> -->
       </div>

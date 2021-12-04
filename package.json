@@ -26,6 +26,7 @@
     "vue-cool-lightbox": "^2.7.4",
     "vue-i18n": "^8.26.7",
     "vue-i18n-composable": "^0.2.2",
+    "vue-inline-svg": "^2.1.0",
     "vue-property-decorator": "^9.1.2",
     "vue-router": "^3.2.0",
     "vuex": "^3.4.0"
