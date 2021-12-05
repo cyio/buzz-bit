@@ -121,6 +121,7 @@ export default defineComponent({
       tId = setInterval(this.checkLogin, 400)
     },
     authConfirm() {
+      if (this.isInShowApp) return
       Dialog.confirm({
         // title: '标题',
         message: '前往登录/切换帐号',
@@ -207,7 +208,7 @@ export default defineComponent({
         console.log('userinfo: ', res)
         if (res.appAccessToken) {
           this.$store.commit('SET_ACCESS_TOKEN', res.appAccessToken)
-          this.$toast('设置 app token 成功')
+          console.log('设置 app token 成功')
         }
       } else {
         console.error('get user error: ', res)

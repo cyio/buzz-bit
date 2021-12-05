@@ -331,5 +331,8 @@ export default ({
     border-radius: 6px;
     margin-bottom: 16px;
   }
+  .tips-popup {
+    max-width: 100%;
+  }
 }
 </style>

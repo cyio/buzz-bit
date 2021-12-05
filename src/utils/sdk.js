@@ -30,7 +30,6 @@ export default function SDKInit() {
       return
     }
     console.log('before new MetaIdJs', performance.now() / 1000)
-    // window.__metaIdJsLoading = true
     window.__metaIdJs = new MetaIdJs({
       oauthSettings: {
         clientId: AppConfig.oauthSettings.clientId,
@@ -50,6 +49,7 @@ export default function SDKInit() {
         reject(code)
       }
     })
+    window.__metaIdJs.addProtocolNode_ = window.__metaIdJs.addProtocolNode
   })
   return singleton
 }

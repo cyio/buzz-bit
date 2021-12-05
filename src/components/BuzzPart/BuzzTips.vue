@@ -78,7 +78,8 @@ export default ({
 <style scoped lang="scss">
 .tips {
   width: 470px;
-  padding: 40px;
+  padding: 40px 0;
+  max-width: 100%;
   .fixed-amount {
     .select-wrap {
       display: flex;
@@ -105,6 +106,8 @@ export default ({
         .unit {
           color: gray;
           margin-left: 6px;
+          position: relative;
+          top: 2px;
         }
       }
     }
