@@ -182,7 +182,9 @@ export default Vue.extend({
   },
   filters: {
     parseVideoUrl: function(t) {
-      return t ? "https://metafile.id/download/".concat(t.replace("metafile://", "")) : ""
+      const base = 'https://showman.showpay.io/metafile/'
+      // const base = 'https://metafile.id/download/'
+      return t ? base.concat(t.replace("metafile://", "")) : ""
     },
     parseTxId(str) {
       let arr = str.split('/')

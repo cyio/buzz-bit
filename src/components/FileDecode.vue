@@ -135,9 +135,13 @@ export default ({
       let hex = await queryHex[this.apiService](txId)
       // show 文件服务不即时 error: "Has no this node"，降级转用其他服务
       if (this.apiService === 'showMANDB' && hex.length < 80) {
+        this.$toast('当前数据源，未查到原始交易，正在尝试其他数据源...')
         hex = await queryHex['whatsonchain'](txId)
         if (hex.length < 80) {
           hex = await queryHex['whatsonchain'](txId, 1)
+          if (hex.length < 80) {
+            hex = await queryHex['whatsonchain'](txId, 2)
+          }
         }
       }
       setTimeout(() => {

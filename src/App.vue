@@ -104,7 +104,10 @@ export default defineComponent({
           enable: true
         },
       ]
-    } 
+    },
+    isInShowApp() {
+      return !!window.appMetaIdJs
+    }
   },
   methods: {
     resetState() {
@@ -185,21 +188,36 @@ export default defineComponent({
         this.$store.commit('SET_USER', userCache);
         return
       }
+      if (this.isInShowApp) {
+        window.__metaIdJs.getUserInfo('showbuzz', 'showbuzz', 'handleUserLoginData')
+        return
+      }
       window.__metaIdJs.getUserInfo({
-        accessToken: this.accessToken,
-        callback: (res) => {
-          if (res.code === 200) {
-            this.$store.commit('SET_USER', res.data);
-          } else {
-            console.log('get user error: ', res)
-          }
-        },
+        accessToken: this.accessToken, // app 内，需要吗？
+        callback: this.handleUserLoginData,
       })
     },
-    async initSDK(hasUserInfo) {
+    handleUserLoginData(res) {
+      if (typeof res === 'string') {
+        res = JSON.parse(res)
+      }
+      console.log('debug logindata: ', res.code, res.code === 200, res)
+      if (res.code === 200) {
+        this.$store.commit('SET_USER', res.data);
+        console.log('userinfo: ', res)
+        if (res.appAccessToken) {
+          this.$store.commit('SET_ACCESS_TOKEN', res.appAccessToken)
+          this.$toast('设置 app token 成功')
+        }
+      } else {
+        console.error('get user error: ', res)
+      }
+    },
+    async initSDK(hasUserInfo = false) {
       await SDKInit()
       this.$store.commit('SET_SDK_LOADED', true);
       if (!hasUserInfo) {
+        // console.log('this', this)
         this.getUser()
       }
     },
@@ -223,11 +241,13 @@ export default defineComponent({
         this.$store.commit('SET_USER', userCache);
         this.initSDK(false)
       } else {
-        if (this.hasToken && this.$route.path === '/user') {
+        if (window.appMetaIdJs || (this.hasToken && this.$route.path === '/user')) {
+          console.log('app inner init sdk')
           this.initSDK()
         }
       }
     }
+    window.handleUserLoginData = this.handleUserLoginData
   },
   mounted() {
   }

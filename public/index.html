@@ -6,6 +6,14 @@
     <meta name="viewport" content="width=device-width,initial-scale=1.0">
     <link rel="icon" href="<%= BASE_URL %>favicon.png">
     <title>BuzzBit</title>
+    <script>
+      ;(function () {
+        var src = '//cdn.jsdelivr.net/npm/eruda';
+        if (localStorage.getItem('debug-tool') !== 'true') return;
+        document.write('<scr' + 'ipt src="' + src + '"></scr' + 'ipt>');
+        document.write('<scr' + 'ipt>eruda.init();</scr' + 'ipt>');
+      })();
+    </script>
   </head>
   <body>
     <noscript>

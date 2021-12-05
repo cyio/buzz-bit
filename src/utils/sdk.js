@@ -8,6 +8,18 @@ export default function SDKInit() {
   if (singleton) return singleton
   singleton = new Promise((resolve, reject) => {
     if (window.appMetaIdJs) {
+      // 定义新方法，兼容公开 SDK 与 showapp 内创建节点方法
+      window.appMetaIdJs.addProtocolNode_ = (config) => {
+        window.addProtocolNodeCallBack_ = (res) => {
+          if (typeof res === 'string') {
+            res = JSON.parse(res)
+          }
+          console.log('callback res: ', res)
+          config.callback(res)
+        }
+        console.log('before inApp send: ', config)
+        window.appMetaIdJs.sendMetaDataTx(config.accessToken, JSON.stringify(config), 'addProtocolNodeCallBack_')
+      }
       window.__metaIdJs = window.appMetaIdJs
       resolve(true)
       return

@@ -138,7 +138,7 @@ export default ({
         callback: this.handleForward
       }
       console.log(config)
-      window.__metaIdJs.addProtocolNode(config);
+      window.__metaIdJs.addProtocolNode_(config);
     },
     doComment() {
       const config = {
@@ -163,7 +163,7 @@ export default ({
         callback: this.handleForward
       }
       console.log(config)
-      window.__metaIdJs.addProtocolNode(config);
+      window.__metaIdJs.addProtocolNode_(config);
     },
     doHandle(func, ...rest) {
       if (this.isSDKLoaded) {
@@ -203,7 +203,7 @@ export default ({
         }
       }
       console.log(config)
-      window.__metaIdJs.addProtocolNode(config);
+      window.__metaIdJs.addProtocolNode_(config);
     },
     handleAmountSelected(amount) {
       this.showTipsPopup = false
@@ -242,7 +242,7 @@ export default ({
         }
       }
       console.log(config)
-      window.__metaIdJs.addProtocolNode(config);
+      window.__metaIdJs.addProtocolNode_(config);
     },
     handleForward(res) {
       this.content = ''

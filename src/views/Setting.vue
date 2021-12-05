@@ -11,9 +11,11 @@
       <router-link to="/about">{{t('nav.about')}}</router-link>
     </div>
     <div class="item">
-      应用版本  {{$version}}
       <van-button @click="refresh" color="var(--theme-color)" size="small">强制更新</van-button>
       <van-button @click="reset" color="var(--theme-color)" size="small">清除缓存</van-button>
+    </div>
+    <div class="item">
+      <div class="version" @click="handleVersionClick">应用版本  {{$version}}</div>
     </div>
   </div>
 </template>
@@ -21,6 +23,7 @@
 <script>
 import { mapState } from 'vuex'
 import { useI18n } from 'vue-i18n-composable/src/index'
+import { Storage } from '@/utils';
 
 export default ({
   name: "PubList",
@@ -29,6 +32,7 @@ export default ({
   data() {
     return {
       // showVideoInFlow: true
+      count: 0,
     };
   },
   setup() {
@@ -46,6 +50,16 @@ export default ({
     reset() {
       window.localStorage.clear()
       window.location.reload()
+    },
+    handleVersionClick() {
+      this.count++
+      if (this.count >= 3) {
+        this.$toast('已切换调试工具，即将刷新页面')
+        const value = window.localStorage.getItem('debug-tool') === 'true' ? true : false
+        window.localStorage.setItem('debug-tool', !value)
+        window.location.reload()
+      }
+      console.log('1')
     }
   },
   computed: {

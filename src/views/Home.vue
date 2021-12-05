@@ -197,7 +197,7 @@ export default {
           // },
         // ],
         data: JSON.stringify(buzzData),
-        needConfirm: false,
+        needConfirm: true,
         // checkOnly: true, // dev
         callback: (res) => {
           // 确认付款完后的回调
@@ -221,24 +221,7 @@ export default {
         }
       }
       console.log(config)
-      window.__metaIdJs.addProtocolNode(config);
-    },
-    getUser() {
-      const userCache = Storage.getObj('user') || '{}'
-      if (userCache.metaId) {
-        this.$store.commit('SET_USER', userCache);
-        return
-      }
-      window.__metaIdJs.getUserInfo({
-        accessToken: this.accessToken,
-        callback: (res) => {
-          if (res.code === 200) {
-            this.$store.commit('SET_USER', res.data);
-          } else {
-            console.log('get user error: ', res)
-          }
-        },
-      })
+      window.__metaIdJs.addProtocolNode_(config);
     },
     handleMetafileChange({files}) {
       this.attachments = files.map(file => {
