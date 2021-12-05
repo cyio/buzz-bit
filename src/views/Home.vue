@@ -23,8 +23,8 @@
         <label for="showFileSelect">{{t('btn.file')}}</label>
       </div>
       <van-button color="var(--theme-color)" @click="send" size="small"
-        :disabled='!isSDKLoaded || content === ""' class="send"
-        :loading="!isSDKLoaded"
+        :disabled='!isSDKLoaded || content === "" || isSending' class="send"
+        :loading="!isSDKLoaded || isSending"
       >
         <!-- {{t('btn.send')}} -->
         <van-icon name="guide-o" size="25" />
@@ -47,7 +47,6 @@ import FileUploader from "@/components/FileUploader.vue";
 import BuzzListContainer from "@/components/BuzzListContainer.vue";
 import { getToken } from '@/api/buzz.ts'
 import AppConfig from '@/config/'
-import { Storage } from '@/utils/index';
 import { mapState } from 'vuex'
 import mime from 'mime-types'
 import { Field } from 'vant'
@@ -79,6 +78,7 @@ export default {
       showImgSelect: false,
       showFileSelect: false,
       lastBuzzTime: +new Date(),
+      isSending: false
     }
   },
   setup() {
@@ -197,17 +197,19 @@ export default {
           // },
         // ],
         data: JSON.stringify(buzzData),
-        needConfirm: true,
+        // needConfirm: this.$isInShowApp && this.needConfirm,
         // checkOnly: true, // dev
         callback: (res) => {
           // 确认付款完后的回调
+          this.$toast.clear()
+          this.isSending = false
           if (res.code === 200) {
             console.log(res.data.txId);
             this.content = ''
             this.attachments = []
             this.clearFiles()
             this.lastBuzzTime = +new Date()
-            this.$toast('发送成功')
+            this.$toast.success('发送成功')
           } else {
             new Error(res.data.message);
             this.$toast(res.data.message)
@@ -221,6 +223,7 @@ export default {
         }
       }
       console.log(config)
+      this.isSending = true
       window.__metaIdJs.addProtocolNode_(config);
     },
     handleMetafileChange({files}) {
@@ -236,7 +239,7 @@ export default {
         return res
       })
       if (this.showFileSelect && this.attachments.length) {
-        let { fileName, data } = this.attachments[0]
+        let { fileName } = this.attachments[0]
         if (files[0].chunkIndex > -1) {
           this.content = `${sliceTag}:${fileName}`
         } else {
@@ -262,7 +265,8 @@ export default {
     ...mapState({
       user: 'user',
       accessToken: 'accessToken',
-      isSDKLoaded: 'isSDKLoaded'
+      isSDKLoaded: 'isSDKLoaded',
+      needConfirm: 'needConfirm'
     }),
     isLogined() {
       return !!this.accessToken

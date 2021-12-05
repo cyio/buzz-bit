@@ -195,6 +195,7 @@ export default ({
           likeTo: this.buzz.txId
         }),
         callback: (res) => {
+          this.$toast.clear()
           if (res.code === 200) {
             this.buzz.like.push({})
           } else {
@@ -203,6 +204,11 @@ export default ({
         }
       }
       console.log(config)
+      this.$toast.loading({
+        duration: 0,
+        message: '处理中...',
+        forbidClick: true,
+      });
       window.__metaIdJs.addProtocolNode_(config);
     },
     handleAmountSelected(amount) {
@@ -233,6 +239,7 @@ export default ({
           // message: "hi" // showapp 消息目前不支持
         }),
         callback: (res) => {
+          this.$toast.clear()
           if (res.code === 200) {
             this.buzz.donate.push({})
             this.$toast('发送成功！');
@@ -248,6 +255,7 @@ export default ({
       this.content = ''
       this.showCommentBox = false
       this.$emit('sent')
+      this.$toast.clear()
     },
     handleCmdEnter(e) {
       if (e && (e.metaKey || e.ctrlKey) && e.keyCode == 13) {
@@ -256,6 +264,11 @@ export default ({
     },
     send() {
       this.doType === 'forward' ? this.doHandle('doForward') : this.doHandle('doComment')
+      this.$toast.loading({
+        duration: 0,
+        message: '处理中...',
+        forbidClick: true,
+      });
     },
   },
   computed: {

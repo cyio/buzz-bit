@@ -18,6 +18,13 @@ export default function SDKInit() {
           config.callback(res)
         }
         console.log('before inApp send: ', config)
+        if (window.localStorage.getItem('needConfirm') === 'false') {
+          let totalAmount = config.payTo.reduce((acc, cur) => acc + cur.amount, 0)
+          console.log('neecConfirm amount', totalAmount)
+          if (totalAmount < 2000) {
+            config.needConfirm = false
+          }
+        }
         window.appMetaIdJs.sendMetaDataTx(config.accessToken, JSON.stringify(config), 'addProtocolNodeCallBack_')
       }
       window.__metaIdJs = window.appMetaIdJs

@@ -4,6 +4,10 @@
       <input type="checkbox" id="showVideo" :checked="showVideoInFlow" @change="onChange">
       <label for="showVideo">信息流中展示视频（不影响详情页）</label>
     </div>
+    <div class="item" v-if="$isInShowApp">
+      <input type="checkbox" id="showneedConfirm" :checked="!needConfirm" @change="onChange1">
+      <label for="showneedConfirm">小额免确认 (2000 sat)</label>
+    </div>
     <div class="item">
       <router-link to="/decode">{{t('nav.decode')}}</router-link>
     </div>
@@ -23,7 +27,6 @@
 <script>
 import { mapState } from 'vuex'
 import { useI18n } from 'vue-i18n-composable/src/index'
-import { Storage } from '@/utils';
 
 export default ({
   name: "PubList",
@@ -31,7 +34,6 @@ export default ({
   },
   data() {
     return {
-      // showVideoInFlow: true
       count: 0,
     };
   },
@@ -43,6 +45,9 @@ export default ({
   methods: {
     onChange() {
       this.$store.commit('SET_SHOW_VIDEO_IN_FLOW', !this.showVideoInFlow)
+    },
+    onChange1() {
+      this.$store.commit('SET_NEED_CONFIRM', !this.needConfirm)
     },
     refresh() {
       window.location.reload(true)
@@ -64,7 +69,8 @@ export default ({
   },
   computed: {
     ...mapState({
-      showVideoInFlow: 'showVideoInFlow'
+      showVideoInFlow: 'showVideoInFlow',
+      needConfirm: 'needConfirm'
     }),
   },
   watch: {

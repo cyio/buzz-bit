@@ -1,4 +1,4 @@
-import Vue, { VueConstructor } from "vue";
+import Vue from "vue";
 import VueCompositionAPI, { createApp } from '@vue/composition-api'
 import { createI18n } from 'vue-i18n-composable/src/index'
 import App from "./App.vue";
@@ -22,11 +22,13 @@ Vue.use(Toast);
 Vue.use(Icon);
 Vue.component('inline-svg', InlineSvg);
 
-Vue.prototype.$version = '1.8.2'
+Vue.prototype.$version = '1.8.3'
 Vue.prototype.$chargeAddress = privateConfig.chargeAddress
 Vue.prototype.$SDKInit = SDKInit
 Vue.prototype.$isMobile = isMobile()
 Vue.prototype.$shared = shared
+// @ts-expect-error
+Vue.prototype.$isInShowApp = !!window.appMetaIdJs
 
 const i18n = createI18n({
   locale: shared.isZh ? 'zh' : 'en',

@@ -105,9 +105,6 @@ export default defineComponent({
         },
       ]
     },
-    isInShowApp() {
-      return !!window.appMetaIdJs
-    }
   },
   methods: {
     resetState() {
@@ -121,7 +118,7 @@ export default defineComponent({
       tId = setInterval(this.checkLogin, 400)
     },
     authConfirm() {
-      if (this.isInShowApp) return
+      if (this.$isInShowApp) return
       Dialog.confirm({
         // title: '标题',
         message: '前往登录/切换帐号',
@@ -184,19 +181,20 @@ export default defineComponent({
       }
     },
     getUser() {
-      const userCache = Storage.getObj('user') || '{}'
-      if (userCache.metaId) {
-        this.$store.commit('SET_USER', userCache);
-        return
-      }
-      if (this.isInShowApp) {
+      if (this.$isInShowApp) {
         window.__metaIdJs.getUserInfo('showbuzz', 'showbuzz', 'handleUserLoginData')
         return
+      } else {
+        const userCache = Storage.getObj('user') || '{}'
+        if (userCache.metaId) {
+          this.$store.commit('SET_USER', userCache);
+        } else {
+          window.__metaIdJs.getUserInfo({
+            accessToken: this.accessToken, // app 内，需要吗？
+            callback: this.handleUserLoginData,
+          })
+        }
       }
-      window.__metaIdJs.getUserInfo({
-        accessToken: this.accessToken, // app 内，需要吗？
-        callback: this.handleUserLoginData,
-      })
     },
     handleUserLoginData(res) {
       if (typeof res === 'string') {

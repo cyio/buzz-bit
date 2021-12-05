@@ -25,7 +25,7 @@
 </template>
 
 <script>
-import { getBuzzRelationData, getBuzz } from '@/api/buzz'
+import { getBuzz } from '@/api/buzz'
 import BuzzItem from './BuzzItem.vue'
 import BuzzHeader from './BuzzPart/BuzzHeader.vue'
 import BuzzSide from './BuzzPart/BuzzAvatar.vue'
@@ -104,7 +104,7 @@ export default ({
         const { code, data } = res
         if (code === 0) {
           this.dataDone = true
-          const items = res.data.results?.items || []
+          const items = data.results?.items || []
           this.buzzData.quoteItem = items[0] || {}
         }
       })
