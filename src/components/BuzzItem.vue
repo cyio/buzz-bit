@@ -230,6 +230,7 @@ export default Vue.extend({
     }
     .media {
       max-height: 200px;
+      overflow: hidden;
     }
   }
   &.mode-reply {
@@ -273,6 +274,9 @@ export default Vue.extend({
     margin-top: 42vh;
     .btn {
       cursor: pointer;
+      background: rgba(128, 128, 128, 0.6);
+      padding: 4px 6px;
+      border-radius: 4px;
       &.disabled {
         color: gray;
       }

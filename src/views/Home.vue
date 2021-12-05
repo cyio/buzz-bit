@@ -36,7 +36,8 @@
       scene="priv"
       :user="user"
       v-if="user.metaId"
-      :lastBuzzTime="lastBuzzTime"
+      :lastBuzzTxId="lastBuzzTxId"
+      :lastBuzzUseEncrypt="lastBuzzUseEncrypt"
     />
   </div>
 </template>
@@ -77,7 +78,8 @@ export default {
       useEncrypt: false,
       showImgSelect: false,
       showFileSelect: false,
-      lastBuzzTime: +new Date(),
+      lastBuzzTxId: '',
+      lastBuzzUseEncrypt: false,
       isSending: false
     }
   },
@@ -204,11 +206,17 @@ export default {
           this.$toast.clear()
           this.isSending = false
           if (res.code === 200) {
-            console.log(res.data.txId);
+            // { message, rawTx, txId }
+            console.log(res.data.txId, res);
+            // reset
+            this.lastBuzzTxId = res.data.txId
+            this.lastBuzzUseEncrypt = this.useEncrypt
             this.content = ''
             this.attachments = []
             this.clearFiles()
-            this.lastBuzzTime = +new Date()
+            this.useEncrypt = false
+            this.showImgSelect = false
+            this.showFileSelect = false
             this.$toast.success('发送成功')
           } else {
             new Error(res.data.message);

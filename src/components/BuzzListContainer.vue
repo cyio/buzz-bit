@@ -32,7 +32,7 @@
 </template>
 <script>
 import BuzzList from "@/components/BuzzList.vue";
-import { getBuzzList, getFollowBuzzList, getHotBuzzList, getNewBuzzList, getSearchBuzzList } from '@/api/buzz.ts'
+import { getBuzzList, getFollowBuzzList, getHotBuzzList, getNewBuzzList, getSearchBuzzList, getBuzz } from '@/api/buzz.ts'
 import { Tab, Tabs, Loading, Pagination, Search, PullRefresh, List } from 'vant';
 import { useI18n } from 'vue-i18n-composable/src/index'
 
@@ -47,9 +47,12 @@ export default {
       type: Object,
       default: () => ({})
     },
-    lastBuzzTime: {
-      type: Number,
-    }
+    lastBuzzTxId: {
+      type: String,
+    },
+    lastBuzzUseEncrypt: {
+      type: Boolean,
+    },
   },
   components: {
     BuzzList,
@@ -278,9 +281,28 @@ export default {
       immediate: true,
     },
     // 用户发帖后，刷新
-    'lastBuzzTime': function(val) {
+    'lastBuzzTxId': function(txId) {
       setTimeout(() => {
-        this.getCurBuzzList('', true)
+        // this.getCurBuzzList('', true)
+        // 加密内容仅我的列表可展示，切换过去
+        if (this.lastBuzzUseEncrypt) {
+          this.curListType = 'my'
+          return
+        }
+        getBuzz({txId}).then(res => {
+          const { code, data } = res
+          if (code === 0) {
+            const items = data.results?.items || []
+            if (items.length) {
+              const buzz = items[0]
+              if (buzz) {
+                this.buzzListData[this.curListType].data.unshift(buzz)
+              }
+            } else {
+              // this.$toast('数据未查询到，请稍后再试')
+            }
+          }
+        })
       }, 400)
     },
   },
