@@ -9,13 +9,21 @@ export default function SDKInit() {
   singleton = new Promise((resolve, reject) => {
     if (window.appMetaIdJs) {
       // 定义新方法，兼容公开 SDK 与 showapp 内创建节点方法
-      window.appMetaIdJs.addProtocolNode_ = (config) => {
+      window.__metaIdJs = window.appMetaIdJs || {}
+      window.__metaIdJs.addProtocolNode_ = (config) => {
         window.addProtocolNodeCallBack_ = (res) => {
           if (typeof res === 'string') {
             res = JSON.parse(res)
           }
           console.log('callback res: ', res)
           config.callback(res)
+        }
+        window.addProtocolNodeOnCancel_ = (res) => {
+          if (typeof res === 'string') {
+            res = JSON.parse(res)
+          }
+          console.log('cancel res: ', res)
+          config.onCancel(res)
         }
         console.log('before inApp send: ', config)
         if (window.localStorage.getItem('needConfirm') === 'false') {
@@ -25,38 +33,43 @@ export default function SDKInit() {
             config.needConfirm = false
           }
         }
-        window.appMetaIdJs.sendMetaDataTx(config.accessToken, JSON.stringify(config), 'addProtocolNodeCallBack_')
+        window.appMetaIdJs.sendMetaDataTx(
+          config.accessToken,
+          JSON.stringify(config),
+          'addProtocolNodeCallBack_',
+          // 'addProtocolNodeOnCancel_' // 会报错
+        )
       }
-      window.__metaIdJs = window.appMetaIdJs
       resolve(true)
       return
-    }
-    if (window.__metaIdJs?.isInjectMainFrame) {
-      console.log('sdk has cached')
-      resolve(true)
-      return
-    }
-    console.log('before new MetaIdJs', performance.now() / 1000)
-    window.__metaIdJs = new MetaIdJs({
-      oauthSettings: {
-        clientId: AppConfig.oauthSettings.clientId,
-        clientSecret: AppConfig.oauthSettings.clientSecret,
-        redirectUri: AppConfig.oauthSettings.redirectUri,
-      },
-      onLoaded: () => {
-        console.log('metaidjs loaded', performance.now() / 1000)
+    } else {
+      if (window.__metaIdJs?.isInjectMainFrame) {
+        console.log('sdk has cached')
         resolve(true)
-      },
-      onError: (res) => {
-        console.log(res)
-        const { code } = res
-        if (code === 201) {
-          goAuth()
-        }
-        reject(code)
+        return
       }
-    })
-    window.__metaIdJs.addProtocolNode_ = window.__metaIdJs.addProtocolNode
+      console.log('before new MetaIdJs', performance.now() / 1000)
+      window.__metaIdJs = new MetaIdJs({
+        oauthSettings: {
+          clientId: AppConfig.oauthSettings.clientId,
+          clientSecret: AppConfig.oauthSettings.clientSecret,
+          redirectUri: AppConfig.oauthSettings.redirectUri,
+        },
+        onLoaded: () => {
+          console.log('metaidjs loaded', performance.now() / 1000)
+          resolve(true)
+        },
+        onError: (res) => {
+          console.log(res)
+          const { code } = res
+          if (code === 201) {
+            goAuth()
+          }
+          reject(code)
+        }
+      })
+      window.__metaIdJs.addProtocolNode_ = window.__metaIdJs.addProtocolNode
+    }
   })
   return singleton
 }

@@ -218,12 +218,18 @@ export default {
             }
           }
         },
-        onCancel(res) {
+        onCancel: (res) => {
+          this.isSending = false
           console.log('cancel: ', res)
         }
       }
       console.log(config)
       this.isSending = true
+      if (this.$isInShowApp) {
+        setTimeout(() => {
+          this.isSending = false
+        }, 3000)
+      }
       window.__metaIdJs.addProtocolNode_(config);
     },
     handleMetafileChange({files}) {
@@ -268,9 +274,6 @@ export default {
       isSDKLoaded: 'isSDKLoaded',
       needConfirm: 'needConfirm'
     }),
-    isLogined() {
-      return !!this.accessToken
-    },
     isSlice() {
       return this.attachments[0]?.chunkIndex > -1
     }

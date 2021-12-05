@@ -135,7 +135,10 @@ export default ({
           rePostProtocol: '', // this.dialogData.nodeName,
           rePostComment: this.content // 评论内容
         }),
-        callback: this.handleForward
+        callback: this.handleForward,
+        onCancel: () => {
+          this.$toast.clear()
+        }
       }
       console.log(config)
       window.__metaIdJs.addProtocolNode_(config);
@@ -160,7 +163,10 @@ export default ({
           contentType: 'text/plain',
           commentTo: this.buzz.txId, // tx
         }),
-        callback: this.handleForward
+        callback: this.handleForward,
+        onCancel: () => {
+          this.$toast.clear()
+        }
       }
       console.log(config)
       window.__metaIdJs.addProtocolNode_(config);
@@ -201,6 +207,9 @@ export default ({
           } else {
             new Error(res.data.message);
           }
+        },
+        onCancel: () => {
+          this.$toast.clear()
         }
       }
       console.log(config)
@@ -246,6 +255,9 @@ export default ({
           } else {
             new Error(res.data.message);
           }
+        },
+        onCancel: () => {
+          this.$toast.clear()
         }
       }
       console.log(config)
