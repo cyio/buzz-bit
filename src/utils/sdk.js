@@ -7,6 +7,11 @@ let singleton
 export default function SDKInit() {
   if (singleton) return singleton
   singleton = new Promise((resolve, reject) => {
+    if (window.appMetaIdJs) {
+      window.__metaIdJs = window.appMetaIdJs
+      resolve(true)
+      return
+    }
     if (window.__metaIdJs?.isInjectMainFrame) {
       console.log('sdk has cached')
       resolve(true)

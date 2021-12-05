@@ -33,7 +33,7 @@
         </div>
       </div>
       <buzz-footer
-        v-if="showFooter && buzz.txId"
+        v-if="showFooter && buzz.txId && mode !== 'reply'"
         :buzz="buzz"
         v-on="$listeners"
       />
@@ -229,6 +229,9 @@ export default Vue.extend({
     .media {
       max-height: 200px;
     }
+  }
+  &.mode-reply {
+    border-bottom: 1px solid #eae7e7;
   }
   &.is-original {
     border-top: none;

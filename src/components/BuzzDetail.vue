@@ -51,10 +51,10 @@ export default ({
     };
   },
   methods: {
-    getInteractiveBuzzList() {
+    getInteractiveBuzzList(txId) {
       const params = {
         Protocols: ['PayComment'],
-        buzzTxId: this.buzz.txId,
+        buzzTxId: txId,
         // metaId: this.user.metaId,
         page: '1',
         pageSize: '10',
@@ -65,10 +65,33 @@ export default ({
         this.buzzListData[this.curListType].loading = false
         const { code, data } = res
         if (code === 0) {
-          const items = res.data.results?.items || []
+          const items = data.results?.items || []
           this.buzzListData[this.curListType].data.push(...items)
+          // 是否存在回复
+          this.getReply(items)
         }
       })
+    },
+    getReply(items) {
+      for (let i = 0; i < items.length; i++) {
+        const item = items[i]
+        if (item.hasComment) {
+          const params = {
+            Protocols: ['PayComment'],
+            buzzTxId: item.txId,
+            // metaId: this.user.metaId,
+            page: '1',
+            pageSize: '10',
+            timestamp: 0
+          }
+          getInteractiveBuzzList(params).then(res => {
+            const { code, data } = res
+            if (code === 0) {
+              this.$set(this.buzzListData[this.curListType].data[i], 'replyList_', data.results?.items || [])
+            }
+          })
+        }
+      }
     },
     onSent() {
       this.getInteractiveBuzzList()
@@ -80,7 +103,7 @@ export default ({
     }
   },
   created() {
-    this.getInteractiveBuzzList()
+    this.getInteractiveBuzzList(this.buzz.txId)
   }
 });
 </script>
