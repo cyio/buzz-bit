@@ -213,11 +213,13 @@ export default ({
         }
       }
       console.log(config)
-      this.$toast.loading({
-        duration: 0,
-        message: '处理中...',
-        forbidClick: true,
-      });
+      if (this.$isInShowApp) {
+        this.$toast.loading({
+          duration: 0,
+          message: '处理中...',
+          // forbidClick: true,
+        });
+      }
       window.__metaIdJs.addProtocolNode_(config);
     },
     handleAmountSelected(amount) {
@@ -276,11 +278,13 @@ export default ({
     },
     send() {
       this.doType === 'forward' ? this.doHandle('doForward') : this.doHandle('doComment')
-      this.$toast.loading({
-        duration: 0,
-        message: '处理中...',
-        forbidClick: true,
-      });
+      if (this.$isInShowApp) {
+        this.$toast.loading({
+          duration: 0,
+          message: '处理中...',
+          // forbidClick: true,
+        });
+      }     
     },
   },
   computed: {

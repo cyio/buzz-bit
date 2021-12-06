@@ -36,7 +36,7 @@ export default function SDKInit() {
         window.appMetaIdJs.sendMetaDataTx(
           config.accessToken,
           JSON.stringify(config),
-          'addProtocolNodeCallBack_',
+          'addProtocolNodeCallBack_'
           // 'addProtocolNodeOnCancel_' // 会报错
         )
       }

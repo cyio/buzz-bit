@@ -182,8 +182,8 @@ export default defineComponent({
     },
     getUser() {
       if (this.$isInShowApp) {
-        window.__metaIdJs.getUserInfo('showbuzz', 'showbuzz', 'handleUserLoginData')
-        return
+        console.log('before app get userinfo')
+        window.__metaIdJs.getUserInfo(AppConfig.oauthSettings.clientId, AppConfig.oauthSettings.clientSecret, 'handleUserLoginData')
       } else {
         const userCache = Storage.getObj('user') || '{}'
         if (userCache.metaId) {
@@ -214,6 +214,7 @@ export default defineComponent({
     },
     async initSDK(hasUserInfo = false) {
       await SDKInit()
+      console.log('sdk loaded')
       this.$store.commit('SET_SDK_LOADED', true);
       if (!hasUserInfo) {
         // console.log('this', this)
@@ -222,6 +223,7 @@ export default defineComponent({
     },
   },
   created() {
+    window.handleUserLoginData = this.handleUserLoginData
     this.code = getUrlParameterByName('code')
     // 是否存在 token
     //  是否存在 user cache
@@ -246,7 +248,6 @@ export default defineComponent({
         }
       }
     }
-    window.handleUserLoginData = this.handleUserLoginData
   },
   mounted() {
   }
@@ -292,6 +293,8 @@ export default defineComponent({
   }
   .link {
     margin-right: 6px;
+    text-align: center;
+    padding: 4px;
   }
 }
 

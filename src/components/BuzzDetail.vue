@@ -66,7 +66,7 @@ export default ({
         const { code, data } = res
         if (code === 0) {
           const items = data.results?.items || []
-          this.buzzListData[this.curListType].data.push(...items)
+          this.$set(this.buzzListData[this.curListType], 'data', items)
           // 是否存在回复
           this.getReply(items)
         }
@@ -79,7 +79,6 @@ export default ({
           const params = {
             Protocols: ['PayComment'],
             buzzTxId: item.txId,
-            // metaId: this.user.metaId,
             page: '1',
             pageSize: '10',
             timestamp: 0
@@ -94,7 +93,9 @@ export default ({
       }
     },
     onSent() {
-      this.getInteractiveBuzzList()
+      setTimeout(() => {
+        this.getInteractiveBuzzList(this.buzz.txId)
+      }, 300)
     }
   },
   computed: {
