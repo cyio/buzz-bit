@@ -35,6 +35,10 @@ export default new Vuex.Store({
       state.needConfirm = value
       Storage.setItem('needConfirm', value)
     },
+    SET_USER_FOLLOW(state, value) {
+      state.user.socialList = value
+      // Storage.setItem('user', state.user)
+    },
   },
   actions: {},
   modules: {},

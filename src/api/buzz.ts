@@ -124,6 +124,17 @@ export const getSearchBuzzList = (params): Promise<any> => {
     }
   })
 }
+export const getUserFollow = (params): Promise<any> => {
+  return callApi({
+    url: 'aggregation/v2/app/follow/getMyFollow',
+    host: 'https://www.showbuzz.app/',
+    params: params,
+    options: {
+      credentials: 'omit',
+    }
+  })
+}
+
 export const goAuth = () => {
   const authUrl = `${AppConfig.showMoneyUrl}/userLogin?response_type=code&scope=app&client_id=${AppConfig.oauthSettings.clientId}&redirect_uri=${AppConfig.oauthSettings.redirectUri}`
   location.href= authUrl

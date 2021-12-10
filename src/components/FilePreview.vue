@@ -7,6 +7,7 @@
     <video
       v-else-if="type === 'video/mp4'"
       controls
+      preload="metadata"
       :src="url"
     />
     <audio

@@ -44,6 +44,7 @@ import { Storage } from '@/utils/index';
 import SDKInit from '@/utils/sdk';
 import { useI18n } from 'vue-i18n-composable/src/index'
 import NavItem from '@/components/NavItem.vue'
+import { getUserFollow } from '@/api/buzz.ts'
 
 function setLocal(key, val) {
   return window.localStorage.setItem(key, val)
@@ -188,6 +189,7 @@ export default defineComponent({
         const userCache = Storage.getObj('user') || '{}'
         if (userCache.metaId) {
           this.$store.commit('SET_USER', userCache);
+          this.getUserFollow(userCache.metaId)
         } else {
           window.__metaIdJs.getUserInfo({
             accessToken: this.accessToken, // app 内，需要吗？
@@ -200,17 +202,28 @@ export default defineComponent({
       if (typeof res === 'string') {
         res = JSON.parse(res)
       }
-      console.log('debug logindata: ', res.code, res.code === 200, res)
-      if (res.code === 200) {
-        this.$store.commit('SET_USER', res.data);
-        console.log('userinfo: ', res)
-        if (res.appAccessToken) {
-          this.$store.commit('SET_ACCESS_TOKEN', res.appAccessToken)
+      const { code, data, appAccessToken } = res
+      // console.log('debug logindata: ', res.code, res.code === 200, res)
+      if (code === 200) {
+        this.$store.commit('SET_USER', data);
+        console.log('userinfo: ', data)
+        if (appAccessToken) {
+          this.$store.commit('SET_ACCESS_TOKEN', appAccessToken)
+          this.getUserFollow(data.metaId)
           console.log('设置 app token 成功')
         }
       } else {
         console.error('get user error: ', res)
       }
+    },
+    getUserFollow(metaId) {
+      getUserFollow({metaId}).then(res => {
+        console.log(res)
+        const { code, data } = res
+        if (code === 0) {
+          this.$store.commit('SET_USER_FOLLOW', data)
+        }
+      })
     },
     async initSDK(hasUserInfo = false) {
       await SDKInit()

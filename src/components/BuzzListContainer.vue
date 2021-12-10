@@ -35,6 +35,7 @@ import BuzzList from "@/components/BuzzList.vue";
 import { getBuzzList, getFollowBuzzList, getHotBuzzList, getNewBuzzList, getSearchBuzzList, getBuzz } from '@/api/buzz.ts'
 import { Tab, Tabs, Loading, Pagination, Search, PullRefresh, List } from 'vant';
 import { useI18n } from 'vue-i18n-composable/src/index'
+import { mapState } from 'vuex'
 
 export default {
   name: "BuzzListContainer",
@@ -210,6 +211,15 @@ export default {
             this.buzzListData[_listType].data.unshift(list[0])
           }
         } else {
+          const socialList = this.user.socialList || this.user2.socialList
+          console.log(socialList, this.user2)
+          if (socialList) {
+            list = list.filter(i => {
+              let value = !socialList.blackList.includes(i.metaId)
+              // console.log('是否展示', value, i.metaId)
+              return value
+            })
+          }
           this.buzzListData[_listType].data.push(...list)
         }
         // .filter(i => i.encrypt === '0')
@@ -241,6 +251,9 @@ export default {
     }
   },
   computed: {
+    ...mapState({
+      user2: 'user',
+    }),
     navDataComputed() {
       const priv = [
         {
@@ -303,7 +316,7 @@ export default {
             }
           }
         })
-      }, 400)
+      }, 100)
     },
   },
   created() {

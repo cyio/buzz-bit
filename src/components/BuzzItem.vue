@@ -1,5 +1,6 @@
 <template>
-  <div class="buzz-item" :class="['mode-' + mode, isOriginal ? 'is-original' : '']">
+  <div v-if="mode === 'list' && isInBlackList" class="blacklist-wrap">已屏蔽用户内容</div>
+  <div v-else class="buzz-item" :class="['mode-' + mode, isOriginal ? 'is-original' : '']">
     <div class="item-left">
       <buzz-side :avatarTxId="buzz.avatarTxId" :userTxId="buzz.metaId" />
     </div>
@@ -21,6 +22,7 @@
             <video
               v-else
               controls
+              preload="metadata"
               :src="metafile | parseVideoUrl"
             />
           </template>
@@ -137,6 +139,10 @@ export default Vue.extend({
   methods: {
     getAssetUrl(src) {
       const srcArray = src.split('://')
+      if (!srcArray[1]) {
+        // 无效输入
+        return ''
+      }
       let fileId = imgFix(srcArray[1])
       let url = src
       if (srcArray[0] === 'metafile') {
@@ -178,6 +184,14 @@ export default Vue.extend({
     }),
     avatarUrl() {
       return `https://showman.showpay.io/metafile/avatar/${this.buzz.avatarTxId}?timestamp=${+new Date()}`
+    },
+    isInBlackList() {
+      const socialList = this.user.socialList
+      let value = false
+      if (socialList) {
+        value = socialList.blackList.includes(this.buzz.metaId)
+      }
+      return value
     }
   },
   filters: {
@@ -294,5 +308,12 @@ export default Vue.extend({
   .item-left {
     width: 40px;
   }
+}
+.blacklist-wrap {
+  height: 30px;
+  text-align: center;
+  font-size: 14px;
+  color: #706d6d;
+  line-height: 30px;
 }
 </style>
