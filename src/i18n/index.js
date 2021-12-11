@@ -17,7 +17,8 @@ export default {
       back: '返回',
       image: '图片',
       file: '文件',
-      login: '登录'
+      login: '登录',
+      private: '私密'
     },
     post: {
       forward: '转发',

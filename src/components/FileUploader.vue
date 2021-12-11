@@ -7,7 +7,7 @@
       @drop="drop"
       @paste="onPaste"
     > 
-      <button class="select-btn btn-reverse">
+      <div class="select-btn">
         <label class="text-primary"
           >选择...
           <input
@@ -18,8 +18,8 @@
             ref="selectInput"
           />
         </label>
-      </button>
-      <button @click="clear" class="clear-btn btn-medium">清除选择</button>
+      </div>
+      <van-button @click="clear" class="clear-btn btn-medium">清除选择</van-button>
       <div class="file-options">
         <div class="file-option-item">
           <label for="useLargeFile">文件分片(支持 > 10MB)</label>
@@ -216,12 +216,33 @@ a {
     height: 150px;
     border: 2px dashed #d8d2d2;
     overflow-y: scroll;
-    max-width: 100%;
+    width: 100%;
     .select-input {
       visibility: hidden;
     }
     .select-btn {
       margin-bottom: 10px;
+      position: relative;
+      display: inline-block;
+      border: 1px solid gray;
+      padding: 4px 14px;
+      width: 200px;
+      cursor: pointer;
+      label {
+        width: 100%;
+        height: 100%;
+        display: block;
+      }
+      input {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        cursor: pointer;
+        opacity: 0;
+      }
     }
   }
   .image-preview {

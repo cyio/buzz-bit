@@ -17,7 +17,7 @@
       <div class="text-option">
         <div class="item">
           <input type="checkbox" id="useEncrypt" v-model="useEncrypt">
-          <label for="useEncrypt">加密</label>
+          <label for="useEncrypt">{{t('btn.private')}}</label>
         </div>
         <div class="item">
           <input type="checkbox" id="showImgSelect" v-model="showImgSelect">

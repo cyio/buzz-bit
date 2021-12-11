@@ -334,5 +334,15 @@ export default defineComponent({
     background-color: var(--theme-color)!important;
   }
 }
+.btn-theme {
+  color: white;
+  background: var(--theme-color);
+  border-color: var(--theme-color);
+}
+.btn-reverse {
+  background: white;
+  color: var(--theme-color);
+  border-color: var(--theme-color);
+}
 
 </style>

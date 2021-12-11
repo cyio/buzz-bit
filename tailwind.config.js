@@ -1,15 +1,16 @@
+// const colors = require('tailwindcss/colors')
+
 module.exports = {
   content: [],
   theme: {
+    // 引起编译错误
     // colors: {
-    //   primary: {
-    //     DEFAULT: '#c68230',
-    //     // light
-    //   },
+    //   // primary: '#c68230'
     //   // secondary: '#ab490d',
     //   // ...
     // },
-    extend: {},
+    extend: {
+    },
   },
   plugins: [],
 }

@@ -2,7 +2,7 @@
   <div class="preview" v-if="url">
     <template v-if="type === 'application/pdf'">
       <iframe :src="url" frameborder="0" v-if="isSupportPDF()"></iframe>
-      <a class="link" :href="url" target="_blank" v-else>下载文件</a>
+      <a class="link" :href="url" target="_blank" v-else>下载(仅电脑端)</a>
     </template>
     <video
       v-else-if="type === 'video/mp4'"

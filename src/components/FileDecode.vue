@@ -16,7 +16,7 @@
           </div>
         </template>
         <div class="download" v-else>
-          <a :href="blobUrl" :download="filename">下载</a>
+          <a :href="blobUrl" :download="filename">下载(仅电脑端)</a>
         </div>
       </template>
     </div>

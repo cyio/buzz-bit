@@ -1,15 +1,33 @@
 <template>
   <div class="wrap">
+    <!-- <van-uploader
+      v-model="previewImages"
+      multiple
+      :after-read="res => handleFiles([...res].map(i => i.file))"
+    /> -->
+    <div v-if="$isMobile" class="mobile-selector" @change="change">
+      <input
+        type="file"
+        class="select-input"
+        id="m-file"
+        accept="image/*"
+        multiple="multiple"
+        ref="selectInput"
+      />
+      <van-icon name="photograph" />
+    </div>
     <div
+      v-else
       class="select-area"
       @change="change"
       @dragover="dragover"
       @drop="drop"
       @paste="onPaste"
     > 
-      <button class="select-btn btn-reverse">
+      <div class="select-btn btn-reverse">
         <label class="text-primary"
-          >选择图片...
+          >      
+          <van-icon name="photograph" />
           <input
             type="file"
             class="select-input"
@@ -19,26 +37,31 @@
             ref="selectInput"
           />
         </label>
-      </button>
-      <span> 共 {{previewImages.length}} 个 </span>
-      <button class="btn-clear btn-medium" @click="clear" v-show="previewImages.length">清除图片</button>
-      <div class="options">
-        <div class="item">
-          <input type="checkbox" id="useOriginal" v-model="useOriginal">
-          <label for="useOriginal">使用原图</label>
-        </div>
-        <div class="item">
-          <input type="checkbox" id="useOriginalWidth" v-model="useOriginalWidth">
-          <label for="useOriginalWidth">压缩时，保持原图宽高</label>
-        </div>
       </div>
+      <div class="tips">拖拽或粘贴至此</div>
+      <!-- <span> 共 {{previewImages.length}} 个 </span> -->
+    </div>
+    <div class="options">
+      <div class="item">
+        <input type="checkbox" id="useOriginal" v-model="useOriginal">
+        <label for="useOriginal">使用原图</label>
+      </div>
+      <div class="item">
+        <input type="checkbox" id="useOriginalWidth" v-model="useOriginalWidth">
+        <label for="useOriginalWidth">压缩时，保持原图宽高</label>
+      </div>
+      <!-- <button class="btn-clear btn-medium" @click="clear" v-show="previewImages.length">清除图片</button> -->
     </div>
     <div class="image-preview">
       <div class="item" v-for="(image, index) in previewImages" :key="index">
-        <div class="info">
+        <div class="info" v-if="!$isMobile">
             原图：{{image.input.size|formatSize}} 压缩后：{{image.output.size|formatSize}} 压缩率：{{(image.output.size/image.input.size)|formatPercent}}</div>
-        <img :src="image.url" :alt="image.input.name" />
-        <button @click="removeImg(index)" class="remove-btn">X</button>
+        <div class="img-wrap">
+          <img :src="image.url" :alt="image.input.name" />
+          <button @click="removeImg(index)" class="remove-btn">
+            <van-icon name="cross" />
+          </button>
+        </div>
       </div>
     </div>
   </div>
@@ -48,6 +71,7 @@
 import Vue from "vue";
 import Compressor from "compressorjs";
 import { formatBytes } from '@/utils/index'
+import { Uploader } from 'vant';
 
 // 需求 blob => hex
 export default Vue.extend({
@@ -55,12 +79,16 @@ export default Vue.extend({
   props: {
     msg: String,
   },
+  components: {
+    [Uploader.name]: Uploader,
+  },
   data() {
     return {
       images: [],
       previewImages: [],
       useOriginal: false,
-      useOriginalWidth: false
+      useOriginalWidth: false,
+      testArr: []
     };
   },
   methods: {
@@ -222,50 +250,89 @@ a {
   display: flex;
   flex-wrap: wrap;
   margin-top: 15px;
+  margin-bottom: 30px;
 
   .select-area {
     padding: 1.25rem;
-    margin-right: 15px;
+    margin: 10px 0;
     background-color: #f8f9fa;
-    height: 150px;
+    // height: 150px;
     border: 2px dashed #d8d2d2;
-    max-width: 100%;
+    width: 100%;
+    display: flex;
+    align-items: center;
     .select-input {
       visibility: hidden;
     }
+    .tips {
+      margin-left: 30%;
+      color: gray;
+    }
     .select-btn {
-      margin-bottom: 10px;
-      width: 80%;
+      width: 80px;
+      height: 80px;
+      margin: 0 8px 8px 0;
+      background-color: #f7f8fa;
+      color: #dcdee0;
+      font-size: 24px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      position: relative;
+      border: 1px solid #c5c3c3;
+      cursor: pointer;
+      i {
+        cursor: pointer;
+      }
+      input {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        overflow: hidden;
+        cursor: pointer;
+        opacity: 0;
+      }
     }
   }
   .image-preview {
     width: 530px;
+    min-height: 100px;
     display: flex;
     flex-wrap: wrap;
-    justify-content: space-between;
     .item {
-      width: 31%;
+      width: 25%;
       margin-top: 10px;
       margin-right: 10px;
       position: relative;
       .info {
         font-size: 12px;
       }
+      .img-wrap {
+        position: relative;
+      }
       img {
         width: 100%;
       }
       .remove-btn {
         position: absolute;
-        right: 10px;
-        bottom: 10px;
-        background: rgba(128, 128, 128, 0.6);
+        right: 0;
+        top: 0;
+        background-color: rgba(128, 128, 128, 0.6);
         width: 30px;
         border-radius: 2px;
+        color: #fff;
+        border: none;
+        :hover {
+          cursor: pointer;
+        }
       }
     }
   }
   .options {
     display: flex;
+    flex-wrap: wrap;
     .img-option-item {
       margin-right: 10px;
     }
@@ -277,7 +344,30 @@ a {
     }
   }
   .btn-clear {
-    margin: 5px 0;
+    margin: 5px;
+  }
+  .mobile-selector {
+    width: 80px;
+    height: 80px;
+    margin: 0 8px 8px 0;
+    background-color: #f7f8fa;
+    color: #dcdee0;
+    font-size: 24px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: relative;
+    border: 1px solid #c5c3c3;
+    input {
+      position: absolute;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      overflow: hidden;
+      cursor: pointer;
+      opacity: 0;
+    }
   }
 }
 </style>
