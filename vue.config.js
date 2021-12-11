@@ -44,6 +44,13 @@ module.exports = {
         config.resolve.alias
             .set('@$', resolve('src'))
     },
+    css: {
+      loaderOptions: {
+        postcss: {
+          plugins: [require('tailwindcss'), require('autoprefixer')]
+        }
+      }
+    },
     devServer: {
       historyApiFallback: true,
       disableHostCheck: true,

@@ -7,7 +7,7 @@
       @drop="drop"
       @paste="onPaste"
     > 
-      <button class="select-btn">
+      <button class="select-btn btn-reverse">
         <label class="text-primary"
           >选择...
           <input
@@ -19,7 +19,7 @@
           />
         </label>
       </button>
-      <button @click="clear" class="clear-btn">清除选择</button>
+      <button @click="clear" class="clear-btn btn-medium">清除选择</button>
       <div class="file-options">
         <div class="file-option-item">
           <label for="useLargeFile">文件分片(支持 > 10MB)</label>
@@ -216,6 +216,7 @@ a {
     height: 150px;
     border: 2px dashed #d8d2d2;
     overflow-y: scroll;
+    max-width: 100%;
     .select-input {
       visibility: hidden;
     }

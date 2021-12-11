@@ -15,12 +15,18 @@
     </div>
     <div class="input-operation">
       <div class="text-option">
-        <input type="checkbox" id="useEncrypt" v-model="useEncrypt">
-        <label for="useEncrypt">加密</label>
-        <input type="checkbox" id="showImgSelect" v-model="showImgSelect">
-        <label for="showImgSelect">{{t('btn.image')}}</label>
-        <input type="checkbox" id="showFileSelect" v-model="showFileSelect">
-        <label for="showFileSelect">{{t('btn.file')}}</label>
+        <div class="item">
+          <input type="checkbox" id="useEncrypt" v-model="useEncrypt">
+          <label for="useEncrypt">加密</label>
+        </div>
+        <div class="item">
+          <input type="checkbox" id="showImgSelect" v-model="showImgSelect">
+          <label for="showImgSelect">{{t('btn.image')}}</label>
+        </div>
+        <div class="item">
+          <input type="checkbox" id="showFileSelect" v-model="showFileSelect">
+          <label for="showFileSelect">{{t('btn.file')}}</label>
+        </div>
       </div>
       <van-button color="var(--theme-color)" @click="send" size="small"
         :disabled='!isSDKLoaded || content === "" || isSending' class="send"
@@ -359,6 +365,16 @@ export default {
   .loading {
     margin-bottom: 12px;
     text-align: center;
+  }
+  .text-option {
+    display: flex;
+    align-items: center;
+    .item {
+      margin-right: 6px;
+    }
+    label {
+      margin-left: 4px;
+    }
   }
 }
 </style>

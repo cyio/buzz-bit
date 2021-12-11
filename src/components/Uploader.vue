@@ -7,7 +7,7 @@
       @drop="drop"
       @paste="onPaste"
     > 
-      <button class="select-btn">
+      <button class="select-btn btn-reverse">
         <label class="text-primary"
           >选择图片...
           <input
@@ -21,13 +21,13 @@
         </label>
       </button>
       <span> 共 {{previewImages.length}} 个 </span>
-      <button @click="clear">清除图片</button>
-      <div class="img-options">
-        <div class="img-option-item">
+      <button class="btn-clear btn-medium" @click="clear" v-show="previewImages.length">清除图片</button>
+      <div class="options">
+        <div class="item">
           <input type="checkbox" id="useOriginal" v-model="useOriginal">
           <label for="useOriginal">使用原图</label>
         </div>
-        <div class="img-option-item">
+        <div class="item">
           <input type="checkbox" id="useOriginalWidth" v-model="useOriginalWidth">
           <label for="useOriginalWidth">压缩时，保持原图宽高</label>
         </div>
@@ -229,11 +229,13 @@ a {
     background-color: #f8f9fa;
     height: 150px;
     border: 2px dashed #d8d2d2;
+    max-width: 100%;
     .select-input {
       visibility: hidden;
     }
     .select-btn {
       margin-bottom: 10px;
+      width: 80%;
     }
   }
   .image-preview {
@@ -242,9 +244,13 @@ a {
     flex-wrap: wrap;
     justify-content: space-between;
     .item {
-      width: 48%;
+      width: 31%;
       margin-top: 10px;
+      margin-right: 10px;
       position: relative;
+      .info {
+        font-size: 12px;
+      }
       img {
         width: 100%;
       }
@@ -252,14 +258,26 @@ a {
         position: absolute;
         right: 10px;
         bottom: 10px;
+        background: rgba(128, 128, 128, 0.6);
+        width: 30px;
+        border-radius: 2px;
       }
     }
   }
-  .img-options {
+  .options {
     display: flex;
     .img-option-item {
       margin-right: 10px;
     }
+    .item {
+      margin-right: 6px;
+    }
+    label {
+      margin-left: 4px;
+    }
+  }
+  .btn-clear {
+    margin: 5px 0;
   }
 }
 </style>

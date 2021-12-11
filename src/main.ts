@@ -12,6 +12,8 @@ import SDKInit from '@/utils/sdk';
 import { isMobile, shared } from '@/utils/'
 import translations from './i18n'
 import InlineSvg from 'vue-inline-svg';
+// import 'tailwindcss/tailwind.css'
+// import './base.css'
 
 Vue.config.productionTip = false;
 
@@ -22,7 +24,7 @@ Vue.use(Toast);
 Vue.use(Icon);
 Vue.component('inline-svg', InlineSvg);
 
-Vue.prototype.$version = '1.9.0'
+Vue.prototype.$version = '1.9.2'
 Vue.prototype.$chargeAddress = privateConfig.chargeAddress
 Vue.prototype.$SDKInit = SDKInit
 Vue.prototype.$isMobile = isMobile()
