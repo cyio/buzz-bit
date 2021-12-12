@@ -59,7 +59,7 @@ module.exports = {
           target: 'https://api.showmoney.app',
           changeOrigin: true,
           pathRewrite: {
-            '^/showMANDB': '' // 重写接口
+            // '^/showMANDB': '' // 重写接口
           }
         },
         'aggregation/v2/app/search': {

@@ -230,7 +230,7 @@ export default ({
       const accessToken = window.localStorage.getItem('access_token')
       const config = {
         nodeName: "SimpleArticleDonate",
-        metaIdTag: "MetaId",
+        metaIdTag: "metaid",
         brfcId: "5c7afdb85de5",
         accessToken: accessToken,
         encrypt: 0,

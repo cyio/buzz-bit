@@ -12,6 +12,7 @@ import SDKInit from '@/utils/sdk';
 import { isMobile, shared } from '@/utils/'
 import translations from './i18n'
 import InlineSvg from 'vue-inline-svg';
+import AppConfig from '@/config/'
 // import 'tailwindcss/tailwind.css'
 // import './base.css'
 
@@ -24,13 +25,14 @@ Vue.use(Toast);
 Vue.use(Icon);
 Vue.component('inline-svg', InlineSvg);
 
-Vue.prototype.$version = '1.9.4'
+Vue.prototype.$version = '1.9.5'
 Vue.prototype.$chargeAddress = privateConfig.chargeAddress
 Vue.prototype.$SDKInit = SDKInit
 Vue.prototype.$isMobile = isMobile()
 Vue.prototype.$shared = shared
 // @ts-expect-error
 Vue.prototype.$isInShowApp = !!window.appMetaIdJs
+Vue.prototype.$AppConfig = AppConfig
 
 const i18n = createI18n({
   locale: shared.isZh ? 'zh' : 'en',

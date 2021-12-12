@@ -92,11 +92,15 @@ export default ({
     // }
     const parentNodeName = this.buzz.protocol?.toLowerCase()
     if (['simplerepost', 'paycomment'].indexOf(parentNodeName) !== -1) {
-      if (parentNodeName === 'simplerepost') {
-        this.buzzData.quoteItem = this.buzz.quoteItem || {}
+      // if (parentNodeName === 'simplerepost') {
+      //   this.buzzData.quoteItem = this.buzz.quoteItem || {}
+      //   return
+      // }
+      const txId = parentNodeName === 'simplerepost' ? this.buzz.quoteItem?.txId || this.buzz.rePost[0]?.txId : this.buzz.data.commentTo
+      if (!txId) {
+        console.log(this.buzz.quoteItem, this.buzz.rePost)
         return
       }
-      const txId = parentNodeName === 'simplerepost' ? this.buzz.quoteItem.txId : this.buzz.data.commentTo
       const params = {
         txId
       }
@@ -105,7 +109,7 @@ export default ({
         if (code === 0) {
           this.dataDone = true
           const items = data.results?.items || []
-          this.buzzData.quoteItem = items[0] || {}
+          this.$set(this.buzzData, 'quoteItem', items[0] || {})
         }
       })
     }

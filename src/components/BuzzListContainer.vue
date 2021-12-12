@@ -212,7 +212,7 @@ export default {
           }
         } else {
           const socialList = this.user.socialList || this.user2.socialList
-          console.log(socialList, this.user2)
+          // console.log(socialList, this.user2)
           if (socialList) {
             list = list.filter(i => {
               let value = !socialList.blackList.includes(i.metaId)

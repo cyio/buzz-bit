@@ -105,7 +105,7 @@ export default {
       }
     },
     onSearch() {
-      // this.buzzListData.search.data = []
+      this.buzzListData.search.data = []
       this.getCurBuzzList()
     }
   },
