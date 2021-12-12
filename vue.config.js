@@ -62,6 +62,13 @@ module.exports = {
             // '^/showMANDB': '' // 重写接口
           }
         },
+        '/metaaccess': {
+          target: 'https://api.showmoney.app',
+          changeOrigin: true,
+          pathRewrite: {
+            // '^/showMANDB': '' // 重写接口
+          }
+        },
         'aggregation/v2/app/search': {
           target: 'https://api.showmoney.app',
           changeOrigin: true,

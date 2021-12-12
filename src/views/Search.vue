@@ -9,6 +9,12 @@
       />
       <van-button color="var(--theme-color)" @click="onSearch" size="small" :disabled='keywords === ""' class="search-btn">搜 索</van-button>
     </div>
+    <div class="options">
+      <div class="item">
+        <input type="checkbox" id="caseInsensitive" v-model="caseInsensitive">
+        <label for="caseInsensitive">{{t('btn.caseInsensitive')}}</label>
+      </div>
+    </div>
     <van-loading v-show="buzzListData[curListType].loading" color="var(--theme-color)" class="loading" />
     <BuzzList :buzzListData="curBuzzListData" v-show="!buzzListData[curListType].loading" />
     <van-pagination
@@ -67,7 +73,8 @@ export default {
       },
       curListType: 'search',
       keywords: '',
-      showVideoInFlow: true
+      showVideoInFlow: true,
+      caseInsensitive: false
     }
   },
   methods: {
@@ -75,7 +82,7 @@ export default {
       const params = {
         page: "" + this.buzzListData[this.curListType].currentPage,
         pageSize: '10',
-        searchWord: this.keywords,
+        searchWord: this.caseInsensitive ? '(?i)' + this.keywords : this.keywords,
         timestamp: 0
       }
       this.searchLoading = true
@@ -148,6 +155,10 @@ export default {
     .search-input {
       width: 80%;
     }
+  }
+  .options {
+    margin: 15px 0;
+    font-size: 14px;
   }
 }
 </style>

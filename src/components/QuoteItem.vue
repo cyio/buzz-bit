@@ -31,6 +31,7 @@ import BuzzHeader from './BuzzPart/BuzzHeader.vue'
 import BuzzSide from './BuzzPart/BuzzAvatar.vue'
 import BuzzFooter from './BuzzPart/BuzzFooter.vue'
 import mixin from './BuzzPart/mixin'
+import { mapState } from 'vuex'
 
 export default ({
   name: "QuoteItem",
@@ -69,7 +70,10 @@ export default ({
   computed: {
     avatarUrl() {
       return `https://showman.showpay.io/metafile/avatar/${this.buzz.avatarTxId}?timestamp=${+new Date()}`
-    }
+    },
+    ...mapState({
+      user: 'user',
+    }),
   },
   created() {
     this.buzzData = Object.assign(this.buzzData, this.buzz)
@@ -102,7 +106,8 @@ export default ({
         return
       }
       const params = {
-        txId
+        txId,
+        MetaId: this.user.metaId
       }
       getBuzz(params).then(res => {
         const { code, data } = res

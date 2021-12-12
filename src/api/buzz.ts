@@ -124,6 +124,20 @@ export const getSearchBuzzList = (params): Promise<any> => {
     }
   })
 }
+export const getMetaAccessContent = (params): Promise<any> => {
+  return callApi({
+    url: '/metaaccess/api/v2/article/getMessage',
+    host: 'https://api.showmoney.app/',
+    params: params,
+    options: {
+      mode: 'cors',
+      credentials: 'include',
+      headers: {
+        metaId: params.metaId
+      },
+    }
+  })
+}
 export const getUserFollow = (params): Promise<any> => {
   return callApi({
     url: 'aggregation/v2/app/follow/getMyFollow',

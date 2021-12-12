@@ -10,6 +10,12 @@
       <template v-else>
         <van-loading v-show="loading">解密中</van-loading>
         <div class="content" v-if="!loading" v-html="displayContent(buzz.content || buzz.publicContent, mode === 'list')"></div>
+        <!-- <div class="paid-wrap">
+          以下为付费部分
+          <div class="paid-content">
+            {{buzz.paidContent}}
+          </div>
+        </div> -->
       </template>
       <div class="media">
         <div class="media-item" v-for="(metafile, index) in buzz.attachments" :key="index">
@@ -85,6 +91,8 @@ import SDKInit from '@/utils/sdk';
 // import CoolLightBox from 'vue-cool-lightbox'
 // import 'vue-cool-lightbox/dist/vue-cool-lightbox.min.css'
 import { ImagePreview } from 'vant';
+import { getMetaAccessContent } from '@/api/buzz.ts'
+import {md5} from 'pure-md5';
 
 function imgFix(str) {
   str = str.split('.')
@@ -226,6 +234,24 @@ export default Vue.extend({
       await SDKInit()
       window.__metaIdJs.eciesDecryptData(config);
     }
+    // if (this.buzz.metaAccessTxId) {
+    //   const {
+    //     metaAccessMetanetId,
+    //     metaAccessPayTx,
+    //     serverCode,
+    //     serverPublicKey,
+    //     txId
+    //   } = this.buzz
+    //   const params = {
+    //     metaAccessMetanetID: metaAccessMetanetId,
+    //     metaAccessPayTx,
+    //     metaId: this.user.metaId,
+    //     serverCode: md5(serverCode),
+    //     serverPublicKey,
+    //     txId
+    //   }
+    //   getMetaAccessContent(params)
+    // }
   }
 });
 </script>

@@ -13,6 +13,7 @@
 import BuzzDetail from "@/components/BuzzDetail";
 import { getBuzz } from '@/api/buzz.ts'
 import { useI18n } from 'vue-i18n-composable/src/index'
+import { mapState } from 'vuex'
 
 export default ({
   name: "Detail",
@@ -34,7 +35,7 @@ export default ({
   methods: {
     getFull(txId) {
       this.showLoading = true
-      getBuzz({txId}).then(res => {
+      getBuzz({ txId, MetaId: this.user.metaId }).then(res => {
         this.showLoading = false
         const { code, data } = res
         if (code === 0) {
@@ -49,6 +50,9 @@ export default ({
     }
   },
   computed: {
+    ...mapState({
+      user: 'user',
+    }),
   },
   created() {
     const txId = this.$route.params.txId

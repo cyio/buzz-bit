@@ -18,7 +18,8 @@ export default {
       image: '图片',
       file: '文件',
       login: '登录',
-      private: '私密'
+      private: '私密',
+      caseInsensitive: '大小写不敏感'
     },
     post: {
       forward: '转发',
@@ -45,7 +46,10 @@ export default {
       send: 'send',
       back: 'back',
       image: 'image',
-      file: 'file'
+      file: 'file',
+      login: 'login',
+      private: 'private',
+      caseInsensitive: 'case insensitive'
     },
     post: {
       forward: 'forward',

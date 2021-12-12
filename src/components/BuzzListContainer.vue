@@ -121,7 +121,7 @@ export default {
     getBuzzList() {
       const params = {
         Protocols: ['SimpleMicroblog'],
-        metaId: this.user.metaId,
+        MetaId: this.user.metaId,
         page: "" + this.buzzListData[this.curListType].currentPage,
         pageSize: '6',
         timestamp: 0
@@ -135,7 +135,7 @@ export default {
     },
     getFollowBuzzList() {
       const params = {
-        metaId: this.user.metaId,
+        MetaId: this.user.metaId,
         page: "" + this.buzzListData[this.curListType].currentPage,
         pageSize: '6',
         timeType: "today",
@@ -150,6 +150,7 @@ export default {
     },
     getHotBuzzList() {
       const params = {
+        MetaId: this.user.metaId,
         page: "" + this.buzzListData[this.curListType].currentPage,
         pageSize: '6',
         timeType: "today",
@@ -163,6 +164,7 @@ export default {
     },
     getNewBuzzList() {
       const params = {
+        MetaId: this.user.metaId,
         page: "" + this.buzzListData[this.curListType].currentPage,
         pageSize: '6',
         timeType: "today",
@@ -177,6 +179,7 @@ export default {
     },
     getSearchBuzzList() {
       const params = {
+        MetaId: this.user.metaId,
         page: "" + this.buzzListData[this.curListType].currentPage,
         pageSize: '10',
         searchWord: this.keywords,
@@ -302,7 +305,7 @@ export default {
           this.curListType = 'my'
           return
         }
-        getBuzz({txId}).then(res => {
+        getBuzz({ txId, MetaId: this.user.metaId }).then(res => {
           const { code, data } = res
           if (code === 0) {
             const items = data.results?.items || []
