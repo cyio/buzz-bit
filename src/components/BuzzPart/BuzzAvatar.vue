@@ -48,6 +48,8 @@ export default ({
   img, .default {
     border-radius: 20%;
     width: 100%;
+    height: 100%;
+    object-fit: cover;
   }
   &.large {
     width: 64px;

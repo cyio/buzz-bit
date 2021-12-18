@@ -9,13 +9,15 @@
       <div v-if="mode === 'list' && buzz.encrypt === '1'">加密内容，进入查看</div>
       <template v-else>
         <van-loading v-show="loading">解密中</van-loading>
-        <div class="content" v-if="!loading" v-html="displayContent(buzz.content || buzz.publicContent, mode === 'list')"></div>
-        <!-- <div class="paid-wrap">
-          以下为付费部分
-          <div class="paid-content">
-            {{buzz.paidContent}}
+        <template v-if="!loading">
+          <div class="content" v-html="displayContent(buzz.content || buzz.publicContent, mode === 'list')"></div>
+          <div class="paid-wrap" v-if="buzz.metaAccessTxId">
+            付费 buzz，请前往 showbuzz 查看
+            <!-- <div class="paid-content">
+              {{buzz.paidContent}}
+            </div> -->
           </div>
-        </div> -->
+        </template>
       </template>
       <div class="media">
         <div class="media-item" v-for="(metafile, index) in buzz.attachments" :key="index">
@@ -341,5 +343,10 @@ export default Vue.extend({
   font-size: 14px;
   color: #706d6d;
   line-height: 30px;
+}
+.paid-wrap {
+  padding: 10px;
+  font-size: 12px;
+  color: var(--theme-color);
 }
 </style>

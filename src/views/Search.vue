@@ -16,12 +16,16 @@
       </div>
     </div>
     <van-loading v-show="buzzListData[curListType].loading" color="var(--theme-color)" class="loading" />
-    <BuzzList :buzzListData="curBuzzListData" v-show="!buzzListData[curListType].loading" />
-    <van-pagination
-      v-show="curBuzzListData.length > 0 && !buzzListData[curListType].loading"
-      v-model="buzzListData[curListType].currentPage" :total-items="10000" :items-per-page="10"
-      force-ellipses
-    />
+    <div v-show="showResult && !buzzListData[curListType].loading">
+      <div v-if="curBuzzListData.length || buzzListData.search.currentPage > 1">
+        <BuzzList :buzzListData="curBuzzListData" />
+        <van-pagination
+          v-model="buzzListData[curListType].currentPage" :total-items="10000" :items-per-page="10"
+          force-ellipses
+        />
+      </div>
+      <div class="no-result" v-else>没有查询到，换个搜索词试试</div>
+    </div>
   </div>
 </template>
 <script>
@@ -74,7 +78,8 @@ export default {
       curListType: 'search',
       keywords: '',
       showVideoInFlow: true,
-      caseInsensitive: false
+      caseInsensitive: false,
+      showResult: false
     }
   },
   methods: {
@@ -106,13 +111,18 @@ export default {
       this.buzzListData[_listType].refreshing = false
       if (list.length === 0) {
         this.buzzListData[_listType].finished = true
+        this.buzzListData[_listType].data = []
       } else {
         this.buzzListData[_listType].data = list
         // .filter(i => i.encrypt === '0')
       }
+      this.showResult = true
     },
     onSearch() {
       this.buzzListData.search.data = []
+      this.buzzListData.search.finished = false
+      this.buzzListData.search.currentPage = 1
+      this.showResult = false
       this.getCurBuzzList()
     }
   },
@@ -158,6 +168,12 @@ export default {
   }
   .options {
     margin: 15px 0;
+    font-size: 14px;
+  }
+  .no-result {
+    text-align: center;
+    margin-top: 200px;
+    color: var(--theme-color);
     font-size: 14px;
   }
 }

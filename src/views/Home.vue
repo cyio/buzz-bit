@@ -15,7 +15,7 @@
     </div>
     <div class="input-operation">
       <div class="text-option">
-        <div class="item">
+        <div class="item" v-show="!$isInShowApp">
           <input type="checkbox" id="useEncrypt" v-model="useEncrypt">
           <label for="useEncrypt">{{t('btn.private')}}</label>
         </div>
@@ -300,6 +300,7 @@ export default {
         // this.content = ''
       } else {
         this.showImgSelect = false
+        this.useEncrypt = false
       }
       this.attachments = []
     },
@@ -308,6 +309,7 @@ export default {
         // this.content = ''
       } else {
         this.showFileSelect = false
+        this.useEncrypt = false
       }
       this.attachments = []
     },
