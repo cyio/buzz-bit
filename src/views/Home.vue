@@ -15,7 +15,7 @@
     </div>
     <div class="input-operation">
       <div class="text-option">
-        <div class="item" v-show="!$isInShowApp">
+        <div class="item" v-show="1">
           <input type="checkbox" id="useEncrypt" v-model="useEncrypt">
           <label for="useEncrypt">{{t('btn.private')}}</label>
         </div>

@@ -218,12 +218,13 @@ export default defineComponent({
     },
     getUserFollow(metaId) {
       getUserFollow({metaId}).then(res => {
-        // console.log(res)
         const { code, data } = res
         if (code === 0) {
           this.$store.commit('SET_USER_FOLLOW', data)
+        } else {
+          console.log('get follow error', res)
         }
-      })
+      }, (err) => console.log('fail: ', err))
     },
     async initSDK(hasUserInfo = false) {
       await SDKInit()

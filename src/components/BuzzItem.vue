@@ -90,11 +90,12 @@ import mixin from './BuzzPart/mixin'
 import { mapState } from 'vuex'
 import { useI18n } from 'vue-i18n-composable/src/index'
 import SDKInit from '@/utils/sdk';
+import { hexToBase64Img } from '@/utils/'
 // import CoolLightBox from 'vue-cool-lightbox'
 // import 'vue-cool-lightbox/dist/vue-cool-lightbox.min.css'
 import { ImagePreview } from 'vant';
-import { getMetaAccessContent } from '@/api/buzz.ts'
-import {md5} from 'pure-md5';
+import { getImageMetaFile } from '@/api/buzz.ts'
+// import {md5} from 'pure-md5';
 
 function imgFix(str) {
   str = str.split('.')
@@ -148,6 +149,9 @@ export default Vue.extend({
   },
   methods: {
     getAssetUrl(src) {
+      if (src.startsWith('data:image/')) {
+        return src
+      }
       const srcArray = src.split('://')
       if (!srcArray[1]) {
         // 无效输入
@@ -183,6 +187,47 @@ export default Vue.extend({
           localStorage.setItem('buzz', JSON.stringify(this.buzz))
         }
       }
+    },
+    handleAttachments(attachments) {
+      this.buzz.attachments = this.buzz.attachments || []
+      // this.buzz.attachments = ret.attachments
+      // 1. 请求图片数据
+      // 2. 解密
+      console.log('handleAttachments', attachments)
+      if (attachments && attachments.length) {
+        const txIds = attachments.map(item => {
+          const srcArray = item.split('://')
+          let fileId = imgFix(srcArray[1])
+          console.log(fileId)
+          return fileId[0]
+        })
+        console.log(txIds)
+        getImageMetaFile({
+          txIds
+        }).then(res => {
+          console.log('img meta: ', res)
+          if (res.code === 0) {
+            res.data.results.items.forEach(i => {
+              const config = {
+                accessToken: this.accessToken,
+                data: i.data,
+                callback: (res) => {
+                  // this.loading = false
+                  console.log('img de: ', res)
+                  if ((res.code === 200 && res.data?.data) || this.$isInShowApp) {
+                    const raw = this.$isInShowApp ? res : res.data.data
+                    console.log('img raw: ', raw)
+                    const base64 = hexToBase64Img(raw, i.dataType)
+                    console.log('img push: ', base64)
+                    this.buzz.attachments.push(base64)
+                  }
+                }
+              }
+              window.__metaIdJs.eciesDecryptData_(config, true);
+            })
+          }
+        })
+      }
     }
   },
   computed: {
@@ -216,7 +261,7 @@ export default Vue.extend({
     }
   },
   async created() {
-    const self = this
+    // const self = this
     if (this.buzz.encrypt === '1' && this.mode !== 'list') {
       // console.log(this.buzz.data || this.buzz.content)
       this.loading = true
@@ -224,17 +269,24 @@ export default Vue.extend({
         accessToken: this.accessToken,
         data: this.buzz.data,
         callback: (res) => {
-          self.loading = false
+          this.loading = false
+          // showapp 返回
+          if (res.content) {
+            this.buzz.content = res.content
+            this.handleAttachments(res.attachments)
+            return
+          }
           if (res.code === 200) {
             let ret = JSON.parse(res.data.data)
-            self.buzz.content = ret.content
+            this.buzz.content = ret.content
+            this.handleAttachments(ret.attachments)
           } else {
             console.error('解析异常', res)
           }
         }
       }
       await SDKInit()
-      window.__metaIdJs.eciesDecryptData(config);
+      window.__metaIdJs.eciesDecryptData_(config);
     }
     // if (this.buzz.metaAccessTxId) {
     //   const {

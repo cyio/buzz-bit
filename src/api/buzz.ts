@@ -114,6 +114,16 @@ export const getBuzz = (params): Promise<any> => {
     }
   })
 }
+export const getImageMetaFile = (params): Promise<any> => {
+  return callApi({
+    url: '/aggregation/v2/app/metaFile/getImageMetaFile',
+    host: 'https://api.showmoney.app/',
+    params: params,
+    options: {
+      credentials: 'omit',
+    }
+  })
+}
 export const getSearchBuzzList = (params): Promise<any> => {
   return callApi({
     url: '/aggregation/v2/app/search/getSearchContentBySearchWord',

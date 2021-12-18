@@ -18,13 +18,13 @@ export default function SDKInit() {
           console.log('callback res: ', res)
           config.callback(res)
         }
-        window.addProtocolNodeOnCancel_ = (res) => {
-          if (typeof res === 'string') {
-            res = JSON.parse(res)
-          }
-          console.log('cancel res: ', res)
-          config.onCancel(res)
-        }
+        // window.addProtocolNodeOnCancel_ = (res) => {
+        //   if (typeof res === 'string') {
+        //     res = JSON.parse(res)
+        //   }
+        //   console.log('cancel res: ', res)
+        //   config.onCancel(res)
+        // }
         console.log('before inApp send: ', config)
         if (window.localStorage.getItem('needConfirm') === 'false') {
           let totalAmount = config.payTo.reduce((acc, cur) => acc + cur.amount, 0)
@@ -38,6 +38,22 @@ export default function SDKInit() {
           JSON.stringify(config),
           'addProtocolNodeCallBack_'
           // 'addProtocolNodeOnCancel_' // 会报错
+        )
+      }
+      window.__metaIdJs.eciesDecryptData_ = (config, isFile) => {
+        window.eciesDecryptDataCallBack_ = (res) => {
+          console.log('callback res raw: ', res)
+          if (!isFile && typeof res === 'string') {
+            res = JSON.parse(res)
+          }
+          console.log('callback res: ', res)
+          config.callback(res)
+        }
+        console.log(config.data)
+        window.appMetaIdJs.decryptData(
+          config.accessToken,
+          config.data,
+          'eciesDecryptDataCallBack_'
         )
       }
       resolve(true)
@@ -68,7 +84,9 @@ export default function SDKInit() {
           reject(code)
         }
       })
+      // 设置成新方法，保留原方法
       window.__metaIdJs.addProtocolNode_ = window.__metaIdJs.addProtocolNode
+      window.__metaIdJs.eciesDecryptData_ = window.__metaIdJs.eciesDecryptData
     }
   })
   return singleton
