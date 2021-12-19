@@ -10,7 +10,10 @@
       <template v-else>
         <van-loading v-show="loading">解密中</van-loading>
         <template v-if="!loading">
-          <div class="content" v-html="displayContent(buzz.content || buzz.publicContent, mode === 'list')"></div>
+          <div class="note-content" v-if="buzz.protocol === 'metanote'">发布了笔记
+            <a :href="`https://www.metanote.app/detail/${buzz.txId}`" target="_blank">《{{buzz.content || '无题'}}》</a>
+          </div>
+          <div class="content" v-else v-html="displayContent(buzz.content || buzz.publicContent, mode === 'list')"></div>
           <div class="paid-wrap" v-if="buzz.metaAccessTxId">
             付费 buzz，请前往 showbuzz 查看
             <!-- <div class="paid-content">
