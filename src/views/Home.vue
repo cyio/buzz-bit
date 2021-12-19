@@ -8,14 +8,13 @@
         label=""
         type="textarea"
         :placeholder="t('post.inputPlaceholder')"
-        clearable
         @keydown="handleCmdEnter($event)"
       />
       <div class="word-count">{{content.length || ''}}</div>
     </div>
     <div class="input-operation">
       <div class="text-option">
-        <div class="item" v-show="1">
+        <div class="item">
           <input type="checkbox" id="useEncrypt" v-model="useEncrypt">
           <label for="useEncrypt">{{t('btn.private')}}</label>
         </div>

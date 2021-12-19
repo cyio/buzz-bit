@@ -69,27 +69,27 @@ module.exports = {
             // '^/showMANDB': '' // 重写接口
           }
         },
-        'aggregation/v2/app/search': {
+        '/aggregation/v2/': {
           target: 'https://api.showmoney.app',
           changeOrigin: true,
           pathRewrite: {
             // '^/aggregation': '' // 重写接口
           }
         },
-        '/api/aggregation': {
-          target: 'https://www.showbuzz.app/',
+        '/oauth2/': {
+          target: 'https://www.showmoney.app',
           changeOrigin: true,
           pathRewrite: {
             // '^/aggregation': '' // 重写接口
           }
         },
-        '/aggregation': {
-          target: 'https://api.showmoney.app',
-          changeOrigin: true,
-          pathRewrite: {
-            // '^/aggregation': '' // 重写接口
-          }
-        }
+        // '/api/aggregation': {
+        //   target: 'https://www.showbuzz.app/',
+        //   changeOrigin: true,
+        //   pathRewrite: {
+        //     // '^/aggregation': '' // 重写接口
+        //   }
+        // },
       },
     },
     pwa: {

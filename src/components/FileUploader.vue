@@ -25,7 +25,7 @@
           <label for="useLargeFile">文件分片(支持 > 10MB)</label>
           <input type="checkbox" id="useLargeFile" v-model="useLargeFile">
           <span class="slice-about" v-show="useLargeFile">说明：会分割成 1MB 大小上传，信息流不可见、不可预览。仅用于测试。
-            上传大于 10MB 的文件，点击发送后，可能需要等待 1 分钟以上时间
+            上传大于 10MB 的文件，点击发送后，可能需要等待 1 分钟以上时间完成发送
           </span>
         </div>
       </div>

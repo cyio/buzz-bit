@@ -5,6 +5,7 @@ const privateConfig = require('../../private-config.json')
 export interface ConfigTypes {
   readonly baseUrl: string; // 当前项目基本Url
   readonly showMoneyUrl: string; // Showmoney 钱包地址
+  readonly showMoneyAuthUrl: string; // Showmoney 钱包地址
   readonly metaFileServiceUrl: string; // MetaFile 服务Url
   readonly metaIdServiceUrl: string; // MetaId 数据服务Url
   readonly metaIdCenterUrl: string; // MetaId tag 服务Url
@@ -73,7 +74,8 @@ const prodHotBuzz: string[] = [
 const config: ObjTypes<ConfigTypes> = {
   development: {
     baseUrl: '',
-    showMoneyUrl: 'https://www.showmoney.app',  // Showmoney 钱包地址 - 不需要变动
+    showMoneyUrl: 'https://api.showmoney.app',  // Showmoney 钱包地址 - 不需要变动
+    showMoneyAuthUrl: 'https://www.showmoney.app',  // Showmoney 钱包地址 - 不需要变动
     metaFileServiceUrl: 'https://showman.showpay.io/',
     metaIdServiceUrl: '',
     metaIdCenterUrl: '',
@@ -102,7 +104,8 @@ const config: ObjTypes<ConfigTypes> = {
   },
   production: {
     baseUrl: 'https://buzz.metasv.com', 		    // 当前项目的基本 Url
-    showMoneyUrl: 'https://www.showmoney.app',  // Showmoney 钱包地址 - 不需要变动
+    showMoneyUrl: 'https://api.showmoney.app',  // Showmoney 钱包地址 - 不需要变动
+    showMoneyAuthUrl: 'https://www.showmoney.app',  // Showmoney 钱包地址 - 不需要变动
     metaFileServiceUrl: 'https://showman.showpay.io/',  // MetaFile 文件服务API地址 - 不需要变动
     metaIdServiceUrl: 'https://api.showmoney.app',      // Showmoney MetaId 数据服务服务API地址
     // metaIdServiceUrl: 'https://buzz-api.metasv.com',      // MetaSV MetaId 数据服务服务API地址

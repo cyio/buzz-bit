@@ -13,6 +13,7 @@ import { isMobile, shared } from '@/utils/'
 import translations from './i18n'
 import InlineSvg from 'vue-inline-svg';
 import AppConfig from '@/config/'
+import VueKeepAliveDev from 'vue-keep-alive-dev'
 // import 'tailwindcss/tailwind.css'
 // import './base.css'
 
@@ -24,8 +25,9 @@ Vue.use(Loading);
 Vue.use(Toast);
 Vue.use(Icon);
 Vue.component('inline-svg', InlineSvg);
+Vue.use(VueKeepAliveDev);
 
-Vue.prototype.$version = '1.11.2'
+Vue.prototype.$version = '1.11.8'
 Vue.prototype.$chargeAddress = privateConfig.chargeAddress
 Vue.prototype.$SDKInit = SDKInit
 Vue.prototype.$isMobile = isMobile()

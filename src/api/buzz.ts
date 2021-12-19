@@ -43,8 +43,9 @@ const callApi = async (config: ApiRequestTypes): Promise<any> => {
 }
 export const getToken = (params: GetTokenParamsTypes): Promise<any> => {
   return callApi({
-    url: '/api/oauth2/oauth/token',
+    url: '/oauth2/oauth/token',
     params: params,
+    host: AppConfig.showMoneyAuthUrl,
     options: {
       headers: {
         'Content-Type': ContentType.form
@@ -53,11 +54,9 @@ export const getToken = (params: GetTokenParamsTypes): Promise<any> => {
     }
   })
 }
-// https://api.showmoney.app/aggregation/v2/app/buzz/getBuzzMyCustomizeList
 export const getBuzzList = (params): Promise<any> => {
   return callApi({
     url: '/aggregation/v2/app/buzz/getBuzzMyCustomizeList',
-    host: 'https://api.showmoney.app/',
     params: params,
     options: {
       credentials: 'omit',
@@ -66,8 +65,7 @@ export const getBuzzList = (params): Promise<any> => {
 }
 export const getFollowBuzzList = (params): Promise<any> => {
   return callApi({
-    url: '/api/aggregation/v2/app/buzz/getBuzzFollowList',
-    host: 'https://www.showbuzz.app/',
+    url: '/aggregation/v2/app/buzz/getBuzzFollowList',
     params: params,
     options: {
       credentials: 'omit',
@@ -76,8 +74,7 @@ export const getFollowBuzzList = (params): Promise<any> => {
 }
 export const getHotBuzzList = (params): Promise<any> => {
   return callApi({
-    url: '/api/aggregation/v2/app/buzz/getBuzzHotList',
-    host: 'https://www.showbuzz.app/',
+    url: '/aggregation/v2/app/buzz/getBuzzHotList',
     params: params,
     options: {
       credentials: 'omit',
@@ -86,8 +83,7 @@ export const getHotBuzzList = (params): Promise<any> => {
 }
 export const getNewBuzzList = (params): Promise<any> => {
   return callApi({
-    url: '/api/aggregation/v2/app/buzz/getBuzzHomeList',
-    host: 'https://www.showbuzz.app/',
+    url: '/aggregation/v2/app/buzz/getBuzzHomeList',
     params: params,
     options: {
       credentials: 'omit',
@@ -96,8 +92,7 @@ export const getNewBuzzList = (params): Promise<any> => {
 }
 export const getInteractiveBuzzList = (params): Promise<any> => {
   return callApi({
-    url: '/api/aggregation/v2/app/buzz/getBuzzInteractiveList',
-    host: 'https://www.showbuzz.app/',
+    url: '/aggregation/v2/app/buzz/getBuzzInteractiveList',
     params: params,
     options: {
       credentials: 'omit',
@@ -106,8 +101,7 @@ export const getInteractiveBuzzList = (params): Promise<any> => {
 }
 export const getBuzz = (params): Promise<any> => {
   return callApi({
-    url: '/api/aggregation/v2/app/buzz/getOneBuzz',
-    host: 'https://www.showbuzz.app/',
+    url: '/aggregation/v2/app/buzz/getOneBuzz',
     params: params,
     options: {
       credentials: 'omit',
@@ -117,7 +111,6 @@ export const getBuzz = (params): Promise<any> => {
 export const getImageMetaFile = (params): Promise<any> => {
   return callApi({
     url: '/aggregation/v2/app/metaFile/getImageMetaFile',
-    host: 'https://api.showmoney.app/',
     params: params,
     options: {
       credentials: 'omit',
@@ -127,7 +120,6 @@ export const getImageMetaFile = (params): Promise<any> => {
 export const getSearchBuzzList = (params): Promise<any> => {
   return callApi({
     url: '/aggregation/v2/app/search/getSearchContentBySearchWord',
-    host: 'https://api.showmoney.app/',
     params: params,
     options: {
       credentials: 'omit',
@@ -137,7 +129,6 @@ export const getSearchBuzzList = (params): Promise<any> => {
 export const getMetaAccessContent = (params): Promise<any> => {
   return callApi({
     url: '/metaaccess/api/v2/article/getMessage',
-    host: 'https://api.showmoney.app/',
     params: params,
     options: {
       mode: 'cors',
@@ -150,8 +141,7 @@ export const getMetaAccessContent = (params): Promise<any> => {
 }
 export const getUserFollow = (params): Promise<any> => {
   return callApi({
-    url: 'aggregation/v2/app/follow/getMyFollow',
-    host: 'https://www.showbuzz.app/',
+    url: '/aggregation/v2/app/follow/getMyFollow',
     params: params,
     options: {
       credentials: 'omit',
@@ -160,7 +150,7 @@ export const getUserFollow = (params): Promise<any> => {
 }
 
 export const goAuth = () => {
-  const authUrl = `${AppConfig.showMoneyUrl}/userLogin?response_type=code&scope=app&client_id=${AppConfig.oauthSettings.clientId}&redirect_uri=${AppConfig.oauthSettings.redirectUri}`
+  const authUrl = `${AppConfig.showMoneyAuthUrl}/userLogin?response_type=code&scope=app&client_id=${AppConfig.oauthSettings.clientId}&redirect_uri=${AppConfig.oauthSettings.redirectUri}`
   location.href= authUrl
   // window.open(authUrl)
 }
