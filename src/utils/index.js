@@ -147,6 +147,23 @@ const sliceFile = (fileBlob, chunkSize = 1024) => {
   return chunks
 }
 
+const hexStringToImageByte = function(t) {
+  if (!t)
+    return "https://showjob.oss-cn-hangzhou.aliyuncs.com/index/img_photo_default.png";
+  for (var e = [], a = 0, o = t.length; a < o; a += 2)
+    e.push(parseInt(t.substr(a, 2), 16));
+  for (var s = "", n = new Uint8Array(e), i = n.byteLength, r = 0; r < i; r++)
+    s += String.fromCharCode(n[r]);
+  var c = window.btoa(s)
+    , l = "image/jpeg";
+  return "data:" + l + ";base64," + c
+}
+
+function hasChinese (str) {
+  const reg = new RegExp("[\\u4E00-\\u9FFF]+","g");
+  return reg.test(str)
+}
+
 export {
   formatBytes,
   isProd,
@@ -158,5 +175,6 @@ export {
   isMobile,
   shared,
   getExtension,
-  sliceFile
+  sliceFile,
+  hasChinese
 }

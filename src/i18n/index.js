@@ -19,14 +19,19 @@ export default {
       file: '文件',
       login: '登录',
       private: '私密',
-      caseInsensitive: '大小写不敏感'
+      caseInsensitive: '大小写不敏感',
+      translate: '翻译',
+      translateOri: '原文',
+      useOriginal: '使用原图',
+      keepWidthAndHeight: '压缩时，保持原图宽高'
     },
     post: {
       forward: '转发',
       comment: '评论',
       like: '喜欢',
       tip: '打赏',
-      inputPlaceholder: '永久记录'
+      inputPlaceholder: '永久记录',
+      full: '全文'
     },
   },
   en: {
@@ -49,14 +54,19 @@ export default {
       file: 'file',
       login: 'login',
       private: 'private',
-      caseInsensitive: 'case insensitive'
+      caseInsensitive: 'case insensitive',
+      translate: 'translate',
+      translateOri: 'original',
+      useOriginal: 'use original',
+      keepWidthAndHeight: 'when compressing, keep the width and height of the original image'
     },
     post: {
       forward: 'forward',
       comment: 'comment',
       like: 'like',
       tip: 'tip',
-      inputPlaceholder: 'Permanent Record'
+      inputPlaceholder: 'Permanent Record',
+      full: 'full'
     },
   },
 }

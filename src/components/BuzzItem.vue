@@ -13,7 +13,7 @@
           <div class="note-content" v-if="buzz.protocol === 'metanote'">发布了笔记
             <a :href="`https://www.metanote.app/detail/${buzz.txId}`" target="_blank">《{{buzz.content || '无题'}}》</a>
           </div>
-          <div class="content" v-else v-html="displayContent(buzz.content || buzz.publicContent, mode === 'list')"></div>
+          <div class="content" v-else v-html="displayContent(buzzContent, mode === 'list')"></div>
           <div class="paid-wrap" v-if="buzz.metaAccessTxId">
             付费 buzz，请前往 showbuzz 查看
             <!-- <div class="paid-content">
@@ -44,6 +44,10 @@
             loading="lazy"
           />
         </div>
+      </div>
+      <div class="trans-wrap" v-if="showTranslateBtn">
+        <van-loading v-if="isInTranslate && !translatedContent"></van-loading>
+        <div class="translate" v-else @click.stop="toggleTranslate(buzz.content)">{{isInTranslate ? t('btn.translateOri') : t('btn.translate')}}</div>
       </div>
       <buzz-footer
         v-if="showFooter && buzz.txId && mode !== 'reply'"
@@ -93,7 +97,7 @@ import mixin from './BuzzPart/mixin'
 import { mapState } from 'vuex'
 import { useI18n } from 'vue-i18n-composable/src/index'
 import SDKInit from '@/utils/sdk';
-import { hexToBase64Img } from '@/utils/'
+import { hexToBase64Img, hasChinese } from '@/utils/'
 // import CoolLightBox from 'vue-cool-lightbox'
 // import 'vue-cool-lightbox/dist/vue-cool-lightbox.min.css'
 import { ImagePreview } from 'vant';
@@ -231,7 +235,7 @@ export default Vue.extend({
           }
         })
       }
-    }
+    },
   },
   computed: {
     ...mapState({
@@ -403,5 +407,12 @@ export default Vue.extend({
   padding: 10px;
   font-size: 12px;
   color: var(--theme-color);
+}
+.translate {
+  font-size: 12px;
+  color: #565454;
+  width: 30px;
+  padding: 2px 4px;
+  cursor: pointer;
 }
 </style>

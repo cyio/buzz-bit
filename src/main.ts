@@ -27,7 +27,7 @@ Vue.use(Icon);
 Vue.component('inline-svg', InlineSvg);
 Vue.use(VueKeepAliveDev);
 
-Vue.prototype.$version = '1.11.9'
+Vue.prototype.$version = '1.12.0'
 Vue.prototype.$chargeAddress = privateConfig.chargeAddress
 Vue.prototype.$SDKInit = SDKInit
 Vue.prototype.$isMobile = isMobile()

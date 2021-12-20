@@ -139,6 +139,19 @@ export const getMetaAccessContent = (params): Promise<any> => {
     }
   })
 }
+export const queryTranslate = (params): Promise<any> => {
+  return callApi({
+    url: '/showpaycore/api/v1/i18n/translate',
+    params: params,
+    options: {
+      mode: 'cors',
+      credentials: 'include',
+      headers: {
+        metaId: params.metaId
+      },
+    }
+  })
+}
 export const getUserFollow = (params): Promise<any> => {
   return callApi({
     url: '/aggregation/v2/app/follow/getMyFollow',

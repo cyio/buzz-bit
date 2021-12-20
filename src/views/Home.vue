@@ -190,7 +190,7 @@ export default {
         brfcId: "9e73d8935669",
         accessToken: this.accessToken,
         encrypt: +this.useEncrypt,
-        payCurrency: "BSV",
+        payCurrency: "BSV", // 没有 payto 才生效，可选值 usd，展示美分
         payTo,
         path: useSelfPath ? '/Protocols/SimpleMicroblog/self' : '/Protocols/SimpleMicroblog',
         dataType: "application/json",

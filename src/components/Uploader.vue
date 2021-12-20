@@ -44,11 +44,11 @@
     <div class="options">
       <div class="item">
         <input type="checkbox" id="useOriginal" v-model="useOriginal">
-        <label for="useOriginal">使用原图</label>
+        <label for="useOriginal">{{t('btn.useOriginal')}}</label>
       </div>
       <div class="item">
         <input type="checkbox" id="useOriginalWidth" v-model="useOriginalWidth">
-        <label for="useOriginalWidth">压缩时，保持原图宽高</label>
+        <label for="useOriginalWidth">{{t('btn.keepWidthAndHeight')}}</label>
       </div>
       <!-- <button class="btn-clear btn-medium" @click="clear" v-show="previewImages.length">清除图片</button> -->
     </div>
@@ -72,6 +72,7 @@ import Vue from "vue";
 import Compressor from "compressorjs";
 import { formatBytes } from '@/utils/index'
 import { Uploader } from 'vant';
+import { useI18n } from 'vue-i18n-composable/src/index'
 
 // 需求 blob => hex
 export default Vue.extend({
@@ -90,6 +91,11 @@ export default Vue.extend({
       useOriginalWidth: false,
       testArr: []
     };
+  },
+  setup() {
+    return {
+      ...useI18n(),
+    }
   },
   methods: {
     removeImg(index) {

@@ -6,8 +6,12 @@
       </div>
       <div class="item-main" @click="goDetail">
         <buzz-header :buzz="buzz" />
-        <div class="content" v-html="displayContent(buzz.content)"></div>
+        <div class="content" v-html="displayContent(buzzContent)"></div>
       </div>
+    </div>
+    <div class="trans-wrap" v-if="showTranslateBtn">
+      <van-loading v-if="isInTranslate && !translatedContent"></van-loading>
+      <div class="translate" v-else @click.stop="toggleTranslate(buzz.content)">{{isInTranslate ? t('btn.translateOri') : t('btn.translate')}}</div>
     </div>
     <div class="item-original" v-if="buzzData.quoteItem">
       <buzz-item
@@ -32,6 +36,7 @@ import BuzzSide from './BuzzPart/BuzzAvatar.vue'
 import BuzzFooter from './BuzzPart/BuzzFooter.vue'
 import mixin from './BuzzPart/mixin'
 import { mapState } from 'vuex'
+import { useI18n } from 'vue-i18n-composable/src/index'
 
 export default ({
   name: "QuoteItem",
@@ -58,6 +63,11 @@ export default ({
       buzzData: {},
       dataDone: false
     };
+  },
+  setup() {
+    return {
+      ...useI18n(),
+    }
   },
   methods: {
     goDetail() {
@@ -155,6 +165,15 @@ export default ({
   }
   .item-left {
     width: 40px;
+  }
+  .trans-wrap {
+    font-size: 12px;
+    color: #565454;
+    width: 30px;
+    padding: 2px 4px;
+    cursor: pointer;
+    margin-left: 50px;
+    margin-top: 4px;
   }
 }
 </style>
