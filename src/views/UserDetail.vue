@@ -76,7 +76,7 @@ export default ({
     getUserBuzzList() {
       const metaId = this.$route.params.id
       const params = {
-        Protocols: ['SimpleMicroblog'],
+        Protocols: ['SimpleMicroblog', 'WebotBuzz'],
         metaId,
         page: "" + this.buzzListData[this.curListType].currentPage,
         pageSize: '6',
@@ -172,12 +172,12 @@ export default ({
   computed: {
     curBuzzListData() {
       let list = this.buzzListData[this.curListType].data
-      if (!this.showVideoInFlow) {
-        return list.filter(i => {
-          const hasVideo = i.attachments && i.attachments[0] && i.attachments[0].endsWith('.mp4')
-          return !hasVideo
-        })
-      }
+      // if (!this.showVideoInFlow) {
+      //   return list.filter(i => {
+      //     const hasVideo = i.attachments && i.attachments[0] && i.attachments[0].endsWith('.mp4')
+      //     return !hasVideo
+      //   })
+      // }
       return list
     },
     actualAmount() {

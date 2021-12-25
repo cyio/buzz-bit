@@ -2,7 +2,7 @@
   <div class="setting">
     <div class="item">
       <input type="checkbox" id="showVideo" :checked="showVideoInFlow" @change="onChange">
-      <label for="showVideo">信息流中展示视频（不影响详情页）</label>
+      <label for="showVideo">信息流中预览视频（不影响详情页）</label>
     </div>
     <div class="item" v-if="$isInShowApp">
       <input type="checkbox" id="showneedConfirm" :checked="!needConfirm" @change="onChange1">

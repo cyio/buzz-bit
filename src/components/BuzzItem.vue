@@ -24,12 +24,14 @@
       </template>
       <div class="media">
         <div class="media-item" v-for="(metafile, index) in buzz.attachments" :key="index">
-          <file-decode v-if="isShareFile(buzz)" :txId="buzz.attachments[0] | parseTxId"
+          <file-decode v-if="isShareFile(buzz, metafile)" :txId="buzz.attachments[0] | parseTxId"
             class="share-file"
             :mode="mode"
           />
           <template v-else-if="metafile.endsWith('.mp4')">
-            <div class="" v-if="mode === 'list' && !showVideoInFlow">视频</div>
+            <div class="" v-if="mode === 'list' && !showVideoInFlow">
+                <van-icon name="video-o" size="25" color="var(--theme-color)" />
+            </div>
             <video
               v-else
               controls
@@ -184,8 +186,8 @@ export default Vue.extend({
     onChange(index) {
       this.index = index
     },
-    isShareFile(buzz) {
-      return buzz.content.includes('#分享文件')
+    isShareFile(buzz, metafile) {
+      return buzz.content.includes('#分享文件') && !metafile.endsWith('.mp4')
     },
     goDetail() {
       if (this.mode === 'list' || (this.mode === 'detail' && this.isOriginal)) {
