@@ -31,7 +31,8 @@ export default {
       like: '喜欢',
       tip: '打赏',
       inputPlaceholder: '永久记录',
-      full: '全文'
+      full: '全文',
+      batchTipPlaceholder: '每人金额',
     },
   },
   en: {
@@ -66,7 +67,8 @@ export default {
       like: 'like',
       tip: 'tip',
       inputPlaceholder: 'Permanent Record',
-      full: 'full'
+      full: 'full',
+      batchTipPlaceholder: 'amount per persion',
     },
   },
 }

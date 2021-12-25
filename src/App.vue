@@ -345,5 +345,4 @@ export default defineComponent({
   color: var(--theme-color);
   border-color: var(--theme-color);
 }
-
 </style>
