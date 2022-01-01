@@ -7,6 +7,8 @@
 
 <script>
 const time = +new Date()
+import { assetUrl } from '@/utils/'
+
 export default ({
   name: "BuzzAvatar",
   props: {
@@ -28,8 +30,9 @@ export default ({
   },
   computed: {
     avatarUrl() {
+      const url = `https://showman.showpay.io/metafile/avatar/${this.avatarTxId}?timestamp=${time}`
       return this.avatarTxId
-        ? `https://showman.showpay.io/metafile/avatar/${this.avatarTxId}?timestamp=${time}`
+        ? assetUrl(url)
         : ''
       // return `https://buzz-api.metasv.com/api/metafile/${this.avatarTxId}`
     }

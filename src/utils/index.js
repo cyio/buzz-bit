@@ -164,6 +164,12 @@ function hasChinese (str) {
   return reg.test(str)
 }
 
+const proxy = 'https://qcbor7.api.cloudendpoint.cn/image-proxy?url='
+const useProxy = 1
+function assetUrl(url) {
+  return useProxy ? proxy + url : url
+}
+
 export {
   formatBytes,
   isProd,
@@ -176,5 +182,6 @@ export {
   shared,
   getExtension,
   sliceFile,
-  hasChinese
+  hasChinese,
+  assetUrl
 }

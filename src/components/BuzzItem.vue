@@ -99,7 +99,7 @@ import mixin from './BuzzPart/mixin'
 import { mapState } from 'vuex'
 import { useI18n } from 'vue-i18n-composable/src/index'
 import SDKInit from '@/utils/sdk';
-import { hexToBase64Img, hasChinese } from '@/utils/'
+import { hexToBase64Img, assetUrl } from '@/utils/'
 // import CoolLightBox from 'vue-cool-lightbox'
 // import 'vue-cool-lightbox/dist/vue-cool-lightbox.min.css'
 import { ImagePreview } from 'vant';
@@ -171,7 +171,7 @@ export default Vue.extend({
       if (srcArray[0] === 'metafile') {
         url = fileId && fileId !== '' ? `${AppConfig.metaFileServiceUrl}/metafile/${fileId}` : null
       }
-      return url
+      return assetUrl(url)
     },
     handleHashTags(val) {
       const html = val.replace(/#([\u4e00-\u9fa5_\w-]+)#/g, '<a href="' + this.$router.options.base + 'list?tag=$1">$&</a> ')
