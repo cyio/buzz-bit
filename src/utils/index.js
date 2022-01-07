@@ -165,7 +165,7 @@ function hasChinese (str) {
 }
 
 const proxy = 'https://qcbor7.api.cloudendpoint.cn/image-proxy?url='
-const useProxy = 1
+const useProxy = 0
 function assetUrl(url) {
   return useProxy ? proxy + url : url
 }

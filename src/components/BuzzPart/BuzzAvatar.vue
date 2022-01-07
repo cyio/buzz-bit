@@ -30,7 +30,7 @@ export default ({
   },
   computed: {
     avatarUrl() {
-      const url = `https://showman.showpay.io/metafile/avatar/${this.avatarTxId}?timestamp=${time}`
+      const url = `${this.$AppConfig.metaFileServiceUrl}/metafile/avatar/${this.avatarTxId}?timestamp=${time}`
       return this.avatarTxId
         ? assetUrl(url)
         : ''

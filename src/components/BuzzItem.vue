@@ -247,7 +247,7 @@ export default Vue.extend({
       accessToken: 'accessToken'
     }),
     avatarUrl() {
-      return `https://showman.showpay.io/metafile/avatar/${this.buzz.avatarTxId}?timestamp=${+new Date()}`
+      return `${this.$AppConfig.metaFileServiceUrl}/metafile/avatar/${this.buzz.avatarTxId}?timestamp=${+new Date()}`
     },
     isInBlackList() {
       const socialList = this.user.socialList
@@ -260,7 +260,7 @@ export default Vue.extend({
   },
   filters: {
     parseVideoUrl: function(t) {
-      const base = 'https://showman.showpay.io/metafile/'
+      const base = `${this.$AppConfig.metaFileServiceUrl}/metafile/`
       // const base = 'https://metafile.id/download/'
       return t ? base.concat(t.replace("metafile://", "")) : ""
     },

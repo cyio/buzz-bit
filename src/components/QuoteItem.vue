@@ -79,7 +79,7 @@ export default ({
   },
   computed: {
     avatarUrl() {
-      return `https://showman.showpay.io/metafile/avatar/${this.buzz.avatarTxId}?timestamp=${+new Date()}`
+      return `${this.$AppConfig.metaFileServiceUrl}/metafile/avatar/${this.buzz.avatarTxId}?timestamp=${+new Date()}`
     },
     ...mapState({
       user: 'user',
