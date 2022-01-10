@@ -30,8 +30,8 @@ export default ({
   },
   computed: {
     avatarUrl() {
-      const url = `${this.$AppConfig.metaFileServiceUrl}/metafile/avatar/${this.avatarTxId}?timestamp=${time}`
-      return this.avatarTxId
+      const url = `${this.$AppConfig.metaFileServiceUrl}/metafile/avatar/${this.userTxId}?timestamp=${time}`
+      return this.userTxId
         ? assetUrl(url)
         : ''
       // return `https://buzz-api.metasv.com/api/metafile/${this.avatarTxId}`
