@@ -44,10 +44,6 @@ export default {
       type: String,
       default: 'pub'
     },
-    user: {
-      type: Object,
-      default: () => ({})
-    },
     lastBuzzTxId: {
       type: String,
     },
@@ -214,7 +210,7 @@ export default {
             this.buzzListData[_listType].data.unshift(list[0])
           }
         } else {
-          const socialList = this.user.socialList || this.user2.socialList
+          const socialList = this.user?.socialList
           // console.log(socialList, this.user2)
           if (socialList) {
             list = list.filter(i => {
@@ -228,7 +224,7 @@ export default {
         // .filter(i => i.encrypt === '0')
       }
     },
-    async onRefresh(){
+    onRefresh(){
       if (this.buzzListData[this.curListType].refreshing) {
         this.buzzListData[this.curListType].data = []
         this.buzzListData[this.curListType].currentPage = 1
@@ -255,7 +251,7 @@ export default {
   },
   computed: {
     ...mapState({
-      user2: 'user',
+      user: 'user',
     }),
     navDataComputed() {
       const priv = [

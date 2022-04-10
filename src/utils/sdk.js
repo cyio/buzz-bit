@@ -78,7 +78,7 @@ export default function SDKInit() {
         onError: (res) => {
           console.log(res)
           const { code } = res
-          if (code === 201) {
+          if (code === 201 || code === 204) {
             goAuth()
           }
           reject(code)

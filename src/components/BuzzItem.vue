@@ -28,7 +28,7 @@
             class="share-file"
             :mode="mode"
           />
-          <template v-else-if="metafile.endsWith('.mp4')">
+          <template v-else-if="isVideo(metafile)">
             <div class="" v-if="mode === 'list' && !showVideoInFlow">
                 <van-icon name="video-o" size="25" color="var(--theme-color)" />
             </div>
@@ -39,12 +39,26 @@
               :src="metafile | parseVideoUrl"
             />
           </template>
+          <template v-else-if="isAudio(metafile)">
+            <div class="" v-if="mode === 'list' && !showVideoInFlow">
+                <van-icon name="video-o" size="25" color="var(--theme-color)" />
+            </div>
+            <audio
+              v-else
+              controls
+              preload="metadata"
+              :src="metafile | parseVideoUrl"
+            />
+          </template>
           <img
-            v-else
+            v-else-if="isImg(metafile)"
             :src="getAssetUrl(metafile)"
             @click.stop="handlePreviewImg(buzz.attachments, index)"
             loading="lazy"
           />
+          <div v-else>
+            <a :href="dLink(metafile)" download>下载</a>
+          </div>
         </div>
       </div>
       <div class="trans-wrap" v-if="showTranslateBtn">
@@ -99,7 +113,7 @@ import mixin from './BuzzPart/mixin'
 import { mapState } from 'vuex'
 import { useI18n } from 'vue-i18n-composable/src/index'
 import SDKInit from '@/utils/sdk';
-import { hexToBase64Img, assetUrl } from '@/utils/'
+import { hexToBase64Img, assetUrl, getExtension } from '@/utils/'
 // import CoolLightBox from 'vue-cool-lightbox'
 // import 'vue-cool-lightbox/dist/vue-cool-lightbox.min.css'
 import { ImagePreview } from 'vant';
@@ -109,9 +123,13 @@ import { getImageMetaFile } from '@/api/buzz.ts'
 function imgFix(str) {
   str = str.split('.')
   const last = str[str.length - 1]
-  return /webp|jpg|jpeg|git/.test(last) ? str.slice(0, -1) : str
+  return /webp|jpg|jpeg|gif|png/.test(last) ? str.slice(0, -1) : str
 }
-
+function isImg(str) {
+  const ext = getExtension(str);
+  let ans = ext === '' || /webp|jpg|jpeg|png|gif/.test(ext);
+  return ans
+}
 export default Vue.extend({
   name: "buzz-item",
   mixins: [mixin],
@@ -157,6 +175,11 @@ export default Vue.extend({
     }
   },
   methods: {
+    isImg: isImg,
+    dLink(str) {
+      str = str.replace('metafile://', '')
+      return `https://filecdn.showpay.top/metaChunkFile/original/${str}`
+    },
     getAssetUrl(src) {
       if (src.startsWith('data:image/')) {
         return src
@@ -169,7 +192,9 @@ export default Vue.extend({
       let fileId = imgFix(srcArray[1])
       let url = src
       if (srcArray[0] === 'metafile') {
-        url = fileId && fileId !== '' ? `${AppConfig.metaFileServiceUrl}/metafile/${fileId}` : null
+        url = fileId && fileId !== '' ? `${AppConfig.metaFileServiceUrl}/metafile/${fileId.join('.')}` : null
+      } else if (srcArray[0] === 'sensible') {
+        url = fileId && fileId !== '' ? `${AppConfig.metaFileServiceUrl}/metafile/sensible/${fileId.join('.')}` : null
       }
       return assetUrl(url)
     },
@@ -238,6 +263,14 @@ export default Vue.extend({
         })
       }
     },
+    isAudio(str) {
+      let s =  /mp3|ogg|aac|wav/.test(getExtension(str));
+      return s
+    },
+    isVideo(str) {
+      let s =  /mp4|webm/.test(getExtension(str));
+      return s
+    }
   },
   computed: {
     ...mapState({
@@ -256,11 +289,11 @@ export default Vue.extend({
         value = socialList.blackList.includes(this.buzz.metaId)
       }
       return value
-    }
+    },
   },
   filters: {
-    parseVideoUrl: function(t) {
-      const base = `${this.$AppConfig.metaFileServiceUrl}/metafile/`
+    parseVideoUrl(t) {
+      const base = `${AppConfig.metaFileServiceUrl}/metafile/`
       // const base = 'https://metafile.id/download/'
       return t ? base.concat(t.replace("metafile://", "")) : ""
     },

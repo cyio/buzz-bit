@@ -139,7 +139,7 @@ export default {
     }
   },
   watch: {
-    'buzzListData.search.currentPage': function(val) {
+    'buzzListData.search.currentPage': function() {
       this.getCurBuzzList()
     }
   },

@@ -129,7 +129,9 @@ const shared = {
 
 function getExtension(str = '') {
   let arr = str.split('.')
-  return arr[arr.length - 1] || 'unknown'
+  if (arr.length <= 1) return ''
+  let ans = arr[arr.length - 1]
+  return ans.toLowerCase()
 }
 
 const sliceFile = (fileBlob, chunkSize = 1024) => {

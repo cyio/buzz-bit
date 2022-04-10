@@ -124,8 +124,8 @@ export default ({
         encrypt: 0,
         payCurrency: "BSV",
         payTo: [
-          { amount: 1000, address: '18H4SRi4nh9yg6Tr8M24CTtsveqzmFmJxM' },
           { amount: 500, address: this.buzz.zeroAddress },
+          { amount: 1000, address: this.$chargeAddress.postFee }
         ],
         dataType: 'applicaition/json',
         path: '/Protocols/SimpleRePost',
@@ -152,8 +152,8 @@ export default ({
         encrypt: 0,
         payCurrency: "BSV",
         payTo: [
-          { amount: 1000, address: '18H4SRi4nh9yg6Tr8M24CTtsveqzmFmJxM' },
           { amount: 500, address: this.buzz.zeroAddress },
+          { amount: 1000, address: this.$chargeAddress.postFee }
         ],
         dataType: 'applicaition/json',
         path: '/Protocols/PayComment',

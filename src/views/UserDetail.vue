@@ -41,6 +41,7 @@ import BuzzList from "@/components/BuzzList.vue";
 import { getBuzzList } from '@/api/buzz.ts'
 import { List, Pagination } from 'vant';
 import BuzzSide from '@/components/BuzzPart/BuzzAvatar.vue'
+const sensilet = window.sensilet
 
 export default ({
   name: "UserDetail",
@@ -87,7 +88,7 @@ export default ({
         this.buzzListData[this.curListType].loading = false
         const { code, data } = res
         if (code === 0) {
-          const items = res.data.results?.items || []
+          const items = data.results?.items || []
           return items.filter(i => i.encrypt === '0')
         }
       })
@@ -185,7 +186,7 @@ export default ({
     }
   },
   watch: {
-    'buzzListData.user.currentPage': function(val) {
+    'buzzListData.user.currentPage': function() {
       this.getCurBuzzList()
     }
   },
