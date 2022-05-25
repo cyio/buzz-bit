@@ -7,7 +7,8 @@ function convertImgs(input) {
   for (let rule of rules) {
     res = res.replace(rule, (t) => {
       if (t.includes('sinaimg.cn')) {
-        t = 'https://cnbeta.leanapp.cn/api/image?url=' + t
+        // t = 'https://cnbeta.leanapp.cn/api/image?url=' + t
+        return t
       }
       return `<img src="${t}" style="width: 100%" loading="lazy" />`
     })
@@ -23,7 +24,8 @@ function convertRawText(text) {
       const common = /(http(s?):)([/|.|\w|\s|-])*\.(?:jpg|gif|png)/g;    
       if (common.test(t)) {
         if (t.includes('sinaimg.cn')) {
-          t = 'https://cnbeta.leanapp.cn/api/image?url=' + t
+          // t = 'https://cnbeta.leanapp.cn/api/image?url=' + t
+          return t
         }
         return `<img src="${t}" style="width: 100%" />`
       }

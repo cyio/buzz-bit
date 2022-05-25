@@ -4,6 +4,7 @@ import MetaIdJs from "metaidjs"
 
 let singleton
 
+// 调用：window.__metaIdJs.addProtocolNode_(config);
 export default function SDKInit() {
   if (singleton) return singleton
   singleton = new Promise((resolve, reject) => {
