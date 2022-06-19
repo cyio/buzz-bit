@@ -23,7 +23,13 @@
           @load="onLoad(item.key)"
           :key="item.key"
         >
+          <!-- <div class="init-loading" v-if="curBuzzListData.length === 0 && buzzListData[curListType].loading">数据</div> -->
           <BuzzList :buzzListData="curBuzzListData" :key="item.key" />
+          <!-- 定制首次加载界面 -->
+          <template v-if="curBuzzListData.length === 0" v-slot:loading>
+              <van-loading color="var(--theme-color)" class="loading"></van-loading>
+              <!-- <QuoteCard name="for-list" /> -->
+          </template>
         </van-list>
         <!-- </van-pull-refresh> -->
       </van-tab>
@@ -32,6 +38,7 @@
 </template>
 <script>
 import BuzzList from "@/components/BuzzList.vue";
+import QuoteCard from "@/components/QuoteCard.vue";
 import { getBuzzList, getFollowBuzzList, getHotBuzzList, getNewBuzzList, getSearchBuzzList, getBuzz } from '@/api/buzz.ts'
 import { Tab, Tabs, Loading, Pagination, Search, PullRefresh, List } from 'vant';
 import { useI18n } from 'vue-i18n-composable/src/index'
@@ -53,6 +60,7 @@ export default {
   },
   components: {
     BuzzList,
+    QuoteCard,
     [Tab.name]: Tab,
     [Tabs.name]: Tabs,
     [Loading.name]: Loading,
@@ -284,7 +292,7 @@ export default {
         console.info('watch', val, old)
         this.buzzListData[this.curListType].currentPage = 1
         this.buzzListData[this.curListType].data = []
-        // this.buzzListData[this.curListType].loading = true;
+        this.buzzListData[this.curListType].loading = true;
         this.getCurBuzzList(val)
         if (window.location.pathname !== `/pub/${val}` && !/follow|my/.test(val) && old) {
           window.history.pushState({}, '', `/pub/${val}`)

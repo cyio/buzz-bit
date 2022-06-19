@@ -6,10 +6,10 @@ function convertImgs(input) {
   let res = input
   for (let rule of rules) {
     res = res.replace(rule, (t) => {
-      if (t.includes('sinaimg.cn')) {
-        // t = 'https://cnbeta.leanapp.cn/api/image?url=' + t
-        return t
-      }
+      // if (t.includes('sinaimg.cn')) {
+      //   // t = 'https://cnbeta.leanapp.cn/api/image?url=' + t
+      //   return t
+      // }
       return `<img src="${t}" style="width: 100%" loading="lazy" />`
     })
   }
@@ -25,9 +25,10 @@ function convertRawText(text) {
       if (common.test(t)) {
         if (t.includes('sinaimg.cn')) {
           // t = 'https://cnbeta.leanapp.cn/api/image?url=' + t
-          return t
+          // return t
+        } else {
+            return `<img src="${t}" style="width: 100%" />`
         }
-        return `<img src="${t}" style="width: 100%" />`
       }
       if (dogefiles.test(t)) {
         return `<img src="${t}" style="width: 100%" />`

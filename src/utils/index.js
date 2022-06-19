@@ -172,6 +172,11 @@ function assetUrl(url) {
   return useProxy ? proxy + url : url
 }
 
+function random(lower, higher) {
+  return lower + Math.floor(Math.random() * (higher - lower + 1)) // 左闭右闭
+}
+
+
 export {
   formatBytes,
   isProd,
@@ -185,5 +190,6 @@ export {
   getExtension,
   sliceFile,
   hasChinese,
-  assetUrl
+  assetUrl,
+  random
 }

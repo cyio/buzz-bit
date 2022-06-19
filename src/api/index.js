@@ -19,3 +19,10 @@ export const queryHex = {
   'showMANDB': queryHexFromShow,
   'whatsonchain': queryHexFromWOC
 }
+
+export const getQuotes = async () => {
+  let url = `https://vercel-server-bit.vercel.app/api/bsv/quotes`
+  let res = await fetch(url)
+  let json = await res.json()
+  return json
+}

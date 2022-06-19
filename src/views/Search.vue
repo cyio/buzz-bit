@@ -1,5 +1,6 @@
 <template>
   <div class="list-container">
+    <!-- 搜索顶部 -->
     <div class="search-wrap" v-show="curListType === 'search'" >
       <van-search
         v-model="keywords"
@@ -15,8 +16,8 @@
         <label for="caseInsensitive">{{t('btn.caseInsensitive')}}</label>
       </div>
     </div>
-    <van-loading v-show="buzzListData[curListType].loading" color="var(--theme-color)" class="loading" />
-    <div v-show="showResult && !buzzListData[curListType].loading">
+    <!-- 搜索内容 -->
+    <div v-if="showResult && !buzzListData[curListType].loading">
       <div v-if="curBuzzListData.length || buzzListData.search.currentPage > 1">
         <BuzzList :buzzListData="curBuzzListData" />
         <van-pagination
@@ -26,10 +27,17 @@
       </div>
       <div class="no-result" v-else>没有查询到，换个搜索词试试</div>
     </div>
+    <div class="custom-content" v-else>
+      <QuoteCard v-if="!buzzListData[curListType].loading" />
+      <van-loading v-else color="var(--theme-color)" class="loading">
+        <QuoteCard />
+      </van-loading>
+    </div>
   </div>
 </template>
 <script>
 import BuzzList from "@/components/BuzzList.vue";
+import QuoteCard from "@/components/QuoteCard.vue";
 import { getSearchBuzzList } from '@/api/buzz.ts'
 import { Tab, Tabs, Loading, Pagination, Search, PullRefresh, List } from 'vant';
 import { useI18n } from 'vue-i18n-composable/src/index'
@@ -51,6 +59,7 @@ export default {
   },
   components: {
     BuzzList,
+    QuoteCard,
     [Tab.name]: Tab,
     [Tabs.name]: Tabs,
     [Loading.name]: Loading,
@@ -136,11 +145,16 @@ export default {
       //   })
       // }
       return list
-    }
+    },
   },
   watch: {
     'buzzListData.search.currentPage': function() {
       this.getCurBuzzList()
+    },
+    keywords(val) {
+      if (val.trim() === '') {
+        this.showResult = false;
+      }
     }
   },
   created() {

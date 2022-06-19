@@ -5,7 +5,7 @@
         <span class="title" @click="goHome">BuzzBit</span>
         <span class="ver">{{$version}}</span>
         <van-loading v-show="hasToken && !isSDKLoaded" size="16px" class="sdk-loading"
-        >{{`${$isMobile ? '' : 'MetaID框架...'}`}}</van-loading>
+        >{{loadingStatus}}</van-loading>
       </div>
       <div class="links">
         <div class="link" v-for="item of links" :key="item.name">
@@ -81,6 +81,9 @@ export default defineComponent({
     },
     currentRouteName() {
       return this.$route.name;
+    },
+    loadingStatus() {
+      return this.$isMobile ? '' : 'MetaID框架...'
     },
     links() {
       return [

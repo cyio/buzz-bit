@@ -45,7 +45,7 @@ export default Vue.extend({
 
 <style scoped lang="scss">
 .list-wrap {
-  min-height: calc(100vh - 300px);
+  // min-height: calc(100vh - 300px);
   border: 1px solid #eae7e7;
   border-top: 0;
   border-bottom: 0;
