@@ -9,13 +9,16 @@
       </div>
       <div class="links">
         <div class="link" v-for="item of links" :key="item.name">
-          <!-- hasToken || user.name -->
-          <router-link :to="item.to" v-if="item.enable" >
-            <!-- {{t('nav.home')}} -->
-            <!-- @click="activeNavName = item.name"  -->
-            <!-- :is-active="item.name === activeNavName"  -->
-            <nav-item :name="item.name" :is-active="item.name === currentRouteName" />
-          </router-link>
+          <template v-if="item.enable">
+            <div v-if="item.isExternal">
+                <a :href="item.to" target="_blank">
+                  <img class="custom-icon" :src="item.img" />
+                </a>
+            </div>
+            <router-link v-else :to="item.to">
+              <nav-item :name="item.name" :is-active="item.name === currentRouteName" />
+            </router-link>
+          </template>
         </div>
         <div class="user">
           <div v-if="hasToken || user.name" @click="authConfirm">
@@ -107,6 +110,13 @@ export default defineComponent({
           name: 'Setting',
           enable: true
         },
+        {
+          to: 'https://bsv.oaker.bid/',
+          name: 'bsv123',
+          isExternal: true,
+          img: 'https://bsv.oaker.bid/img/icons/favicon.png',
+          enable: true
+        }
       ]
     },
   },
@@ -312,6 +322,14 @@ export default defineComponent({
     margin-right: 6px;
     text-align: center;
     padding: 4px;
+  }
+  .custom-icon {
+    width: 32px;
+    height: 32px;
+    padding: 4px;
+    box-sizing: border-box;
+    position: relative;
+    top: 2px;
   }
 }
 

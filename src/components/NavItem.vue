@@ -24,6 +24,7 @@ export default ({
         'PubList': 'fire-o',
         'Search': 'search',
         'Setting': 'setting-o',
+        "bsv123": 'location-o'
       }
     };
   },

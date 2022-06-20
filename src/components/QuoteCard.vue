@@ -63,14 +63,14 @@ export default ({
     content: '';
   }
 
-  .otro-blockquote .content { 
-    color: #454545;
+  .otro-blockquote .content {
+    color:#333333;
+    font-weight: bold;
   }
 
   .otro-blockquote .author {
-    color:#333333;
+    color: #454545;
     font-style: normal;
-    font-weight: bold;
     margin-top:1em;
   }
 </style>
