@@ -393,7 +393,7 @@ export default Vue.extend({
     }
     img { 
       width: 130px;
-      min-height: 90px;
+      // min-height: 90px;
       min-width: 130px;
       background-color: #eee;
     }

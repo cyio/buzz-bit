@@ -5,7 +5,6 @@
 </template>
 
 <script>
-const time = +new Date()
 export default ({
   name: "NavItem",
   props: {

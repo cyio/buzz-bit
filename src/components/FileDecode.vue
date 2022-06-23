@@ -40,6 +40,7 @@ export default ({
   name: "FileDecode",
   props: {
     txId: String,
+    txHex: String,
     apiService: {
       type: String,
       default: 'showMANDB',
@@ -111,22 +112,6 @@ export default ({
         // console.log('url', url)
         return url
     },
-    parseTxInput(str) {
-      let txId = str
-      if (str.includes('/')) {
-        let arr = this.txUrl.split('/')
-        txId = arr[arr.length - 1]
-      }
-      return txId
-    },
-    checkInput() {
-      let txId = this.parseTxInput(this.txUrl)
-      if (!txId) {
-        alert('交易ID 无效')
-        return 
-      }
-      this.queryHex(txId)
-    },
     async queryHex(txId) {
       this.loading = true
       if (txId.includes('.')) {
@@ -170,7 +155,11 @@ export default ({
   },
   created() {
     if (this.mode !== 'list') {
-      this.queryHex(this.txId)
+      if (this.txId) {
+        this.queryHex(this.txId)
+      } else if (this.txHex) {
+        this.decodeHex(this.txHex)
+      }
     }
   }
 });
