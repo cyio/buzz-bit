@@ -1,5 +1,6 @@
 <template>
   <div class="buzz-detail">
+    <!-- 主内容 -->
     <template v-if="buzz.protocol">
       <quote-item
         v-if="buzz.protocol.toLowerCase() === 'simplerepost'"
@@ -11,6 +12,7 @@
         @sent="onSent"
       />
     </template>
+    <!-- 评论 -->
     <div class="title">
       <div class="left">评论：</div>
       <div class="right">

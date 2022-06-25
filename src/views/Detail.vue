@@ -47,6 +47,13 @@ export default ({
           }
         }
       })
+    },
+    isValid(buzz) {
+      if (buzz.protocol?.toLowerCase() === 'simplerepost') {
+        return !!buzz.quoteitem
+      } else {
+        return true;
+      }
     }
   },
   computed: {
@@ -58,7 +65,7 @@ export default ({
     const txId = this.$route.params.txId
     let buzzCache = localStorage.getItem('buzz') || '{}'
     buzzCache = JSON.parse(buzzCache)
-    if (buzzCache.txId === txId && buzzCache.encrypt === '0') {
+    if (buzzCache.txId === txId && buzzCache.encrypt === '0' && this.isValid(buzzCache)) {
       this.buzz = buzzCache
       if (this.buzz.content.endsWith('...')) {
         this.getFull(txId)
