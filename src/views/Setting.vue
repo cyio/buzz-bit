@@ -15,7 +15,7 @@
       <router-link to="/about">{{t('nav.about')}}</router-link>
     </div>
     <div class="item">
-      <van-button @click="refresh" color="var(--theme-color)" size="small">强制更新</van-button>
+      <van-button @click="refresh" color="var(--theme-color)" size="small">主动更新</van-button>
       <van-button @click="reset" color="var(--theme-color)" size="small">清除缓存</van-button>
     </div>
     <div class="item">

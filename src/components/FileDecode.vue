@@ -46,7 +46,10 @@ export default ({
       default: 'showMANDB',
       // default: 'whatsonchain',
     },
-    showMetaInfo: false,
+    showMetaInfo: {
+      type: Boolean,
+      default: false,
+    },
     mode: {
       type: String,
       default: 'post'

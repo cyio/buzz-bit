@@ -67,6 +67,8 @@
           <van-button color="var(--theme-color)"
             @click="send" size="small"
             class="send"
+            :disabled='!isSDKLoaded || content === "" || isSending'
+            :loading="!isSDKLoaded || isSending"
           >
             <van-icon name="guide-o" size="25" />
           </van-button>
@@ -106,7 +108,8 @@ export default ({
       showCommentBox: false,
       showTipsPopup: false,
       content: '',
-      doType: 'forward'
+      doType: 'forward',
+      isSending: false
     };
   },
   setup() {
@@ -138,9 +141,10 @@ export default ({
         callback: this.handleForward,
         onCancel: () => {
           this.$toast.clear()
+          this.isSending = false;
         }
       }
-      console.log(config)
+      // console.log(config)
       window.__metaIdJs.addProtocolNode_(config);
     },
     doComment() {
@@ -166,6 +170,7 @@ export default ({
         callback: this.handleForward,
         onCancel: () => {
           this.$toast.clear()
+          this.isSending = false;
         }
       }
       console.log(config)
@@ -180,6 +185,10 @@ export default ({
     },
     doLike() {
       const accessToken = window.localStorage.getItem('access_token')
+      this.$toast.loading({
+        duration: 0,
+        message: '处理中...'
+      });
       const config = {
         nodeName: 'PayLike',
         metaIdTag: "metaid",
@@ -202,6 +211,7 @@ export default ({
         }),
         callback: (res) => {
           this.$toast.clear()
+          this.isSending = false;
           if (res.code === 200) {
             this.buzz.like.push({})
           } else {
@@ -210,9 +220,10 @@ export default ({
         },
         onCancel: () => {
           this.$toast.clear()
+          this.isSending = false;
         }
       }
-      console.log(config)
+      // console.log(config)
       if (this.$isInShowApp) {
         this.$toast.loading({
           duration: 0,
@@ -227,6 +238,10 @@ export default ({
       this.doHandle('doDonate', amount)
     },
     doDonate(amount) {
+      this.$toast.loading({
+        duration: 0,
+        message: '处理中...'
+      });
       const accessToken = window.localStorage.getItem('access_token')
       const config = {
         nodeName: "SimpleArticleDonate",
@@ -251,6 +266,7 @@ export default ({
         }),
         callback: (res) => {
           this.$toast.clear()
+          this.isSending = false;
           if (res.code === 200) {
             this.buzz.donate.push({})
             this.$toast('发送成功！');
@@ -270,6 +286,7 @@ export default ({
       this.showCommentBox = false
       this.$emit('sent')
       this.$toast.clear()
+      this.isSending = false;
     },
     handleCmdEnter(e) {
       if (e && (e.metaKey || e.ctrlKey) && e.keyCode == 13) {
@@ -277,6 +294,7 @@ export default ({
       }
     },
     send() {
+      this.isSending = true
       this.doType === 'forward' ? this.doHandle('doForward') : this.doHandle('doComment')
       if (this.$isInShowApp) {
         this.$toast.loading({
