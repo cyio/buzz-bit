@@ -166,9 +166,9 @@ function hasChinese (str) {
   return reg.test(str)
 }
 
-const proxy = 'https://qcbor7.api.cloudendpoint.cn/image-proxy?url='
+const proxy = 'https://vercel-server-bit.vercel.app/api/proxy/image?url='
 const useProxy = 0
-function assetUrl(url) {
+function assetUrl(url) {  
   return useProxy ? proxy + url : url
 }
 

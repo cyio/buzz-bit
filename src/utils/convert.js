@@ -1,3 +1,5 @@
+const proxy = 'https://vercel-server-bit.vercel.app/api/proxy/image?url='
+
 function convertImgs(input) {
   const dogefiles = /(https?:\/\/)dogefiles.twetch\S*/g;
   const common = /(http(s?):)([/|.|\w|\s|-])*\.(?:jpg|gif|png)/g;
@@ -6,11 +8,11 @@ function convertImgs(input) {
   let res = input
   for (let rule of rules) {
     res = res.replace(rule, (t) => {
-      // if (t.includes('sinaimg.cn')) {
-      //   // t = 'https://cnbeta.leanapp.cn/api/image?url=' + t
-      //   return t
-      // }
-      return `<img src="${t}" style="width: 100%" loading="lazy" />`
+      if (t.includes('sinaimg.cn')) {
+        t = `${proxy}${t}`
+        return t
+      }
+      return getImgTag(t)
     })
   }
   return res
@@ -18,24 +20,38 @@ function convertImgs(input) {
 
 function convertRawText(text) {
   const href = /https?:\/\/\S*/g;
+  let oriUrl = '';
   return text
     .replace(href, (t) => {
       const dogefiles = /(https?:\/\/)dogefiles.twetch\S*/g;
       const common = /(http(s?):)([/|.|\w|\s|-])*\.(?:jpg|gif|png)/g;    
       if (common.test(t)) {
+        oriUrl = t
         if (t.includes('sinaimg.cn')) {
-          // t = 'https://cnbeta.leanapp.cn/api/image?url=' + t
+          t = `${proxy}${t}`
           // return t
-        } else {
-            return `<img src="${t}" style="width: 100%" />`
         }
+        return getProxyImgTag(t, oriUrl)
       }
       if (dogefiles.test(t)) {
-        return `<img src="${t}" style="width: 100%" />`
+        return getImgTag(t)
       }
       return `<a target="_blank" href="${t}">${t}</a>`
     })
     .replace(/(?:\r\n|\r|\n|\\n)/g, '<br />')
+}
+
+// 不要使用等待图片方式降级，可以在 img 上挂事件，出错后，替换为 alt
+function getProxyImgTag(url) {
+  // const res = await fetch(url)
+  // if (res.ok) {
+  //   return getImgTag(url)
+  // }
+  return getImgTag(url)
+}
+
+function getImgTag(url, alt) {
+  return `<img src="${url}" style="width: 100%; margin-top: 10px;" alt="${alt}" loading="lazy" />`
 }
 
 export {

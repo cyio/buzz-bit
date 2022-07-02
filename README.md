@@ -2,6 +2,10 @@
 
 一个支持 metaid/SimpleMicroblog 的 PWA 应用 [BuzzBit](https://buzzbit.vercel.app/)
 
+![image.png](http://ww1.sinaimg.cn/large/4e5d3ea7ly1h3sqebth0oj20lc0gx78v.jpg)
+
+![image.png](http://ww1.sinaimg.cn/large/4e5d3ea7ly1h3sqftscbpj20qb0bptax.jpg)
+
 ## 主要特性
 
 - 常规功能：信息流、评论、转发、搜索
