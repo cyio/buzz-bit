@@ -60,7 +60,7 @@ import { Field } from 'vant'
 import { useI18n } from 'vue-i18n-composable/src/index'
 import { uniqBy } from 'lodash'
 import { getUrlParameterByName, hexToUtf8 } from '@/utils/index'
-import {queryHex} from '@/api/'
+import {queryHex, queryBuzzFromWOC} from '@/api/'
 import { Script } from 'bsv'
 
 export default ({
@@ -91,7 +91,6 @@ export default ({
       perTipNum: 0.0001,
       isSending: false,
       showBatchTips: false,
-      txId: '',
       extractCode: '',
       hasExcode: false,
     };
@@ -207,47 +206,14 @@ export default ({
       this.isSending = true
       window.__metaIdJs.addProtocolNode_(config);
     },
-    async queryHex(txId) {
-      this.loading = true
-      if (txId.includes('.')) {
-        txId = txId.split('.')[0]
-      }
-      let hex = await queryHex[this.apiService](txId)
-      // show 文件服务不即时 error: "Has no this node"，降级转用其他服务
-      if (this.apiService === 'showMANDB' && hex.length < 80) {
-        this.$toast('当前数据源，未查到原始交易，正在尝试其他数据源...')
-        hex = await queryHex['whatsonchain'](txId)
-        if (hex.length < 80) {
-          hex = await queryHex['whatsonchain'](txId, 1)
-          if (hex.length < 80) {
-            hex = await queryHex['whatsonchain'](txId, 2)
-          }
-        }
-      }
-      setTimeout(() => {
-        this.loading = false
-      }, 10)
-      if (hex.length <= 30) {
-        console.log('文件未取到')
-        return
-      }
-      this.decodeHex(hex)
-    },
-    decodeHex(hex) {
-      let script = new Script().fromHex(hex)
-      let asm = script.toAsmString()
-      let arr = asm.split(' ')
-      console.log(arr)
-      let res = arr.map(i => i.length <= 100000 ? i : 'too long')
-        .map(i => hexToUtf8(i))
-      if (res[6].includes('SimpleMicroblog') || res[6].includes('MetaAccessContent')) {
-        const buzz = JSON.parse(res[7])
+    // 将原始数据合入当前 buzz
+    async mergeBuzz() {
+        const buzz = await queryBuzzFromWOC(this.buzz.txId)
+        if (!buzz) return
         this.buzz.encrypted = buzz.encrypted
         this.buzz.timestamp = buzz.createTime
         this.buzz.extractCode = this.extractCode
-      }
-      console.log(res)
-    },
+    }
   },
   computed: {
     ...mapState({
@@ -262,13 +228,11 @@ export default ({
   },
   created() {
     this.getInteractiveBuzzList(this.buzz.txId)
-    this.hasExcode = location.search.includes('excode=')
-    if (this.hasExcode) {
+    this.hasExcodeParam = location.search.includes('excode=')
+    if (this.hasExcodeParam) {
       this.$toast('正在获取提取码内容...');
       this.extractCode = getUrlParameterByName('excode')
-      let pathArr = location.pathname.split('/')
-      this.txId = pathArr[pathArr.length - 1]
-      this.queryHex(this.txId)
+      this.mergeBuzz()
     }
   }
 });

@@ -26,8 +26,9 @@
 <script>
 import { Script } from 'bsv'
 import FilePreview from '@/components/FilePreview'
-import {queryHex} from '@/api/'
 import { hexToUtf8 } from '@/utils/index'
+import { getHexByTxId } from '@/utils/convert'
+import { queryBuzz } from '@/api/'
 
 export default ({
   name: "FileDecode",
@@ -100,6 +101,18 @@ export default ({
       // console.log(arr)
       this.blobUrl = this.hexToBlobUrl(file, fileTypeStr)
     },
+    async setBuzz() {
+      this.loading = true
+      const buzz = await queryBuzz[this.apiService](this.txId)
+      this.loading = false
+      if (!buzz) {
+        this.$toast('获取异常')
+        return
+      }
+      this.buzz = buzz
+      this.buzz.timestamp = buzz.createTime
+      this.buzz.extractCode = this.extractCode
+    },
     hexToBlobUrl(hexStr, type = '') {
         // console.log('hex', hexStr)
         let buf = Buffer.from(hexStr, 'hex')
@@ -112,24 +125,8 @@ export default ({
     },
     async queryHex(txId) {
       this.loading = true
-      if (txId.includes('.')) {
-        txId = txId.split('.')[0]
-      }
-      let hex = await queryHex[this.apiService](txId)
-      // show 文件服务不即时 error: "Has no this node"，降级转用其他服务
-      if (this.apiService === 'showMANDB' && hex.length < 80) {
-        this.$toast('当前数据源，未查到原始交易，正在尝试其他数据源...')
-        hex = await queryHex['whatsonchain'](txId)
-        if (hex.length < 80) {
-          hex = await queryHex['whatsonchain'](txId, 1)
-          if (hex.length < 80) {
-            hex = await queryHex['whatsonchain'](txId, 2)
-          }
-        }
-      }
-      setTimeout(() => {
-        this.loading = false
-      }, 10)
+      const hex = await getHexByTxId(txId, this.apiService)
+      this.loading = false
       if (hex.length <= 30) {
         console.log('文件未取到')
         return
@@ -154,7 +151,7 @@ export default ({
   created() {
     if (this.mode !== 'list') {
       if (this.txId) {
-        this.queryHex(this.txId)
+        this.setBuzz()
       } else if (this.txHex) {
         this.decodeHex(this.txHex)
       }

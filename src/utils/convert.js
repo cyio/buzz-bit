@@ -1,3 +1,5 @@
+import {queryHex} from '@/api/'
+
 const proxy = 'https://vercel-server-bit.vercel.app/api/proxy/image?url='
 
 function convertImgs(input) {
@@ -54,6 +56,26 @@ function getImgTag(url, alt) {
   return `<img src="${url}" style="width: 100%; margin-top: 10px;" alt="${alt}" loading="lazy" />`
 }
 
+async function getHexByTxId(txId, apiService) {
+  if (txId.includes('.')) {
+    txId = txId.split('.')[0]
+  }
+  let hex = await queryHex[apiService](txId)
+  // show 文件服务不即时 error: "Has no this node"，降级转用其他服务
+  if (apiService === 'showMANDB' && hex.length < 80) {
+    // 有多个 output，woc 支持选择，选择哪个一个？这里按 index 依次尝试
+    hex = await queryHex['whatsonchain'](txId)
+    if (hex.length < 80) {
+      hex = await queryHex['whatsonchain'](txId, 1)
+      if (hex.length < 80) {
+        hex = await queryHex['whatsonchain'](txId, 2)
+      }
+    }
+  }
+  return hex
+}
+
 export {
-  convertRawText
+  convertRawText,
+  getHexByTxId
 }
