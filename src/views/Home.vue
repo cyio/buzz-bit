@@ -12,6 +12,25 @@
       />
       <div class="word-count">{{content.length || ''}}</div>
     </div>
+    <!-- 提取码 -->
+    <div v-if="useExtractCode">
+      <div class="input-area">
+        <van-field
+          v-model="encryptContent"
+          rows="2"
+          autosize
+          label=""
+          type="textarea"
+          :placeholder="`需提取码访问内容`"
+        />
+        <div class="word-count">{{encryptContent.length || ''}}</div>
+      </div>
+      <div class="extract-input item">
+        <label for="">提取码：</label>
+        <input v-model="encryptPSD" placeholder="提取码（可为空）" />
+        <div class="desc">采用 AES 算法。提取码即密码。在设置=>解码中进行提取查看。</div>
+      </div>
+    </div>
     <div class="input-operation">
       <div class="text-option">
         <div class="item">
@@ -26,12 +45,15 @@
           <input type="checkbox" id="showFileSelect" v-model="showFileSelect">
           <label for="showFileSelect">{{t('btn.file')}}</label>
         </div>
+        <div class="item">
+          <input type="checkbox" id="showExtractCodeSelect" v-model="useExtractCode">
+          <label for="showExtractCodeSelect">{{t('btn.extract')}}</label>
+        </div>
       </div>
       <van-button color="var(--theme-color)" @click="send" size="small"
         :disabled='!isSDKLoaded || content === "" || isSending' class="send"
         :loading="!isSDKLoaded || isSending"
       >
-        <!-- {{t('btn.send')}} -->
         <van-icon name="guide-o" size="25" />
       </van-button>
     </div>
@@ -57,6 +79,7 @@ import { mapState } from 'vuex'
 import mime from 'mime-types'
 import { Field } from 'vant'
 import { useI18n } from 'vue-i18n-composable/src/index'
+import AES from 'crypto-js/aes'
 
 function setLocal(key, val) {
   return window.localStorage.setItem(key, val)
@@ -75,12 +98,14 @@ export default {
     return {
       code: '',
       refreshToken: '',
-      // accessToken: '',
       content: '',
+      encryptContent: '',
+      encryptPSD: '',
       metaIdJs: null,
       attachments: [],
       buzzListData: [],
       useEncrypt: false,
+      useExtractCode: false,
       showImgSelect: false,
       showFileSelect: false,
       lastBuzzTxId: '',
@@ -140,6 +165,7 @@ export default {
     },
     computeFileFees() {
       const postFee = 1000
+      const postExtractCodeFee = this.useExtractCode ? 9000 : 0
       const mineFeeRate = 0.5
       const postFeeRate = 0.05
       const files = this.showFileSelect
@@ -148,7 +174,7 @@ export default {
       const fileSize = files.reduce((acc, cur) => acc + cur.size, 0)
       const fileSizeFee = Math.floor(fileSize * mineFeeRate * postFeeRate)
       console.log('fee', { postFee, fileSizeFee })
-      return { postFee, fileSizeFee }
+      return { postFee, fileSizeFee, postExtractCodeFee }
     },
     updateAttachmentsEncrypt() {
       if (this.useEncrypt) {
@@ -176,6 +202,12 @@ export default {
           return `![metafile](${index})${extStr}`
         }),
         // mention: [],
+      }
+      if (this.encryptContent) {
+        const psd = this.encryptPSD
+        buzzData.encrypted = AES.encrypt(this.encryptContent, psd).toString()
+        // buzzData.contentType += ':AES'
+        // buzzData.encryptAlgo = 'AES'
       }
       // const feeMap = this.attachments[0]?.fileType.includes('image') ? this.computeAppFees() : this.computeFileFees()
       const feeMap = this.computeFileFees()
@@ -217,9 +249,11 @@ export default {
             this.lastBuzzTxId = res.data.txId
             this.lastBuzzUseEncrypt = this.useEncrypt
             this.content = ''
+            this.encryptContent = ''
             this.attachments = []
             this.clearFiles()
             this.useEncrypt = false
+            this.useExtractCode = false
             this.showImgSelect = false
             this.showFileSelect = false
             this.$toast.success('发送成功')
@@ -312,6 +346,17 @@ export default {
       }
       this.attachments = []
     },
+    'useExtractCode': function(val) {
+      if (val === false) {
+        // this.content = ''
+      } else {
+        const tail = '\n---'
+        if (!this.content.includes(tail)) {
+          this.content = this.content += tail
+        }
+        // this.encryptPSD = this.encryptPSD || this.user.address.substring(0, 4)
+      }
+    },
   },
   mounted() {
   }
@@ -375,6 +420,16 @@ export default {
     }
     label {
       margin-left: 4px;
+    }
+  }
+  .extract-input {
+    input {
+        width: 220px;
+    }
+    .desc {
+      color: #333;
+      font-size: 14px;
+      margin-top: 4px;
     }
   }
 }

@@ -14,6 +14,9 @@
             <a :href="`https://www.metanote.app/detail/${buzz.txId}`" target="_blank">《{{buzz.content || '无题'}}》</a>
           </div>
           <div class="content" v-else v-html="displayContent(buzzContent, mode === 'list')"></div>
+          <template v-if="buzz.encrypted">
+            <div class="extract-content" v-html="displayContent(extractTo(buzz.encrypted, buzz.extractCode), mode === 'list')"></div>
+          </template>
           <div class="paid-wrap" v-if="buzz.metaAccessTxId">
             付费 buzz，请前往 showbuzz 查看
             <!-- <div class="paid-content">
@@ -118,6 +121,8 @@ import { hexToBase64Img, assetUrl, getExtension } from '@/utils/'
 // import 'vue-cool-lightbox/dist/vue-cool-lightbox.min.css'
 import { ImagePreview } from 'vant';
 import { getImageMetaFile } from '@/api/buzz.ts'
+import AES from 'crypto-js/aes'
+import UTF8 from 'crypto-js/enc-utf8'
 // import {md5} from 'pure-md5';
 
 function imgFix(str) {
@@ -270,6 +275,10 @@ export default Vue.extend({
     isVideo(str) {
       let s =  /mp4|webm/.test(getExtension(str));
       return s
+    },
+    extractTo(content, psd = '') {
+      // console.log(content, psd)
+      return AES.decrypt(content, psd).toString(UTF8)
     }
   },
   computed: {
@@ -303,7 +312,6 @@ export default Vue.extend({
     }
   },
   async created() {
-    // const self = this
     if (this.buzz.encrypt === '1' && this.mode !== 'list') {
       // console.log(this.buzz.data || this.buzz.content)
       this.loading = true
@@ -330,24 +338,6 @@ export default Vue.extend({
       await SDKInit()
       window.__metaIdJs.eciesDecryptData_(config);
     }
-    // if (this.buzz.metaAccessTxId) {
-    //   const {
-    //     metaAccessMetanetId,
-    //     metaAccessPayTx,
-    //     serverCode,
-    //     serverPublicKey,
-    //     txId
-    //   } = this.buzz
-    //   const params = {
-    //     metaAccessMetanetID: metaAccessMetanetId,
-    //     metaAccessPayTx,
-    //     metaId: this.user.metaId,
-    //     serverCode: md5(serverCode),
-    //     serverPublicKey,
-    //     txId
-    //   }
-    //   getMetaAccessContent(params)
-    // }
   }
 });
 </script>
@@ -449,5 +439,11 @@ export default Vue.extend({
   width: 30px;
   padding: 2px 4px;
   cursor: pointer;
+}
+.extract-content {
+  margin-top: 10px;
+  background: #eee;
+  padding: 2px;
+  border: 1px dashed;
 }
 </style>

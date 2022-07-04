@@ -193,7 +193,7 @@ export default ({
   created() {
     this.getCurBuzzList()
     if (this.check()) {
-      this.init()
+      // this.init()
     } else {
       // this.$toast('Sensilet 未安装');
     }

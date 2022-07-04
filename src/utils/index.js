@@ -21,7 +21,7 @@ function addZero(value) {
 
 function formatTime(time) {
   const date = new Date(time)
-  const year = date.getFullYear()
+  // const year = date.getFullYear()
   const month = date.getMonth() + 1
   const day = addZero(date.getDate())
   const hour = addZero(date.getHours())
@@ -176,6 +176,12 @@ function random(lower, higher) {
   return lower + Math.floor(Math.random() * (higher - lower + 1)) // 左闭右闭
 }
 
+function hexToUtf8(s){
+  return decodeURIComponent(
+     s.replace(/\s+/g, '') // remove spaces
+      .replace(/[0-9a-f]{2}/g, '%$&') // add '%' before each 2 characters
+  );
+}
 
 export {
   formatBytes,
@@ -191,5 +197,6 @@ export {
   sliceFile,
   hasChinese,
   assetUrl,
-  random
+  random,
+  hexToUtf8
 }

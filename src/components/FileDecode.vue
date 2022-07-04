@@ -26,21 +26,15 @@
 <script>
 import { Script } from 'bsv'
 import FilePreview from '@/components/FilePreview'
-// import BuzzItem from "@/components/BuzzItem";
 import {queryHex} from '@/api/'
-
-function hexToUtf8(s){
-  return decodeURIComponent(
-     s.replace(/\s+/g, '') // remove spaces
-      .replace(/[0-9a-f]{2}/g, '%$&') // add '%' before each 2 characters
-  );
-}
+import { hexToUtf8 } from '@/utils/index'
 
 export default ({
   name: "FileDecode",
   props: {
     txId: String,
     txHex: String,
+    extractCode: String,
     apiService: {
       type: String,
       default: 'showMANDB',
@@ -90,6 +84,7 @@ export default ({
         if (res[6].includes('SimpleMicroblog') || res[6].includes('MetaAccessContent')) {
           this.buzz = JSON.parse(res[7])
           this.buzz.timestamp = this.buzz.createTime
+          this.buzz.extractCode = this.extractCode
         }
         console.log(res)
       }

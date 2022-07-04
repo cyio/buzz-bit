@@ -2,7 +2,6 @@
   <div class="detail">
     <div class="head">
       <van-icon class="back" name="arrow-left" @click="$router.go(-1)" />
-      <!-- <button >{{t('btn.back')}}</button> -->
     </div>
     <buzz-detail :buzz="buzz" v-if="!showLoading" />
     <van-loading v-else color="var(--theme-color)" class="loading" />
