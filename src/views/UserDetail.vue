@@ -6,25 +6,6 @@
         <buzz-side :avatarTxId="curBuzzListData[0].avatarTxId" :userTxId="curBuzzListData[0].metaId" size="large" />
         <div class="username">{{curBuzzListData[0].userName}}</div>
       </div>
-      <div class="wallet" v-if="check()">
-        <div class="row">
-          <button class="tip" @click="connect">连接感应钱包</button>
-          <button class="tip" @click="disconnect">断开</button>
-          <div class="address">当前钱包：{{address ? address.slice(0, 6) : ''}}...</div>
-        </div>
-        <div class="row">
-          <input type="number" placeholder="金额(以最小单位)" v-model="amount" min="0"> 
-          <!-- 快捷输入<input type="number" placeholder="金额" v-model="amount" min="200"> 单位系数
-          <select v-model="selectFactor">
-            <option v-for="(item, index) in factors" :key="index">{{item}}</option>
-          </select> -->
-          <div>实际金额{{ actualAmount }}</div>
-          <select v-model="selectedFT">
-            <option v-for="ft in ftList" :key="ft.unit">{{ft.unit}}</option>
-          </select>
-          <button class="tip" @click="tip">打赏 Buzz 主</button>
-        </div>
-      </div>
       <van-loading v-show="buzzListData[curListType].loading" color="var(--theme-color)" class="loading" />
       <BuzzList :buzzListData="curBuzzListData" v-show="!buzzListData[curListType].loading" />
       <van-pagination
@@ -67,8 +48,6 @@ export default ({
       currentPage: 1,
       address: null,
       amount: 200,
-      ftList: [],
-      selectedFT: 'BSV',
       // factors: ['1', '0.00000001'],
       // selectFactor: '1'
     };
@@ -110,35 +89,6 @@ export default ({
         // .filter(i => i.encrypt === '0')
       }
     },
-    check() {
-      if (typeof window.sensilet == 'undefined') {
-        return false
-      }
-      return true
-    },
-    async connect() {
-      const address = await sensilet.requestAccount();
-      this.address = address
-      this.getList()
-      this.$toast('连接成功');
-      console.log(address)
-    },
-    disconnect() {
-      sensilet.exitAccount()
-      this.address = '...'
-    },
-    async getList() {
-      const bsvBalance = await sensilet.getBsvBalance()
-      const bsvFT = {
-        unit: 'BSV',
-        balance: bsvBalance.balance.total
-      }
-      const ftList = await sensilet.getSensibleFtBalance()
-      let tmp = ftList.filter(i => i.balance > 0)
-      tmp.unshift(bsvFT)
-      this.ftList.push(...tmp)
-      this.selectedFT = tmp[0].unit
-    },
     async tip() {
       // const bsvBalance = await sensilet.getBsvBalance();
       const params = {
@@ -164,11 +114,6 @@ export default ({
         this.$toast('支付取消');
       }
     },
-    async init() {
-      const accountInfo = await sensilet.getAccount();
-      this.address = accountInfo
-      this.getList()
-    },
   },
   computed: {
     curBuzzListData() {
@@ -192,11 +137,6 @@ export default ({
   },
   created() {
     this.getCurBuzzList()
-    if (this.check()) {
-      // this.init()
-    } else {
-      // this.$toast('Sensilet 未安装');
-    }
   },
 });
 </script>

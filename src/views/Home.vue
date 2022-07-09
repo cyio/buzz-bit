@@ -183,7 +183,18 @@ export default {
         this.attachments.forEach(i => delete i.encrypt)
       }
     },
-    send() {
+    async send() {
+      if (window.sensilet && this.user.address === this.$sensiletStore.address) {
+        this.isSending = true
+        let txId = await sensilet.sendBuzz({
+          content: this.content
+        })
+        this.isSending = false
+        this.content = ''
+        this.$toast.success('发送成功')
+        console.log('发送成功', txId)
+        return
+      }
       let useSelfPath = false
       if (this.isSlice) {
         useSelfPath = true

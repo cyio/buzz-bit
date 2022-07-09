@@ -7,6 +7,7 @@
         <van-loading v-show="hasToken && !isSDKLoaded" size="16px" class="sdk-loading"
         >{{loadingStatus}}</van-loading>
       </div>
+      <!-- <sensilet-widget /> -->
       <div class="links">
         <div class="link" v-for="item of links" :key="item.name">
           <template v-if="item.enable">
@@ -48,6 +49,7 @@ import SDKInit from '@/utils/sdk';
 import { useI18n } from 'vue-i18n-composable/src/index'
 import NavItem from '@/components/NavItem.vue'
 import { getUserFollow } from '@/api/buzz.ts'
+import SensiletWidget from './components/SensiletWidget.vue';
 
 function setLocal(key, val) {
   return window.localStorage.setItem(key, val)
@@ -60,7 +62,8 @@ export default defineComponent({
   props: {
   },
   components: {
-    NavItem
+    NavItem,
+    SensiletWidget
     // Search
   },
   data() {

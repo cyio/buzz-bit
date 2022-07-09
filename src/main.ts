@@ -36,6 +36,7 @@ Vue.prototype.$shared = shared
 // @ts-expect-error
 Vue.prototype.$isInShowApp = !!window.appMetaIdJs
 Vue.prototype.$AppConfig = AppConfig
+Vue.prototype.$sensiletStore = {}
 
 const i18n = createI18n({
   locale: shared.isZh ? 'zh' : 'en',
