@@ -1,11 +1,17 @@
 <template>
   <div class="wallet" v-if="check()">
-    <van-popover v-model="showPopover" trigger="hover">
+    <div v-popover:myname @click="onClick" class="trigger">
+      <img :src="sensiletIcon" :class="[isConnect ? 'enabled': 'disabled']" />
+    </div>
+    <popover name="myname" event="hover">
+      <div class="address">{{address ? address : '未连接 Sensilet，点击图标连接'}}</div>
+    </popover>
+    <!-- <van-popover v-model="showPopover" trigger="hover">
       <div class="address">{{address ? address.slice(0, 6) + '...' : ''}}</div>
       <template #reference>
         <van-button type="primary" @click="connect">connect</van-button>
       </template>
-    </van-popover>
+    </van-popover> -->
     <!-- <div class="row"> -->
       <!-- <button class="tip" @click="disconnect" v-else>disconnect</button> -->
       <!-- <span class="address">{{address ? address.slice(0, 6) + '...' : ''}}</span> -->
@@ -26,14 +32,13 @@
 </template>
 
 <script>
-import { Popover } from 'vant';
+import sensiletIcon from '@/assets/icons/sensilet.png'
 
 export default ({
   name: "SensiletWidget",
   props: {
   },
   components: {
-    [Popover.name]: Popover,
   },
   data() {
     return {
@@ -41,7 +46,8 @@ export default ({
       ftList: [],
       selectedFT: 'BSV',
       isConnect: false,
-      showPopover: false
+      showPopover: false,
+      sensiletIcon
     };
   },
   methods: {
@@ -63,7 +69,9 @@ export default ({
     disconnect() {
       sensilet.exitAccount()
       this.address = null
+      this.$sensiletStore.address = null
       this.isConnect = false
+      this.$toast('连接断开');
     },
     async init() {
       const address = await sensilet.getAccount();
@@ -84,6 +92,13 @@ export default ({
       this.ftList.push(...tmp)
       this.selectedFT = tmp[0].unit
     },
+    onClick() {
+      if (this.isConnect) {
+        this.disconnect()
+      } else {
+        this.connect()
+      }
+    }
   },
   computed: {
     url() {
@@ -105,4 +120,13 @@ export default ({
 </script>
 
 <style scoped lang="scss">
+.trigger {
+  img {
+    width: 24px;
+    height: 24px;
+    &.disabled {
+        filter: grayscale(0.8);
+    }
+  }
+}
 </style>

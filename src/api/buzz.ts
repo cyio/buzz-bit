@@ -90,6 +90,27 @@ export const getNewBuzzList = (params): Promise<any> => {
     }
   })
 }
+// https://api.showmoney.app/serviceapi/api/v1/showService/getOwnShowAccount
+export const getOwnShowAccount = (params): Promise<any> => {
+  return callApi({
+    url: '/serviceapi/api/v1/showService/getOwnShowAccount',
+    params: params,
+    host: AppConfig.showMoneyUrl,
+    options: {
+      credentials: 'omit',
+    }
+  })
+}
+export const getProtocolDataList = (params): Promise<any> => {
+  return callApi({
+    url: '/serviceapi/api/v1/protocol/getProtocolDataList',
+    params: params,
+    host: AppConfig.showMoneyUrl,
+    options: {
+      credentials: 'omit',
+    }
+  })
+}
 export const getInteractiveBuzzList = (params): Promise<any> => {
   return callApi({
     url: '/aggregation/v2/app/buzz/getBuzzInteractiveList',

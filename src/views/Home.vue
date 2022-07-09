@@ -110,7 +110,8 @@ export default {
       showFileSelect: false,
       lastBuzzTxId: '',
       lastBuzzUseEncrypt: false,
-      isSending: false
+      isSending: false,
+      // sendWithSensible: false
     }
   },
   setup() {
@@ -184,17 +185,6 @@ export default {
       }
     },
     async send() {
-      if (window.sensilet && this.user.address === this.$sensiletStore.address) {
-        this.isSending = true
-        let txId = await sensilet.sendBuzz({
-          content: this.content
-        })
-        this.isSending = false
-        this.content = ''
-        this.$toast.success('发送成功')
-        console.log('发送成功', txId)
-        return
-      }
       let useSelfPath = false
       if (this.isSlice) {
         useSelfPath = true
@@ -203,16 +193,20 @@ export default {
         createTime: new Date().getTime(),
         content: this.content,
         contentType: 'text/plain',
-        attachments: this.attachments.map((item, index) => {
-          let ext = mime.extension(item.fileType)
-          if (ext === false) {
-            let tmp = item.fileName.split('.')
-            ext = tmp[tmp.length - 1]
-          }
-          const extStr = /webp|jpg|png|jpeg|gif/.test(ext) ? '' : `.${ext}`
-          return `![metafile](${index})${extStr}`
-        }),
+        // attachments: 
         // mention: [],
+      }
+      const attachments = this.attachments.map((item, index) => {
+        let ext = mime.extension(item.fileType)
+        if (ext === false) {
+          let tmp = item.fileName.split('.')
+          ext = tmp[tmp.length - 1]
+        }
+        const extStr = /webp|jpg|png|jpeg|gif/.test(ext) ? '' : `.${ext}`
+        return `![metafile](${index})${extStr}`
+      })
+      if (attachments.length) {
+        buzzData.attachments = attachments
       }
       if (this.encryptContent) {
         const psd = this.encryptPSD
@@ -227,6 +221,17 @@ export default {
         address: this.$chargeAddress[key]
       }))
       this.updateAttachmentsEncrypt()
+      if (window.sensilet && this.user.address === this.$sensiletStore.address && window.$ShowAccount.buzzParentTxId) {
+        this.isSending = true
+        const { buzzParentTxId, xpub } = window.$ShowAccount
+        let {txId} = await sensilet.sendBuzz({
+          buzzData,
+          parentTxId: buzzParentTxId,
+          xpub
+        })
+        this.onSendSuccess(txId)
+        return
+      }
       const config = {
         nodeName: "SimpleMicroblog",
         metaIdTag: "metaid",
@@ -254,20 +259,7 @@ export default {
           this.$toast.clear()
           this.isSending = false
           if (res.code === 200) {
-            // { message, rawTx, txId }
-            console.log(res.data.txId, res);
-            // reset
-            this.lastBuzzTxId = res.data.txId
-            this.lastBuzzUseEncrypt = this.useEncrypt
-            this.content = ''
-            this.encryptContent = ''
-            this.attachments = []
-            this.clearFiles()
-            this.useEncrypt = false
-            this.useExtractCode = false
-            this.showImgSelect = false
-            this.showFileSelect = false
-            this.$toast.success('发送成功')
+            this.onSendSuccess(res.data.txId)
           } else {
             new Error(res.data.message);
             this.$toast(res.data.message)
@@ -289,6 +281,20 @@ export default {
         }, 3000)
       }
       window.__metaIdJs.addProtocolNode_(config);
+    },
+    onSendSuccess(txId) {
+      this.lastBuzzTxId = txId
+      this.lastBuzzUseEncrypt = this.useEncrypt
+      this.content = ''
+      this.encryptContent = ''
+      this.attachments = []
+      this.clearFiles()
+      this.useEncrypt = false
+      this.useExtractCode = false
+      this.showImgSelect = false
+      this.showFileSelect = false
+      this.$toast.success('发送成功')
+      console.info('发送成功tx: ', txId)
     },
     handleMetafileChange({files}) {
       this.attachments = files.map(file => {

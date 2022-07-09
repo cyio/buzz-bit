@@ -83,6 +83,13 @@ module.exports = {
             // '^/aggregation': '' // 重写接口
           }
         },
+        '/serviceapi/': {
+          target: 'https://api.showmoney.app',
+          changeOrigin: true,
+          pathRewrite: {
+            // '^/aggregation': '' // 重写接口
+          }
+        },
         '/oauth2/': {
           target: 'https://www.showmoney.app',
           changeOrigin: true,

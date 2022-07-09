@@ -15,6 +15,7 @@ import InlineSvg from 'vue-inline-svg';
 import AppConfig from '@/config/'
 import VueKeepAliveDev from 'vue-keep-alive-dev'
 import { useI18n } from 'vue-i18n-composable/src/index'
+import Popover from 'vue-js-popover'
 // import 'tailwindcss/tailwind.css'
 // import './base.css'
 
@@ -27,6 +28,7 @@ Vue.use(Toast);
 Vue.use(Icon);
 Vue.component('inline-svg', InlineSvg);
 Vue.use(VueKeepAliveDev);
+Vue.use(Popover)
 
 Vue.prototype.$version = '1.17.2'
 Vue.prototype.$chargeAddress = privateConfig.chargeAddress
@@ -37,6 +39,7 @@ Vue.prototype.$shared = shared
 Vue.prototype.$isInShowApp = !!window.appMetaIdJs
 Vue.prototype.$AppConfig = AppConfig
 Vue.prototype.$sensiletStore = {}
+window.$ShowAccount = {}
 
 const i18n = createI18n({
   locale: shared.isZh ? 'zh' : 'en',

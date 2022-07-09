@@ -7,7 +7,6 @@
         <van-loading v-show="hasToken && !isSDKLoaded" size="16px" class="sdk-loading"
         >{{loadingStatus}}</van-loading>
       </div>
-      <!-- <sensilet-widget /> -->
       <div class="links">
         <div class="link" v-for="item of links" :key="item.name">
           <template v-if="item.enable">
@@ -21,6 +20,7 @@
             </router-link>
           </template>
         </div>
+        <sensilet-widget />
         <div class="user">
           <div v-if="hasToken || user.name" @click="authConfirm">
             <span v-if="user.name">{{user.name}}</span>
@@ -39,7 +39,7 @@
 
 <script>
 import { defineComponent } from '@vue/composition-api'
-import { goAuth, getToken } from '@/api/buzz.ts'
+import { goAuth, getToken, getOwnShowAccount, getProtocolDataList } from '@/api/buzz.ts'
 import { getUrlParameterByName } from '@/utils/index';
 import AppConfig from '@/config/'
 import { mapState } from 'vuex'
@@ -242,7 +242,33 @@ export default defineComponent({
         }
       }, (err) => console.log('fail: ', err))
     },
+    async getBuzzParentTxId() {
+      const res = await getOwnShowAccount({
+        data: JSON.stringify({
+          showId: this.user.metaId
+        })
+      })
+      if (res.msg === 'success') {
+        window.$ShowAccount = res.result
+        const { protocolTxId } = res.result
+        const resp = await getProtocolDataList({
+          data: JSON.stringify({
+            protocolTxId,
+            nodeName: 'SimpleMicroblog'
+          })
+        })
+        if (resp.msg === 'success') {
+          const parentTxId = resp.result.data[0].txId
+          window.$ShowAccount.buzzParentTxId = parentTxId
+          console.log('ShowAccount ready!')
+        }
+      }
+    },
     async initSDK(hasUserInfo = false) {
+      // sensilet deps
+      if (hasUserInfo) {
+        this.getBuzzParentTxId()
+      }
       await SDKInit()
       console.log('sdk loaded')
       this.$store.commit('SET_SDK_LOADED', true);
@@ -270,7 +296,7 @@ export default defineComponent({
       const userCache = Storage.getObj('user') || '{}'
       if (userCache.metaId) {
         this.$store.commit('SET_USER', userCache);
-        this.initSDK(false)
+        this.initSDK(true)
       } else {
         if (window.appMetaIdJs || (this.hasToken && this.$route.path === '/user')) {
           console.log('app inner init sdk')
@@ -337,6 +363,7 @@ export default defineComponent({
 }
 
 .user {
+  margin-left: 10px;
   div:hover {
     cursor: pointer
   }
