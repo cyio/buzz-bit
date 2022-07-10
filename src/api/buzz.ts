@@ -111,6 +111,32 @@ export const getProtocolDataList = (params): Promise<any> => {
     }
   })
 }
+export const queryNewNodePath = (params): Promise<any> => {
+  return callApi({
+    url: '/serviceapi/api/v1/showService/getPublicKeyForNewNode',
+    params: params,
+    host: AppConfig.showMoneyUrl,
+    options: {
+      credentials: 'omit',
+    }
+  })
+}
+export const getNewNodePath = async (data): Promise<any> => {
+  const res = await callApi({
+    url: '/serviceapi/api/v1/showService/getPublicKeyForNewNode',
+    params: {
+      data: JSON.stringify(data)
+    },
+    host: AppConfig.showMoneyUrl,
+    options: {
+      credentials: 'omit',
+    }
+  })
+  if (res.msg === 'success') {
+    return res.result.data
+  }
+  return []
+}
 export const getInteractiveBuzzList = (params): Promise<any> => {
   return callApi({
     url: '/aggregation/v2/app/buzz/getBuzzInteractiveList',

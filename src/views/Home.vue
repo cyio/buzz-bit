@@ -11,6 +11,7 @@
         @keydown="handleCmdEnter($event)"
       />
       <div class="word-count">{{content.length || ''}}</div>
+      <!-- TODO 费用估算 -->
     </div>
     <!-- 提取码 -->
     <div v-if="useExtractCode">
@@ -64,6 +65,7 @@
       :user="user"
       v-if="user.metaId"
       :lastBuzzTxId="lastBuzzTxId"
+      :lastBuzz="lastBuzz"
       :lastBuzzUseEncrypt="lastBuzzUseEncrypt"
     />
   </div>
@@ -73,13 +75,15 @@
 import Uploader from "@/components/Uploader.vue";
 import FileUploader from "@/components/FileUploader.vue";
 import BuzzListContainer from "@/components/BuzzListContainer.vue";
-import { getToken } from '@/api/buzz.ts'
+import metaIdUtils from '@/utils/meta-id'
+import { getToken, getNewNodePath } from '@/api/buzz.ts'
 import AppConfig from '@/config/'
 import { mapState } from 'vuex'
 import mime from 'mime-types'
 import { Field } from 'vant'
 import { useI18n } from 'vue-i18n-composable/src/index'
 import AES from 'crypto-js/aes'
+import newNodePathUtils from '@/utils/node-path';
 
 function setLocal(key, val) {
   return window.localStorage.setItem(key, val)
@@ -109,6 +113,7 @@ export default {
       showImgSelect: false,
       showFileSelect: false,
       lastBuzzTxId: '',
+      lastBuzz: {},
       lastBuzzUseEncrypt: false,
       isSending: false,
       // sendWithSensible: false
@@ -221,14 +226,25 @@ export default {
         address: this.$chargeAddress[key]
       }))
       this.updateAttachmentsEncrypt()
-      if (window.sensilet && this.user.address === this.$sensiletStore.address && window.$ShowAccount.buzzParentTxId) {
+      // 如果用户使用 sensilet，且钱包属于当前用户，发帖走 sensilet。好处是不需要等 metaidjs 加载，弊端是展示不即时，需要等 1 次确认。
+      if (window.sensilet && this.user.address === this.$sensiletStore.address && newNodePathUtils.parentTxId) {
         this.isSending = true
-        const { buzzParentTxId, xpub } = window.$ShowAccount
-        let {txId} = await sensilet.sendBuzz({
+        const pathInfo = await newNodePathUtils.get()
+        console.log('use path: ', pathInfo.index)
+        const buzz = metaIdUtils.buildBuzz({
+          parentTxId: newNodePathUtils.parentTxId,
+          newNodePublicKey: pathInfo.publicKey,
           buzzData,
-          parentTxId: buzzParentTxId,
-          xpub
+          encrypt: String(+this.useEncrypt)
         })
+        console.log(buzz)
+        const { txId } = await sensilet.sendBuzz({
+          buzzData: buzz,
+        })
+        this.lastBuzz = buzzData
+        this.lastBuzz.txId = txId
+        this.lastBuzz.userName = this.user.name
+        this.lastBuzz.timestamp = buzzData.createTime
         this.onSendSuccess(txId)
         return
       }
@@ -283,6 +299,7 @@ export default {
       window.__metaIdJs.addProtocolNode_(config);
     },
     onSendSuccess(txId) {
+      this.isSending = false
       this.lastBuzzTxId = txId
       this.lastBuzzUseEncrypt = this.useEncrypt
       this.content = ''

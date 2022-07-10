@@ -54,6 +54,9 @@ export default {
     lastBuzzTxId: {
       type: String,
     },
+    lastBuzz: {
+      type: Object,
+    },
     lastBuzzUseEncrypt: {
       type: Boolean,
     },
@@ -307,6 +310,10 @@ export default {
         // 加密内容仅我的列表可展示，切换过去
         if (this.lastBuzzUseEncrypt) {
           this.curListType = 'my'
+          return
+        }
+        if (this.lastBuzz.content) {
+          this.buzzListData[this.curListType].data.unshift(this.lastBuzz)
           return
         }
         getBuzz({ txId, MetaId: this.user.metaId }).then(res => {

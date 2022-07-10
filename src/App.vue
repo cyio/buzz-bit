@@ -45,6 +45,7 @@ import AppConfig from '@/config/'
 import { mapState } from 'vuex'
 import { Dialog } from 'vant';
 import { Storage } from '@/utils/index';
+import newNodePathUtils from '@/utils/node-path';
 import SDKInit from '@/utils/sdk';
 import { useI18n } from 'vue-i18n-composable/src/index'
 import NavItem from '@/components/NavItem.vue'
@@ -222,6 +223,7 @@ export default defineComponent({
       // console.log('debug logindata: ', res.code, res.code === 200, res)
       if (code === 200) {
         this.$store.commit('SET_USER', data);
+        this.getBuzzParentTxId()
         console.log('userinfo: ', data)
         if (appAccessToken) {
           this.$store.commit('SET_ACCESS_TOKEN', appAccessToken)
@@ -249,8 +251,8 @@ export default defineComponent({
         })
       })
       if (res.msg === 'success') {
-        window.$ShowAccount = res.result
-        const { protocolTxId } = res.result
+        const { xpub, protocolTxId } = res.result
+        console.log('ShowAccount 1', xpub, protocolTxId)
         const resp = await getProtocolDataList({
           data: JSON.stringify({
             protocolTxId,
@@ -259,8 +261,13 @@ export default defineComponent({
         })
         if (resp.msg === 'success') {
           const parentTxId = resp.result.data[0].txId
-          window.$ShowAccount.buzzParentTxId = parentTxId
+          // window.$ShowAccount.buzzParentTxId = parentTxId
+          newNodePathUtils.init({
+            xpub,
+            parentTxId
+          })
           console.log('ShowAccount ready!')
+          // this.$store.commit('SET_SDK_LOADED', true); // 折中处理，允许用户尽早发帖
         }
       }
     },

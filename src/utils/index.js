@@ -51,7 +51,7 @@ const hexToBase64Img = (hexStr, type) => {
 /**
  * localStorage 存取 Object 封装
  * setItem 支持传入过期时间（分钟）
- * 带过期时间存储 {"data":{"a":1},"timestamp":1547536618350}
+ * 带过期时间存储 {"data":{"a":1},"__timestamp":1547536618350}
  * 获取时如果没过期会取出 data，否则返回 false
  */
  const Storage = {
@@ -60,7 +60,7 @@ const hexToBase64Img = (hexStr, type) => {
       const expirationMS = expirationMin * 60 * 1000;
       const record = {
         data: value,
-        timestamp: new Date().getTime() + expirationMS,
+        __timestamp: new Date().getTime() + expirationMS,
       };
       return localStorage.setItem(key, JSON.stringify(record));
     }
@@ -75,10 +75,10 @@ const hexToBase64Img = (hexStr, type) => {
     if (!record) {
       return null;
     }
-    // if (record.timestamp) {
-    //   // 过期返回false, 没有过期返回数据
-    //   return new Date().getTime() < record.timestamp && record.data;
-    // }
+    if (record.__timestamp) {
+      // 过期返回false, 没有过期返回数据
+      return new Date().getTime() < record.__timestamp && record.data;
+    }
     return record;
   },
 

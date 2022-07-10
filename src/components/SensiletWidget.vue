@@ -113,7 +113,7 @@ export default ({
       }
       console.log('sensilet: ', this.isConnect)
     } else {
-      this.$toast('Sensilet 未安装');
+      // this.$toast('Sensilet 未安装');
     }
   },
 });
