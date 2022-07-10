@@ -3,9 +3,9 @@
     <div v-popover:myname @click="onClick" class="trigger">
       <img :src="sensiletIcon" :class="[isConnect ? 'enabled': 'disabled']" />
     </div>
-    <popover name="myname" event="hover">
+    <!-- <popover name="myname" event="hover">
       <div class="address">{{address ? address : '未连接 Sensilet，点击图标连接'}}</div>
-    </popover>
+    </popover> -->
     <!-- <van-popover v-model="showPopover" trigger="hover">
       <div class="address">{{address ? address.slice(0, 6) + '...' : ''}}</div>
       <template #reference>
@@ -65,6 +65,7 @@ export default ({
       this.$toast('连接成功');
       console.log(address)
       this.isConnect = true
+      this.$emit('connected')
     },
     disconnect() {
       sensilet.exitAccount()
@@ -72,12 +73,14 @@ export default ({
       this.$sensiletStore.address = null
       this.isConnect = false
       this.$toast('连接断开');
+      this.$emit('disconnected')
     },
     async init() {
       const address = await sensilet.getAccount();
       this.address = address
       this.$sensiletStore.address = address
       this.isConnect = true
+      this.$emit('connected')
       this.getList()
     },
     async getList() {
@@ -111,7 +114,7 @@ export default ({
       if (this.isConnect) {
         this.init()
       }
-      console.log('sensilet: ', this.isConnect)
+      console.log('sensilet init: ', this.isConnect)
     } else {
       // this.$toast('Sensilet 未安装');
     }

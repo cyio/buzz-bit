@@ -40,4 +40,16 @@ metaIdUtils.buildBuzz = function({ buzzData, newNodePublicKey, parentTxId, encry
     )
 }
 
+// walletManager 只能在钱包插件中使用
+// async function send(data) {
+//     let txid = (await window.sensilet.walletManager.sendOpReturn(data)).tx.id;
+//     return txid;
+// }
+
+// metaIdUtils.sendBuzz = async function ({buzzData}) {
+//     let dataTxid = await send(buzzData).catch(e => console.log(e))
+//     console.log('send buzz success: ', {dataTxid})
+//     return dataTxid
+// } 
+
 export default metaIdUtils

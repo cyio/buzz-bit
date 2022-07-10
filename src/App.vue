@@ -4,7 +4,7 @@
       <div class="left">
         <span class="title" @click="goHome">BuzzBit</span>
         <span class="ver">{{$version}}</span>
-        <van-loading v-show="hasToken && !isSDKLoaded" size="16px" class="sdk-loading"
+        <van-loading v-show="!isSendPage && hasToken && !isSDKLoaded" size="16px" class="sdk-loading"
         >{{loadingStatus}}</van-loading>
       </div>
       <div class="links">
@@ -15,12 +15,14 @@
                   <img class="custom-icon" :src="item.img" />
                 </a>
             </div>
+            <div v-else-if="item.isInternel" @click="$router.push({ path: item.to })">
+              <img class="custom-icon" :src="item.img" />
+            </div>
             <router-link v-else :to="item.to">
               <nav-item :name="item.name" :is-active="item.name === currentRouteName" />
             </router-link>
           </template>
         </div>
-        <sensilet-widget />
         <div class="user">
           <div v-if="hasToken || user.name" @click="authConfirm">
             <span v-if="user.name">{{user.name}}</span>
@@ -51,6 +53,7 @@ import { useI18n } from 'vue-i18n-composable/src/index'
 import NavItem from '@/components/NavItem.vue'
 import { getUserFollow } from '@/api/buzz.ts'
 import SensiletWidget from './components/SensiletWidget.vue';
+import sensiletIcon from '@/assets/icons/sensilet.png'
 
 function setLocal(key, val) {
   return window.localStorage.setItem(key, val)
@@ -70,6 +73,7 @@ export default defineComponent({
   data() {
     return {
       showPub: location.host.includes('localhost'),
+      path: ''
     };
   },
   setup() {
@@ -92,6 +96,9 @@ export default defineComponent({
     loadingStatus() {
       return this.$isMobile ? '' : 'MetaID框架...'
     },
+    isSendPage() {
+      return this.path === '/send'
+    },
     links() {
       return [
         {
@@ -112,6 +119,13 @@ export default defineComponent({
         {
           to: '/setting',
           name: 'Setting',
+          enable: true
+        },
+        {
+          to: '/send',
+          name: 'Send',
+          isInternel: true,
+          img: sensiletIcon,
           enable: true
         },
         {
@@ -272,9 +286,13 @@ export default defineComponent({
       }
     },
     async initSDK(hasUserInfo = false) {
+      console.log('init sdk', this.path)
+      if (this.isSendPage) {
+        return
+      }
       // sensilet deps
       if (hasUserInfo) {
-        this.getBuzzParentTxId()
+        // this.getBuzzParentTxId()
       }
       await SDKInit()
       console.log('sdk loaded')
@@ -288,6 +306,7 @@ export default defineComponent({
   created() {
     window.handleUserLoginData = this.handleUserLoginData
     this.code = getUrlParameterByName('code')
+    this.path = location.pathname
     // 是否存在 token
     //  是否存在 user cache
     //    并行初始化 sdk

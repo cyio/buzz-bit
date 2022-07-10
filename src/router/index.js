@@ -56,6 +56,12 @@ const routes = [
       import(/* webpackChunkName: "Decode" */ "../views/Decode.vue"),
   },
   {
+    path: "/send",
+    name: "Send",
+    component: () =>
+      import(/* webpackChunkName: "Decode" */ "../views/Send.vue"),
+  },
+  {
     path: "/preview/:txId",
     name: "Preview",
     component: () =>

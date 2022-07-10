@@ -30,7 +30,7 @@ Vue.component('inline-svg', InlineSvg);
 Vue.use(VueKeepAliveDev);
 Vue.use(Popover)
 
-Vue.prototype.$version = '1.18.0'
+Vue.prototype.$version = '1.18.2'
 Vue.prototype.$chargeAddress = privateConfig.chargeAddress
 Vue.prototype.$SDKInit = SDKInit
 Vue.prototype.$isMobile = isMobile()
@@ -39,6 +39,8 @@ Vue.prototype.$shared = shared
 Vue.prototype.$isInShowApp = !!window.appMetaIdJs
 Vue.prototype.$AppConfig = AppConfig
 Vue.prototype.$sensiletStore = {}
+Vue.prototype.$isDev = location.hostname === 'localhost'
+
 // window.$ShowAccount = {}
 
 const i18n = createI18n({

@@ -137,6 +137,19 @@ export const getNewNodePath = async (data): Promise<any> => {
   }
   return []
 }
+export const getMetaIdByZoreAddress = async (data): Promise<any> => {
+  const res = await callApi({
+    url: '/serviceapi/api/v1/metago/getMetaIdByZoreAddress',
+    params: {
+      data: JSON.stringify(data)
+    },
+    host: AppConfig.showMoneyUrl,
+    options: {
+      credentials: 'omit',
+    }
+  })
+  return res.result
+}
 export const getInteractiveBuzzList = (params): Promise<any> => {
   return callApi({
     url: '/aggregation/v2/app/buzz/getBuzzInteractiveList',

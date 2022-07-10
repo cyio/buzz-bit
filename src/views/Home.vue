@@ -76,7 +76,7 @@ import Uploader from "@/components/Uploader.vue";
 import FileUploader from "@/components/FileUploader.vue";
 import BuzzListContainer from "@/components/BuzzListContainer.vue";
 import metaIdUtils from '@/utils/meta-id'
-import { getToken, getNewNodePath } from '@/api/buzz.ts'
+import { getToken } from '@/api/buzz.ts'
 import AppConfig from '@/config/'
 import { mapState } from 'vuex'
 import mime from 'mime-types'
@@ -189,7 +189,7 @@ export default {
         this.attachments.forEach(i => delete i.encrypt)
       }
     },
-    async send() {
+    send() {
       let useSelfPath = false
       if (this.isSlice) {
         useSelfPath = true
@@ -226,26 +226,10 @@ export default {
         address: this.$chargeAddress[key]
       }))
       this.updateAttachmentsEncrypt()
+      this.isSending = true
       // 如果用户使用 sensilet，且钱包属于当前用户，发帖走 sensilet。好处是不需要等 metaidjs 加载，弊端是展示不即时，需要等 1 次确认。
       if (window.sensilet && this.user.address === this.$sensiletStore.address && newNodePathUtils.parentTxId) {
-        this.isSending = true
-        const pathInfo = await newNodePathUtils.get()
-        console.log('use path: ', pathInfo.index)
-        const buzz = metaIdUtils.buildBuzz({
-          parentTxId: newNodePathUtils.parentTxId,
-          newNodePublicKey: pathInfo.publicKey,
-          buzzData,
-          encrypt: String(+this.useEncrypt)
-        })
-        console.log(buzz)
-        const { txId } = await sensilet.sendBuzz({
-          buzzData: buzz,
-        })
-        this.lastBuzz = buzzData
-        this.lastBuzz.txId = txId
-        this.lastBuzz.userName = this.user.name
-        this.lastBuzz.timestamp = buzzData.createTime
-        this.onSendSuccess(txId)
+        this.sendBySensilet(buzzData)
         return
       }
       const config = {
@@ -290,13 +274,31 @@ export default {
         }
       }
       console.log(config)
-      this.isSending = true
       if (this.$isInShowApp) {
         setTimeout(() => {
           this.isSending = false
         }, 3000)
       }
       window.__metaIdJs.addProtocolNode_(config);
+    },
+    async sendBySensilet(buzzData) {
+      const pathInfo = await newNodePathUtils.get()
+      console.log('use path: ', pathInfo.index)
+      const buzz = metaIdUtils.buildBuzz({
+        parentTxId: newNodePathUtils.parentTxId,
+        newNodePublicKey: pathInfo.publicKey,
+        buzzData,
+        encrypt: String(+this.useEncrypt)
+      })
+      console.log(buzz)
+      const { txId } = await sensilet.sendBuzz({
+        buzzData: buzz,
+      })
+      this.lastBuzz = buzzData
+      this.lastBuzz.txId = txId
+      this.lastBuzz.userName = this.user.name
+      this.lastBuzz.timestamp = buzzData.createTime
+      this.onSendSuccess(txId)
     },
     onSendSuccess(txId) {
       this.isSending = false
