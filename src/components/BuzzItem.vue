@@ -386,6 +386,8 @@ export default Vue.extend({
       // min-height: 90px;
       min-width: 130px;
       background-color: #eee;
+      max-height: 300px;
+      object-fit: cover;
     }
     video {
       height: 210px;
@@ -445,5 +447,16 @@ export default Vue.extend({
   background: #eee;
   padding: 2px;
   border: 1px dashed;
+}
+</style>
+
+<style>
+.van-image-preview__image--vertical {
+  height: 100vh;
+  overflow: scroll
+}
+.van-image__img {
+  min-height: 100vh;
+  height: unset
 }
 </style>

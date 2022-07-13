@@ -8,8 +8,8 @@
         >{{loadingStatus}}</van-loading>
       </div>
       <div class="links">
-        <div class="link" v-for="item of links" :key="item.name">
-          <template v-if="item.enable">
+        <div class="link" v-for="item of filterNavItem(links)" :key="item.name">
+          <template>
             <div v-if="item.isExternal">
                 <a :href="item.to" target="_blank">
                   <img class="custom-icon" :src="item.img" />
@@ -126,7 +126,7 @@ export default defineComponent({
           name: 'Send',
           isInternel: true,
           img: sensiletIcon,
-          enable: true
+          enable: !!window.sensilet
         },
         {
           to: 'https://bsv.oaker.bid/',
@@ -139,6 +139,9 @@ export default defineComponent({
     },
   },
   methods: {
+    filterNavItem(arr) {
+      return arr.filter(i => i.enable)
+    },
     resetState() {
       localStorage.clear()
       this.$store.commit('SET_USER', {});
@@ -385,6 +388,7 @@ export default defineComponent({
     box-sizing: border-box;
     position: relative;
     top: 2px;
+    cursor: pointer;
   }
 }
 

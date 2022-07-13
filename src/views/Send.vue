@@ -1,7 +1,7 @@
 <template>
   <div class="send-page">
     <div class="head">
-      <div class="username">{{user.name}}</div>
+      <div class="username" @click="$router.push(`user/${user.metaId}`)">{{user.name || '...'}}</div>
       <sensilet-widget
         @disconnected="onDisconnected"
         @connected="onConnected"
@@ -301,5 +301,13 @@ export default ({
 .result {
   margin-top: 20px;
   font-size: 14px;
+}
+.username {
+  font-weight: bold;
+  cursor: pointer;
+  color: #8b591b;
+  &:hover {
+    color: var(--theme-color);
+  }
 }
 </style>
