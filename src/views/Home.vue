@@ -76,8 +76,6 @@ import Uploader from "@/components/Uploader.vue";
 import FileUploader from "@/components/FileUploader.vue";
 import BuzzListContainer from "@/components/BuzzListContainer.vue";
 import metaIdUtils from '@/utils/meta-id'
-import { getToken } from '@/api/buzz.ts'
-import AppConfig from '@/config/'
 import { mapState } from 'vuex'
 import mime from 'mime-types'
 import { Field } from 'vant'
@@ -85,9 +83,6 @@ import { useI18n } from 'vue-i18n-composable/src/index'
 import AES from 'crypto-js/aes'
 import newNodePathUtils from '@/utils/node-path';
 
-function setLocal(key, val) {
-  return window.localStorage.setItem(key, val)
-}
 const sliceTag = '#文件分片测试'
 
 export default {
@@ -100,8 +95,6 @@ export default {
   },
   data() {
     return {
-      code: '',
-      refreshToken: '',
       content: '',
       encryptContent: '',
       encryptPSD: '',
@@ -125,36 +118,6 @@ export default {
     }
   },
   methods: {
-    updateAccessToken(res) {
-      this.accessToken = res.accessToken
-      this.refreshToken = res.refreshToken
-      setLocal('refresh_token', res.refreshToken)
-      setLocal('access_token', res.accessToken)
-    },
-    async refreshAccessToken() {
-      await getToken({
-        'grant_type': 'refresh_token',
-        // 'client_id': id,
-        // 'redirect_uri': AppConfig.oauthSettings.redirectUri,
-        // 'scope': 'app',
-        'refresh_token': this.refreshToken,
-        'client_id': AppConfig.oauthSettings.clientId,
-        'client_secret': AppConfig.oauthSettings.clientSecret
-      }).then(res => {
-        if (res.access_token) {
-          // this.updateAccessToken(res.access_token)
-          this.updateAccessToken({
-            accessToken: res.access_token,
-            refreshToken: res.refresh_token
-          })
-          // window.location.reload()
-        } else if (res.error_description) {
-          window.localStorage.clear()
-          console.log('get token error: ', res.error_description)
-          // this.$toasted.error(res.error_description)
-        }
-      })
-    },
     computeAppFees() {
       const postFee = 1000
       const mineFeeRate = 0.5

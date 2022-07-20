@@ -184,11 +184,8 @@ export default ({
       }
     },
     doLike() {
+      this.showToast()
       const accessToken = window.localStorage.getItem('access_token')
-      this.$toast.loading({
-        duration: 0,
-        message: '处理中...'
-      });
       const config = {
         nodeName: 'PayLike',
         metaIdTag: "metaid",
@@ -223,14 +220,6 @@ export default ({
           this.isSending = false;
         }
       }
-      // console.log(config)
-      if (this.$isInShowApp) {
-        this.$toast.loading({
-          duration: 0,
-          message: '处理中...',
-          // forbidClick: true,
-        });
-      }
       window.__metaIdJs.addProtocolNode_(config);
     },
     handleAmountSelected(amount) {
@@ -238,10 +227,7 @@ export default ({
       this.doHandle('doDonate', amount)
     },
     doDonate(amount) {
-      this.$toast.loading({
-        duration: 0,
-        message: '处理中...'
-      });
+      this.showToast()
       const accessToken = window.localStorage.getItem('access_token')
       const config = {
         nodeName: "SimpleArticleDonate",
@@ -293,16 +279,17 @@ export default ({
         this.send()
       }
     },
+    showToast(message = '处理中...', duration = 0) {
+      if (this.$isInShowApp) return
+      this.$toast.loading({
+        duration,
+        message
+        // forbidClick: true,
+      });
+    },
     send() {
       this.isSending = true
       this.doType === 'forward' ? this.doHandle('doForward') : this.doHandle('doComment')
-      if (this.$isInShowApp) {
-        this.$toast.loading({
-          duration: 0,
-          message: '处理中...',
-          // forbidClick: true,
-        });
-      }     
     },
   },
   computed: {

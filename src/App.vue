@@ -44,7 +44,7 @@ import { defineComponent } from '@vue/composition-api'
 import { goAuth, getToken, getOwnShowAccount, getProtocolDataList } from '@/api/buzz.ts'
 import { getUrlParameterByName } from '@/utils/index';
 import AppConfig from '@/config/'
-import { mapState } from 'vuex'
+import { mapState, mapActions } from 'vuex'
 import { Dialog } from 'vant';
 import { Storage } from '@/utils/index';
 import newNodePathUtils from '@/utils/node-path';
@@ -139,6 +139,9 @@ export default defineComponent({
     },
   },
   methods: {
+    ...mapActions({
+      refreshAccessToken: 'refreshAccessToken'
+    }),
     filterNavItem(arr) {
       return arr.filter(i => i.enable)
     },
@@ -179,17 +182,14 @@ export default defineComponent({
       return getToken({
         'grant_type': 'authorization_code',
         code,
-        // 'client_id': id,
         'redirect_uri': AppConfig.oauthSettings.redirectUri,
         'scope': 'app',
         'client_id': AppConfig.oauthSettings.clientId,
         'client_secret': AppConfig.oauthSettings.clientSecret
       }).then(res => {
         if (res.access_token) {
-          this.updateAccessToken({
-            accessToken: res.access_token,
-            refreshToken: res.refresh_token
-          })
+          this.$store.commit('SET_ACCESS_TOKEN', res.accessToken)
+          this.$store.commit('SET_REFRESH_TOKEN', res.refresh_token)
         } else if (res.error_description) {
           this.$toast(res.error_description)
         }
@@ -197,13 +197,6 @@ export default defineComponent({
         window.localStorage.clear()
         window.location.href = '/'
       })
-    },
-    updateAccessToken(res) {
-      this.$store.commit('SET_ACCESS_TOKEN', res.accessToken)
-      // this.accessToken = res.accessToken
-      this.refreshToken = res.refreshToken
-      setLocal('refresh_token', res.refreshToken)
-      // setLocal('access_token', res.accessToken)
     },
     isRoot() {
       return location.hash === '#/'
@@ -322,6 +315,9 @@ export default defineComponent({
         this.initSDK()
       })
     } else {
+      if (this.accessToken) {
+        this.refreshAccessToken()
+      }
       const userCache = Storage.getObj('user') || '{}'
       if (userCache.metaId) {
         this.$store.commit('SET_USER', userCache);

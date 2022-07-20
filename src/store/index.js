@@ -1,6 +1,8 @@
 import Vue from "vue";
 import Vuex from "vuex";
 import { Storage } from '@/utils/index';
+import { getToken } from '@/api/buzz.ts';
+import AppConfig from '@/config/'
 
 Vue.use(Vuex);
 
@@ -11,9 +13,30 @@ export default new Vuex.Store({
   state: {
     user: {},
     accessToken: Storage.getItem('access_token') || '',
+    refreshToken: Storage.getItem('refresh_token') || '',
     isSDKLoaded: false,
     showVideoInFlow: showVideoInFlowInitValue === 'false' ? false : true,
     needConfirm: needConfirmInitValue === 'false' ? false : true
+  },
+  actions: {
+    async refreshAccessToken ({ commit, state }) {
+      await getToken({
+        'grant_type': 'refresh_token',
+        // 'scope': 'app',
+        'refresh_token': state.refreshToken,
+        'client_id': AppConfig.oauthSettings.clientId,
+        'client_secret': AppConfig.oauthSettings.clientSecret
+      }).then(res => {
+        if (res.access_token) {
+          commit('SET_ACCESS_TOKEN', res.access_token)
+          commit('SET_REFRESH_TOKEN', res.refresh_token)
+        } else if (res.error_description) {
+          window.localStorage.clear()
+          console.log('get token error: ', res.error_description)
+          // this.$toasted.error(res.error_description)
+        }
+      })
+    }
   },
   mutations: {
     SET_USER(state, value) {
@@ -23,6 +46,10 @@ export default new Vuex.Store({
     SET_ACCESS_TOKEN(state, value) {
       state.accessToken = value
       Storage.setItem('access_token', value)
+    },
+    SET_REFRESH_TOKEN(state, value) {
+      state.refreshToken = value
+      Storage.setItem('refresh_token', value)
     },
     SET_SDK_LOADED(state, value) {
       state.isSDKLoaded = value
@@ -40,6 +67,5 @@ export default new Vuex.Store({
       // Storage.setItem('user', state.user)
     },
   },
-  actions: {},
   modules: {},
 });
