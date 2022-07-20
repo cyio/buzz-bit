@@ -22,7 +22,7 @@ export default new Vuex.Store({
     async refreshAccessToken ({ commit, state }) {
       await getToken({
         'grant_type': 'refresh_token',
-        // 'scope': 'app',
+        'scope': 'app',
         'refresh_token': state.refreshToken,
         'client_id': AppConfig.oauthSettings.clientId,
         'client_secret': AppConfig.oauthSettings.clientSecret

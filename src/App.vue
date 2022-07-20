@@ -85,6 +85,7 @@ export default defineComponent({
     ...mapState({
       user: 'user',
       accessToken: 'accessToken',
+      refreshToken: 'refreshToken',
       isSDKLoaded: 'isSDKLoaded',
     }),
     hasToken() {
@@ -188,7 +189,7 @@ export default defineComponent({
         'client_secret': AppConfig.oauthSettings.clientSecret
       }).then(res => {
         if (res.access_token) {
-          this.$store.commit('SET_ACCESS_TOKEN', res.accessToken)
+          this.$store.commit('SET_ACCESS_TOKEN', res.access_token)
           this.$store.commit('SET_REFRESH_TOKEN', res.refresh_token)
         } else if (res.error_description) {
           this.$toast(res.error_description)
@@ -211,15 +212,18 @@ export default defineComponent({
     getUser() {
       if (this.$isInShowApp) {
         console.log('before app get userinfo')
-        window.__metaIdJs.getUserInfo(AppConfig.oauthSettings.clientId, AppConfig.oauthSettings.clientSecret, 'handleUserLoginData')
+        window.__metaIdJs.getUserInfo_({
+          accessToken: this.accessToken,
+          callback: this.handleUserLoginData,
+        })
       } else {
         const userCache = Storage.getObj('user') || '{}'
         if (userCache.metaId) {
           this.$store.commit('SET_USER', userCache);
           this.getUserFollow(userCache.metaId)
         } else {
-          window.__metaIdJs.getUserInfo({
-            accessToken: this.accessToken, // app 内，需要吗？
+          window.__metaIdJs.getUserInfo_({
+            accessToken: this.accessToken,
             callback: this.handleUserLoginData,
           })
         }
@@ -286,15 +290,10 @@ export default defineComponent({
       if (this.isSendPage) {
         return
       }
-      // sensilet deps
-      if (hasUserInfo) {
-        // this.getBuzzParentTxId()
-      }
       await SDKInit()
       console.log('sdk loaded')
       this.$store.commit('SET_SDK_LOADED', true);
-      if (!hasUserInfo) {
-        // console.log('this', this)
+      if (this.$isInShowApp || !hasUserInfo) {
         this.getUser()
       }
     },
@@ -315,7 +314,7 @@ export default defineComponent({
         this.initSDK()
       })
     } else {
-      if (this.accessToken) {
+      if (this.accessToken && this.refreshToken) {
         this.refreshAccessToken()
       }
       const userCache = Storage.getObj('user') || '{}'

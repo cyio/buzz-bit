@@ -57,6 +57,22 @@ export default function SDKInit() {
           'eciesDecryptDataCallBack_'
         )
       }
+      window.__metaIdJs.getUserInfo_ = (config, isFile) => {
+        window.getUserInfoCallBack_ = (res) => {
+          console.log('callback res raw: ', res)
+          if (!isFile && typeof res === 'string') {
+            res = JSON.parse(res)
+          }
+          console.log('callback res: ', res)
+          config.callback(res)
+        }
+        console.log(config.data)
+        window.appMetaIdJs.getUserInfo(
+          AppConfig.oauthSettings.clientId,
+          AppConfig.oauthSettings.clientSecret,
+          'getUserInfoCallBack_'
+        )
+      }
       resolve(true)
       return
     } else {
@@ -88,6 +104,7 @@ export default function SDKInit() {
       // 设置成新方法，保留原方法
       window.__metaIdJs.addProtocolNode_ = window.__metaIdJs.addProtocolNode
       window.__metaIdJs.eciesDecryptData_ = window.__metaIdJs.eciesDecryptData
+      window.__metaIdJs.getUserInfo_ = window.__metaIdJs.getUserInfo
     }
   })
   return singleton
