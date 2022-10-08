@@ -1,6 +1,5 @@
 import Vue from "vue";
-import VueCompositionAPI, { createApp } from '@vue/composition-api'
-import { createI18n } from 'vue-i18n-composable/src/index'
+import { createI18n } from 'vue-i18n-composable'
 import App from "./App.vue";
 import router from "./router";
 import store from "./store";
@@ -14,14 +13,12 @@ import translations from './i18n'
 import InlineSvg from 'vue-inline-svg';
 import AppConfig from '@/config/'
 import VueKeepAliveDev from 'vue-keep-alive-dev'
-import { useI18n } from 'vue-i18n-composable/src/index'
 import Popover from 'vue-js-popover'
 // import 'tailwindcss/tailwind.css'
 // import './base.css'
 
 Vue.config.productionTip = false;
 
-Vue.use(VueCompositionAPI)
 Vue.use(Button);
 Vue.use(Loading);
 Vue.use(Toast);
@@ -30,7 +27,7 @@ Vue.component('inline-svg', InlineSvg);
 Vue.use(VueKeepAliveDev);
 Vue.use(Popover)
 
-Vue.prototype.$version = '1.18.15'
+Vue.prototype.$version = '1.18.16'
 Vue.prototype.$chargeAddress = privateConfig.chargeAddress
 Vue.prototype.$SDKInit = SDKInit
 Vue.prototype.$isMobile = isMobile()
@@ -43,17 +40,18 @@ Vue.prototype.$isDev = location.hostname === 'localhost'
 
 // window.$ShowAccount = {}
 
+// @ts-expect-error
+window.Vue = Vue
 const i18n = createI18n({
   locale: shared.isZh ? 'zh' : 'en',
   messages: translations
 })
 
-const app = createApp({
+new Vue({
+  el: '#app',
   router,
   store,
   i18n,
   render: h => h(App),
 })
-
-app.mount('#app')
 

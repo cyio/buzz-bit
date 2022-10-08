@@ -114,7 +114,7 @@ import BuzzFooter from './BuzzPart/BuzzFooter.vue'
 import FileDecode from '@/components/FileDecode'
 import mixin from './BuzzPart/mixin'
 import { mapState } from 'vuex'
-import { useI18n } from 'vue-i18n-composable/src/index'
+import { useI18n } from 'vue-i18n-composable'
 import SDKInit from '@/utils/sdk';
 import { hexToBase64Img, assetUrl, getExtension } from '@/utils/'
 // import CoolLightBox from 'vue-cool-lightbox'

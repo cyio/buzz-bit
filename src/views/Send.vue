@@ -46,7 +46,7 @@ import { mapState } from 'vuex'
 import metaIdUtils from '@/utils/meta-id'
 import newNodePathUtils from '@/utils/node-path'
 import { getMetaIdByZoreAddress, getOwnShowAccount, getProtocolDataList } from '@/api/buzz.ts'
-import { useI18n } from 'vue-i18n-composable/src/index'
+import { useI18n } from 'vue-i18n-composable'
 import { Field } from 'vant'
 import SensiletWidget from '@/components/SensiletWidget.vue';
 import AES from 'crypto-js/aes'

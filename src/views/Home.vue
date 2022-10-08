@@ -79,7 +79,7 @@ import metaIdUtils from '@/utils/meta-id'
 import { mapState } from 'vuex'
 import mime from 'mime-types'
 import { Field } from 'vant'
-import { useI18n } from 'vue-i18n-composable/src/index'
+import { useI18n } from 'vue-i18n-composable'
 import AES from 'crypto-js/aes'
 import newNodePathUtils from '@/utils/node-path';
 

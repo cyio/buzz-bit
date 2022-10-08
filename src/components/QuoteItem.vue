@@ -36,7 +36,7 @@ import BuzzSide from './BuzzPart/BuzzAvatar.vue'
 import BuzzFooter from './BuzzPart/BuzzFooter.vue'
 import mixin from './BuzzPart/mixin'
 import { mapState } from 'vuex'
-import { useI18n } from 'vue-i18n-composable/src/index'
+import { useI18n } from 'vue-i18n-composable'
 
 export default ({
   name: "QuoteItem",

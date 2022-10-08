@@ -40,7 +40,7 @@
 </template>
 
 <script>
-import { defineComponent } from '@vue/composition-api'
+import { defineComponent } from 'vue'
 import { goAuth, getToken, getOwnShowAccount, getProtocolDataList } from '@/api/buzz.ts'
 import { getUrlParameterByName } from '@/utils/index';
 import AppConfig from '@/config/'
@@ -49,7 +49,7 @@ import { Dialog } from 'vant';
 import { Storage } from '@/utils/index';
 import newNodePathUtils from '@/utils/node-path';
 import SDKInit from '@/utils/sdk';
-import { useI18n } from 'vue-i18n-composable/src/index'
+import { useI18n } from 'vue-i18n-composable'
 import NavItem from '@/components/NavItem.vue'
 import { getUserFollow } from '@/api/buzz.ts'
 import SensiletWidget from './components/SensiletWidget.vue';

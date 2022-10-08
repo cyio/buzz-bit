@@ -40,7 +40,7 @@ import BuzzList from "@/components/BuzzList.vue";
 import QuoteCard from "@/components/QuoteCard.vue";
 import { getSearchBuzzList } from '@/api/buzz.ts'
 import { Tab, Tabs, Loading, Pagination, Search, PullRefresh, List } from 'vant';
-import { useI18n } from 'vue-i18n-composable/src/index'
+import { useI18n } from 'vue-i18n-composable'
 
 export default {
   name: "SearchView",

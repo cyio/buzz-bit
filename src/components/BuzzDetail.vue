@@ -57,7 +57,7 @@ import { getInteractiveBuzzList } from '@/api/buzz.ts'
 import QuoteItem from "./QuoteItem"
 import { mapState } from 'vuex'
 import { Field } from 'vant'
-import { useI18n } from 'vue-i18n-composable/src/index'
+import { useI18n } from 'vue-i18n-composable'
 import { uniqBy } from 'lodash'
 import { getUrlParameterByName, hexToUtf8 } from '@/utils/index'
 import {queryHex, queryBuzzFromWOC} from '@/api/'

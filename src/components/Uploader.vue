@@ -72,7 +72,7 @@ import Vue from "vue";
 import Compressor from "compressorjs";
 import { formatBytes } from '@/utils/index'
 import { Uploader } from 'vant';
-import { useI18n } from 'vue-i18n-composable/src/index'
+import { useI18n } from 'vue-i18n-composable'
 
 // 需求 blob => hex
 export default Vue.extend({

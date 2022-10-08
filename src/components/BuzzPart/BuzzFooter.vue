@@ -89,7 +89,7 @@
 
 <script>
 import { mapState } from 'vuex'
-import { useI18n } from 'vue-i18n-composable/src/index'
+import { useI18n } from 'vue-i18n-composable'
 import { Popup, Field } from 'vant';
 import BuzzTips from '@/components/BuzzPart/BuzzTips.vue'
 

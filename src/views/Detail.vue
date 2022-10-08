@@ -11,7 +11,7 @@
 <script>
 import BuzzDetail from "@/components/BuzzDetail";
 import { getBuzz } from '@/api/buzz.ts'
-import { useI18n } from 'vue-i18n-composable/src/index'
+import { useI18n } from 'vue-i18n-composable'
 import { mapState } from 'vuex'
 
 export default ({

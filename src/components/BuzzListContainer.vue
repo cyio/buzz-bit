@@ -41,7 +41,7 @@ import BuzzList from "@/components/BuzzList.vue";
 import QuoteCard from "@/components/QuoteCard.vue";
 import { getBuzzList, getFollowBuzzList, getHotBuzzList, getNewBuzzList, getSearchBuzzList, getBuzz } from '@/api/buzz.ts'
 import { Tab, Tabs, Loading, Pagination, Search, PullRefresh, List } from 'vant';
-import { useI18n } from 'vue-i18n-composable/src/index'
+import { useI18n } from 'vue-i18n-composable'
 import { mapState } from 'vuex'
 
 export default {
@@ -121,6 +121,7 @@ export default {
         },
       ],
       keywords: '',
+      isActivated: false,
       showVideoInFlow: true
     }
   },
@@ -293,6 +294,10 @@ export default {
     'curListType': {
       handler: function(val, old) {
         console.info('watch', val, old)
+        if (this.isActivated) {
+          console.log('cancel')
+          return
+        }
         this.buzzListData[this.curListType].currentPage = 1
         this.buzzListData[this.curListType].data = []
         this.buzzListData[this.curListType].loading = true;
@@ -338,6 +343,19 @@ export default {
     if (params.type && params.type !== this.curListType) {
       // console.log('created listType changed')
       this.curListType = params.type
+    }
+  },
+  activated() {
+    const { params } = this.$route
+    if (params.type && params.type !== this.curListType) {
+      // bug: 从 keep-alive 恢复的状态，有时不对
+      console.log('activated listType:', params.type, this.curListType)
+      this.isActivated = true
+      this.$nextTick(() => {
+          this.isActivated = false
+      })
+      // console.log('created listType changed')
+      // this.curListType = params.type
     }
   },
   mounted() {
