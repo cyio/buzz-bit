@@ -49,7 +49,7 @@ $--color-primary: var(--theme-color);
   display: flex;
   background: #fff;
   .tab__item {
-    width: 176px;
+    width: 100%;
     height: 56px;
     line-height: 56px;
     font-size: 16px;

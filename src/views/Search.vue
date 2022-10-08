@@ -11,10 +11,10 @@
       <van-button color="var(--theme-color)" @click="onSearch" size="small" :disabled='keywords === ""' class="search-btn">搜 索</van-button>
     </div>
     <div class="options">
-      <div class="item">
+      <!-- <div class="item">
         <input type="checkbox" id="caseInsensitive" v-model="caseInsensitive">
         <label for="caseInsensitive">{{t('btn.caseInsensitive')}}</label>
-      </div>
+      </div> -->
     </div>
     <!-- 搜索内容 -->
     <div v-if="showResult && !buzzListData[curListType].loading">

@@ -42,6 +42,15 @@ import { Loading, Pagination, Search, PullRefresh, List } from 'vant';
 import { useI18n } from 'vue-i18n-composable'
 import { mapState } from 'vuex'
 
+function computeDefaultListType(route, scene) {
+  const { path, params } = route
+  if (scene === 'pub') {
+    return path.split('/').pop()
+  } else {
+    return 'follow'
+  }
+}
+
 export default {
   name: "BuzzListContainer",
   props: {
@@ -106,7 +115,7 @@ export default {
           currentPage: 1,
         },
       },
-      curListType: this.$route.path.split('/').pop(),
+      curListType: computeDefaultListType(this.$route, this.scene),
       navData: [
         {
           key: 'hot',
@@ -131,7 +140,15 @@ export default {
           this.getCurBuzzList()
           return
       }
-      this.$router.push({ path: `/pub/${val}` })
+      if (this.scene === 'pub') {
+        this.$router.push({ path: `/pub/${val}` })
+      } else {
+          this.curListType = val
+          this.buzzListData[this.curListType].currentPage = 1
+          this.buzzListData[this.curListType].data = []
+          this.buzzListData[this.curListType].loading = true;
+          this.getCurBuzzList()
+      }
     },
     getBuzzList() {
       const params = {
