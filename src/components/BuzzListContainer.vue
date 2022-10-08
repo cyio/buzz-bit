@@ -1,46 +1,44 @@
 <template>
   <div class="list-container">
-    <van-tabs v-model="curListType" color="var(--theme-color)">
-      <van-tab
-        v-for="item in navDataComputed"
-        :title="item.title"
-        :name="item.key"
-        :key="item.key"
+    <ui-tabs
+      :tabOptions="navDataComputed"
+      :activeTab="curListType"
+      @click="onClickTab"
+    >
+      <div class="search-wrap" v-show="curListType === 'search'" >
+        <van-search
+          v-model="keywords"
+          placeholder="请输入关键词" @search="onSearch"
+          class="search-input"
+        />
+        <van-button color="var(--theme-color)" @click="onSearch" size="small" :disabled='keywords === ""' class="search-btn">搜 索</van-button>
+      </div>
+      <!-- <van-pull-refresh v-model="buzzListData[curListType].refreshing" @refresh="onRefresh"> -->
+      <van-list
+        v-model="buzzListData[curListType].loading"
+        :finished="buzzListData[curListType].finished"
+        finished-text="没有更多了"
+        @load="onLoad(curListType)"
+        :key="curListType"
       >
-        <div class="search-wrap" v-show="curListType === 'search'" >
-          <van-search
-            v-model="keywords"
-            placeholder="请输入关键词" @search="onSearch"
-            class="search-input"
-          />
-          <van-button color="var(--theme-color)" @click="onSearch" size="small" :disabled='keywords === ""' class="search-btn">搜 索</van-button>
-        </div>
-        <!-- <van-pull-refresh v-model="buzzListData[curListType].refreshing" @refresh="onRefresh"> -->
-        <van-list
-          v-model="buzzListData[curListType].loading"
-          :finished="buzzListData[curListType].finished"
-          finished-text="没有更多了"
-          @load="onLoad(item.key)"
-          :key="item.key"
-        >
-          <!-- <div class="init-loading" v-if="curBuzzListData.length === 0 && buzzListData[curListType].loading">数据</div> -->
-          <BuzzList :buzzListData="curBuzzListData" :key="item.key" />
-          <!-- 定制首次加载界面 -->
-          <template v-if="curBuzzListData.length === 0" v-slot:loading>
-              <van-loading color="var(--theme-color)" class="loading"></van-loading>
-              <!-- <QuoteCard name="for-list" /> -->
-          </template>
-        </van-list>
-        <!-- </van-pull-refresh> -->
-      </van-tab>
-    </van-tabs>
+        <!-- <div class="init-loading" v-if="curBuzzListData.length === 0 && buzzListData[curListType].loading">数据</div> -->
+        <BuzzList :buzzListData="curBuzzListData" :key="curListType" />
+        <!-- 定制首次加载界面 -->
+        <template v-if="curBuzzListData.length === 0" v-slot:loading>
+            <van-loading color="var(--theme-color)" class="loading"></van-loading>
+            <!-- <QuoteCard name="for-list" /> -->
+        </template>
+      </van-list>
+      <!-- </van-pull-refresh> -->
+    </ui-tabs>
   </div>
 </template>
 <script>
 import BuzzList from "@/components/BuzzList.vue";
 import QuoteCard from "@/components/QuoteCard.vue";
+import UITabs from "@/components/Tabs.vue";
 import { getBuzzList, getFollowBuzzList, getHotBuzzList, getNewBuzzList, getSearchBuzzList, getBuzz } from '@/api/buzz.ts'
-import { Tab, Tabs, Loading, Pagination, Search, PullRefresh, List } from 'vant';
+import { Loading, Pagination, Search, PullRefresh, List } from 'vant';
 import { useI18n } from 'vue-i18n-composable'
 import { mapState } from 'vuex'
 
@@ -64,8 +62,7 @@ export default {
   components: {
     BuzzList,
     QuoteCard,
-    [Tab.name]: Tab,
-    [Tabs.name]: Tabs,
+    'ui-tabs': UITabs,
     [Loading.name]: Loading,
     [Pagination.name]: Pagination,
     [Search.name]: Search,
@@ -109,7 +106,7 @@ export default {
           currentPage: 1,
         },
       },
-      curListType: this.scene === 'pub' ? 'hot' : 'follow',
+      curListType: this.$route.path.split('/').pop(),
       navData: [
         {
           key: 'hot',
@@ -126,6 +123,16 @@ export default {
     }
   },
   methods: {
+    onClickTab(val) {
+      if (val === this.curListType) {
+          this.buzzListData[this.curListType].currentPage = 1
+          this.buzzListData[this.curListType].data = []
+          this.buzzListData[this.curListType].loading = true;
+          this.getCurBuzzList()
+          return
+      }
+      this.$router.push({ path: `/pub/${val}` })
+    },
     getBuzzList() {
       const params = {
         Protocols: ['SimpleMicroblog', 'WebotBuzz'],
@@ -290,24 +297,6 @@ export default {
     }
   },
   watch: {
-    // 切换 Tab
-    'curListType': {
-      handler: function(val, old) {
-        console.info('watch', val, old)
-        if (this.isActivated) {
-          console.log('cancel')
-          return
-        }
-        this.buzzListData[this.curListType].currentPage = 1
-        this.buzzListData[this.curListType].data = []
-        this.buzzListData[this.curListType].loading = true;
-        this.getCurBuzzList(val)
-        if (window.location.pathname !== `/pub/${val}` && !/follow|my/.test(val) && old) {
-          window.history.pushState({}, '', `/pub/${val}`)
-        }
-      },
-      immediate: true,
-    },
     // 用户发帖后，刷新
     'lastBuzzTxId': function(txId) {
       setTimeout(() => {
@@ -339,24 +328,7 @@ export default {
     },
   },
   created() {
-    const { params } = this.$route
-    if (params.type && params.type !== this.curListType) {
-      // console.log('created listType changed')
-      this.curListType = params.type
-    }
-  },
-  activated() {
-    const { params } = this.$route
-    if (params.type && params.type !== this.curListType) {
-      // bug: 从 keep-alive 恢复的状态，有时不对
-      console.log('activated listType:', params.type, this.curListType)
-      this.isActivated = true
-      this.$nextTick(() => {
-          this.isActivated = false
-      })
-      // console.log('created listType changed')
-      // this.curListType = params.type
-    }
+    this.getCurBuzzList(this.curListType)
   },
   mounted() {
     const value = localStorage.getItem('showVideoInFlow')
