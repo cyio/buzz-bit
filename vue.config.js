@@ -1,3 +1,4 @@
+const NodePolyfillPlugin = require("node-polyfill-webpack-plugin")
 const path = require('path');
 function resolve (dir) {
     return path.join(__dirname, dir)
@@ -5,6 +6,17 @@ function resolve (dir) {
 module.exports = {
     lintOnSave: true,
     configureWebpack: {
+      resolve: {
+        alias: {},
+        fallback: {
+          //其他的如果不启用可以用 keyname :false，例如：crypto:false, 
+          "crypto": require.resolve("crypto-browserify"),
+          "path": require.resolve("path-browserify")
+        },
+      },  
+      plugins: [
+        new NodePolyfillPlugin()
+      ],
       module: {
         rules: [
           {
@@ -44,7 +56,7 @@ module.exports = {
         config.resolve.alias
             .set('@$', resolve('src'))
     },
-    // css: {
+    // css: { 
     //   loaderOptions: {
     //     postcss: {
     //       plugins: [require('tailwindcss'), require('autoprefixer')]
@@ -53,7 +65,7 @@ module.exports = {
     // },
     devServer: {
       historyApiFallback: true,
-      disableHostCheck: true,
+      allowedHosts: 'all',
       proxy: {
         '/showMANDB': {
           target: 'https://api.showmoney.app',
