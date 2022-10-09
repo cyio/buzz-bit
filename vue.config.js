@@ -4,20 +4,6 @@ function resolve (dir) {
 }
 module.exports = {
     lintOnSave: true,
-    // pages: {
-    //   // 先配置主页
-    //   index: {
-    //       entry: './src/main.js',
-    //       template: './public/index.html',
-    //       title: '用户登录'
-    //   },
-    //   // 再配置各个子页面：登录后课表查询页
-    //   schedule: {
-    //       entry: './src/pages/send/main.js',
-    //       template: './public/schedule.html',
-    //       title: '课表查询'
-    //   }
-    // },
     configureWebpack: {
       module: {
         rules: [
