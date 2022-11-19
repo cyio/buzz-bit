@@ -3,6 +3,7 @@
     <div class="input-area">
       <van-field
         v-model="content"
+        :formatter="replaceBlank"
         rows="2"
         autosize
         label=""
@@ -18,6 +19,7 @@
       <div class="input-area">
         <van-field
           v-model="encryptContent"
+          :formatter="replaceBlank"
           rows="2"
           autosize
           label=""
@@ -311,6 +313,10 @@ export default {
       if (e && (e.metaKey || e.ctrlKey) && e.keyCode == 13) {
         this.send()
       }
+    },
+    replaceBlank(value) {
+        const reg = /\n(\n)*( )*(\n)*\n/g
+        return value.replace(reg, '\n\n')
     }
   },
   computed: {
