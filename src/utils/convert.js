@@ -75,7 +75,26 @@ async function getHexByTxId(txId, apiService) {
   return hex
 }
 
+function parseHighlight(str) {
+  let tmp = ''
+  try {
+    if (str.includes('SimpleMicroblog-')) {
+      let arr = str.split(' ')
+      tmp = arr[arr.length - 1]
+      if (!tmp.endsWith('\"\}')) {
+        tmp += '\"\}'
+      }
+    } else {
+      return
+    }
+    return JSON.parse(tmp)
+  } catch (err) {
+    console.error(err)
+  }
+}
+
 export {
   convertRawText,
-  getHexByTxId
+  getHexByTxId,
+  parseHighlight,
 }

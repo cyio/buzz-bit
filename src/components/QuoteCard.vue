@@ -27,11 +27,13 @@ export default ({
   computed: {
   },
   created() {
-    getQuotes().then(res => {
-      const list = res.list
-      const selectIndex = random(0, res.list.length - 1)
-      this.selectTweet = list[selectIndex]
-    })
+    if (!this.$isDev) {
+      getQuotes().then(res => {
+        const list = res.list
+        const selectIndex = random(0, res.list.length - 1)
+        this.selectTweet = list[selectIndex]
+      })
+    }
   }
 });
 </script>

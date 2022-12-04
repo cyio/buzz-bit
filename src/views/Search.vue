@@ -11,6 +11,10 @@
       <van-button color="var(--theme-color)" @click="onSearch" size="small" :disabled='keywords === ""' class="search-btn">搜 索</van-button>
     </div>
     <div class="options">
+      <div class="item">
+        <input type="checkbox" id="searchChain" v-model="searchChain">
+        <label for="searchChain">{{t('btn.searchChain')}}</label>
+      </div>
       <!-- <div class="item">
         <input type="checkbox" id="caseInsensitive" v-model="caseInsensitive">
         <label for="caseInsensitive">{{t('btn.caseInsensitive')}}</label>
@@ -41,6 +45,7 @@ import QuoteCard from "@/components/QuoteCard.vue";
 import { getSearchBuzzList } from '@/api/buzz.ts'
 import { Tab, Tabs, Loading, Pagination, Search, PullRefresh, List } from 'vant';
 import { useI18n } from 'vue-i18n-composable'
+import { parseHighlight } from '@/utils/convert'
 
 export default {
   name: "SearchView",
@@ -88,6 +93,7 @@ export default {
       keywords: '',
       showVideoInFlow: true,
       caseInsensitive: false,
+      searchChain: false,
       showResult: false
     }
   },
@@ -127,12 +133,45 @@ export default {
       }
       this.showResult = true
     },
+    searchChainQuery(listType) {
+      const _listType = listType || this.curListType
+      const map = {
+        'search': 'getSearchBuzzList',
+      }
+      this.buzzListData[_listType].loading = true
+      const limit = 30
+      const fromIndex = limit * (this.buzzListData[this.curListType].currentPage - 1)
+      fetch(`https://api.bitails.net/search?q=${this.keywords}&limit=${limit}&from=${fromIndex}`).then(
+        res => res.json()
+      ).then(json => {
+        this.buzzListData[_listType].loading = false
+        this.buzzListData[_listType].refreshing = false
+        this.buzzListData[_listType].finished = true
+        const { ops: { results } } = json
+        console.log(results)
+        results.sort((a, b) => b.time - a.time)
+        this.buzzListData[_listType].data = results
+          .map(i => {
+            return {
+              content: parseHighlight(i.highlight[0])?.content || i.highlight[0],
+              _content: i.highlight[0],
+              txId: i.txid,
+              timestamp: i.time * 1000
+            }
+          })
+        this.showResult = true
+      })
+    },
     onSearch() {
       this.buzzListData.search.data = []
       this.buzzListData.search.finished = false
       this.buzzListData.search.currentPage = 1
       this.showResult = false
-      this.getCurBuzzList()
+      if (this.searchChain) {
+        this.searchChainQuery()
+      } else {
+        this.getCurBuzzList()
+      }
     }
   },
   computed: {
@@ -149,7 +188,11 @@ export default {
   },
   watch: {
     'buzzListData.search.currentPage': function() {
-      this.getCurBuzzList()
+      if (this.searchChain) {
+        this.searchChainQuery()
+      } else {
+        this.getCurBuzzList()
+      }
     },
     keywords(val) {
       if (val.trim() === '') {

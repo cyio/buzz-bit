@@ -21,12 +21,17 @@ function addZero(value) {
 
 function formatTime(time) {
   const date = new Date(time)
-  // const year = date.getFullYear()
+  const year = date.getFullYear()
   const month = date.getMonth() + 1
+  const monthWithZero = addZero(month)
   const day = addZero(date.getDate())
   const hour = addZero(date.getHours())
   const minute = addZero(date.getMinutes())
-  return `${month}-${day} ${hour}:${minute}`
+  if (year < new Date().getFullYear()) {
+    return `${year}-${monthWithZero}-${day} ${hour}:${minute}`
+  } else {
+    return `${month}-${day} ${hour}:${minute}`
+  }
 }
 
 const hexToBase64Img = (hexStr, type) => {
