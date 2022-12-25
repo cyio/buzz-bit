@@ -128,7 +128,7 @@ const config: ObjTypes<ConfigTypes> = {
     oauthSettings: {
       clientId: privateConfig[env].clientId,
       clientSecret: privateConfig[env].clientSecret,
-      redirectUri: 'https://buzzbit.vercel.app'
+      redirectUri: window.location.origin
     },
     recommandUsers: prodRecommandUsers,
     hotBuzz: prodHotBuzz,

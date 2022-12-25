@@ -1,6 +1,6 @@
 import {queryHex} from '@/api/'
 
-const proxy = 'https://vercel-server-bit.vercel.app/api/proxy/image?url='
+const proxy = 'https://api.oaker.bid/api/proxy/image?url='
 
 function convertImgs(input) {
   const dogefiles = /(https?:\/\/)dogefiles.twetch\S*/g;
@@ -79,11 +79,12 @@ function parseHighlight(str) {
   let tmp = ''
   try {
     if (str.includes('SimpleMicroblog-')) {
-      let arr = str.split(' ')
+      let arr = str.split(' {')
       tmp = arr[arr.length - 1]
       if (!tmp.endsWith('\"\}')) {
-        tmp += '\"\}'
+        tmp += tmp.endsWith('"') ? '\}': '\"\}'
       }
+      tmp = '{' + tmp
     } else {
       return
     }

@@ -70,7 +70,7 @@ export const queryBuzz = {
 }
 
 export const getQuotes = async () => {
-  let url = `https://vercel-server-bit.vercel.app/api/bsv/quotes`
+  let url = `https://api.oaker.bid/api/bsv/quotes`
   let res = await fetch(url)
   let json = await res.json()
   return json

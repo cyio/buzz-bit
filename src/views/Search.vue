@@ -9,6 +9,11 @@
         autofocus
       />
       <van-button color="var(--theme-color)" @click="onSearch" size="small" :disabled='keywords === ""' class="search-btn">搜 索</van-button>
+      <van-dropdown-menu v-show="searchChain" active-color="#c68230">
+        <van-dropdown-item v-model="timeValue" :options="timeOptions"
+          @change="onSearch"
+         />
+      </van-dropdown-menu>
     </div>
     <div class="options">
       <div class="item">
@@ -29,7 +34,7 @@
           force-ellipses
         />
       </div>
-      <div class="no-result" v-else>没有查询到，换个搜索词试试</div>
+      <div class="no-result" v-else>没有结果</div>
     </div>
     <div class="custom-content" v-else>
       <QuoteCard v-if="!buzzListData[curListType].loading" />
@@ -43,9 +48,26 @@
 import BuzzList from "@/components/BuzzList.vue";
 import QuoteCard from "@/components/QuoteCard.vue";
 import { getSearchBuzzList } from '@/api/buzz.ts'
-import { Tab, Tabs, Loading, Pagination, Search, PullRefresh, List } from 'vant';
+import { Tab, Tabs, Loading, Pagination, Search, PullRefresh, List, DropdownMenu, DropdownItem } from 'vant';
 import { useI18n } from 'vue-i18n-composable'
 import { parseHighlight } from '@/utils/convert'
+
+function getTimeOptions() {
+  const now = new Date();
+  const hour = 3.6e+6
+  const day = 8.64e+7
+  const week = 6.048e+8
+  const month = 2.628e+9
+  const year = 3.156e+10
+  return [
+    { text: '任意时间', value: 0 },
+    { text: '近 1 小时', value: now - hour},
+    { text: '近 24 小时', value: now - day },
+    { text: '近 1 周', value: now - week },
+    { text: '近 1 月', value: now - month },
+    { text: '近 1 年', value: now - year },
+  ]
+}
 
 export default {
   name: "SearchView",
@@ -72,6 +94,8 @@ export default {
     [Search.name]: Search,
     [PullRefresh.name]: PullRefresh,
     [List.name]: List,
+    [DropdownMenu.name]: DropdownMenu,
+    [DropdownItem.name]: DropdownItem,
   },
   setup() {
     return {
@@ -94,7 +118,9 @@ export default {
       showVideoInFlow: true,
       caseInsensitive: false,
       searchChain: false,
-      showResult: false
+      showResult: false,
+      timeValue: 0,
+      timeOptions: getTimeOptions()
     }
   },
   methods: {
@@ -141,14 +167,24 @@ export default {
       this.buzzListData[_listType].loading = true
       const limit = 30
       const fromIndex = limit * (this.buzzListData[this.curListType].currentPage - 1)
-      fetch(`https://api.bitails.net/search?q=${this.keywords}&limit=${limit}&from=${fromIndex}`).then(
+      const fromTime = parseInt(this.timeValue / 1000)
+      const query = {
+        q: this.keywords,
+        limit,
+        from: fromIndex,
+        fromTime
+      }
+      fetch(`https://api.bitails.net/search?${new URLSearchParams(query)}`).then(
         res => res.json()
       ).then(json => {
         this.buzzListData[_listType].loading = false
         this.buzzListData[_listType].refreshing = false
         this.buzzListData[_listType].finished = true
+        this.showResult = true
+        if (!json) {
+          return
+        }
         const { ops: { results } } = json
-        console.log(results)
         results.sort((a, b) => b.time - a.time)
         this.buzzListData[_listType].data = results
           .map(i => {
@@ -159,10 +195,12 @@ export default {
               timestamp: i.time * 1000
             }
           })
-        this.showResult = true
       })
     },
     onSearch() {
+      if (!this.keywords) {
+          return
+      }
       this.buzzListData.search.data = []
       this.buzzListData.search.finished = false
       this.buzzListData.search.currentPage = 1
@@ -220,7 +258,7 @@ export default {
     display: flex;
     align-items: center;
     .search-input {
-      width: 80%;
+      flex: 1;
     }
   }
   .options {
@@ -232,6 +270,16 @@ export default {
     margin-top: 200px;
     color: var(--theme-color);
     font-size: 14px;
+  }
+}
+</style>
+<style>
+@media (min-width:600px) {
+  .van-dropdown-item--down {
+    width: 600px;
+    left: 50%;
+    max-width: 600px;
+    transform: translateX(-50%);
   }
 }
 </style>

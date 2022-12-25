@@ -148,9 +148,15 @@ export default ({
         encrypt: String(+this.useEncrypt)
       })
       console.log(buzz)
-      const { txId } = await sensilet.sendBuzz({
+      const sendRes = await sensilet.sendBuzz({
         metadata: buzz,
       })
+      const { txId } = sendRes
+      if (!txId) {
+        console.error({sendRes})
+        this.$toast('发送失败，请稍后重试')
+        return
+      }
       this.lastBuzz = buzzData
       this.lastBuzz.txId = txId
       this.lastBuzz.userName = this.user.name
