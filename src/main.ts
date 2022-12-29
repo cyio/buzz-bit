@@ -14,6 +14,8 @@ import InlineSvg from 'vue-inline-svg';
 import AppConfig from '@/config/'
 import VueKeepAliveDev from 'vue-keep-alive-dev'
 import Popover from 'vue-js-popover'
+import { inject } from '@vercel/analytics';
+
 // import 'tailwindcss/tailwind.css'
 // import './base.css'
 
@@ -27,7 +29,7 @@ Vue.component('inline-svg', InlineSvg);
 Vue.use(VueKeepAliveDev);
 Vue.use(Popover)
 
-Vue.prototype.$version = '1.19.5'
+Vue.prototype.$version = '1.19.6'
 Vue.prototype.$chargeAddress = privateConfig.chargeAddress
 Vue.prototype.$SDKInit = SDKInit
 Vue.prototype.$isMobile = isMobile()
@@ -55,3 +57,4 @@ new Vue({
   render: h => h(App),
 })
 
+inject();
