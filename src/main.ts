@@ -3,7 +3,6 @@ import { createI18n } from 'vue-i18n-composable'
 import App from "./App.vue";
 import router from "./router";
 import store from "./store";
-import "./registerServiceWorker";
 import { Button, Loading, Toast, Icon } from 'vant';
 import '@vant/touch-emulator';
 import privateConfig from '../private-config.json'
@@ -29,7 +28,7 @@ Vue.component('inline-svg', InlineSvg);
 Vue.use(VueKeepAliveDev);
 Vue.use(Popover)
 
-Vue.prototype.$version = '1.19.6'
+Vue.prototype.$version = '1.20.3'
 Vue.prototype.$chargeAddress = privateConfig.chargeAddress
 Vue.prototype.$SDKInit = SDKInit
 Vue.prototype.$isMobile = isMobile()

@@ -1,6 +1,6 @@
 // 此配置 fork 自 metabuzz，存在冗余字段
 
-const privateConfig = require('../../private-config.json')
+import privateConfig from '../../private-config.json'
 
 export interface ConfigTypes {
   readonly baseUrl: string; // 当前项目基本Url
