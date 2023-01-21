@@ -1,7 +1,7 @@
 <template>
   <div v-if="mode === 'list' && isInBlackList" class="blacklist-wrap">已屏蔽用户内容</div>
   <div v-else class="buzz-item" :class="['mode-' + mode, isOriginal ? 'is-original' : '']">
-    <div class="item-left">
+    <div class="item-left" v-if="buzz.userName || buzz.avatarTxId">
       <buzz-side :avatarTxId="buzz.avatarTxId" :userTxId="buzz.metaId" />
     </div>
     <div class="item-main" @click="goDetail">

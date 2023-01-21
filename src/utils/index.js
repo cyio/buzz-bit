@@ -19,7 +19,7 @@ function addZero(value) {
   return `0${value}`
 }
 
-function formatTime(time) {
+function formatTime(time, useFull = false) {
   const date = new Date(time)
   const year = date.getFullYear()
   const month = date.getMonth() + 1
@@ -27,7 +27,7 @@ function formatTime(time) {
   const day = addZero(date.getDate())
   const hour = addZero(date.getHours())
   const minute = addZero(date.getMinutes())
-  if (year < new Date().getFullYear()) {
+  if (useFull || year < new Date().getFullYear()) {
     return `${year}-${monthWithZero}-${day} ${hour}:${minute}`
   } else {
     return `${month}-${day} ${hour}:${minute}`

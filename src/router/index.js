@@ -50,7 +50,7 @@ const routes = [
     //   import(/* webpackChunkName: "PubList" */ "../views/PubList.vue"),
   },
   {
-    path: "/decode",
+    path: "/decode/:id?",
     name: "Decode",
     component: () =>
       import(/* webpackChunkName: "Decode" */ "../views/Decode.vue"),

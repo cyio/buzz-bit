@@ -38,17 +38,22 @@ export default ({
     extractCode: String,
     apiService: {
       type: String,
-      default: 'showMANDB',
+      required: true
+      // default: 'showMANDB',
       // default: 'whatsonchain',
     },
     showMetaInfo: {
       type: Boolean,
       default: false,
     },
+    embed: {
+      type: Boolean,
+      default: false,
+    },
     mode: {
       type: String,
       default: 'post'
-    }
+    },
   },
   components: {
     FilePreview,
@@ -110,6 +115,8 @@ export default ({
         return
       }
       this.buzz = buzz
+      this.buzz.__embed = this.embed
+      // this.buzz.txId = this.txId
       this.buzz.timestamp = buzz.createTime
       this.buzz.extractCode = this.extractCode
     },

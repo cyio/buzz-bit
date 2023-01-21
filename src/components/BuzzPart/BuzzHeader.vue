@@ -4,8 +4,8 @@
       <div class="avatar"></div>
       <div class="userinfo">
         <!-- <img :src="hexToBase64Img(userInfo.headUrl)" :size="40" /> -->
-        <div class="username" @click.stop="goUserDetail">{{ buzz.userName || buzz.name}}</div>
-        <div class="time">{{ buzz.timestamp | formatTime }}</div>
+        <div class="username" @click.stop="goUserDetail" v-show="username">{{ username }}</div>
+        <div class="time">{{ buzz.timestamp | formatTime(buzz) }}</div>
       </div>
     </div>
     <div class="right" v-show="buzz.txId">
@@ -22,7 +22,8 @@ import { format as timeagoFormat } from 'timeago.js';
 export default ({
   name: "BuzzHeader",
   props: {
-    buzz: Object
+    buzz: Object,
+    required: true
   },
   components: {
   },
@@ -43,9 +44,15 @@ export default ({
     }
   },
   computed: {
+    username() {
+      return this.buzz.userName || this.buzz.name
+    }
   },
   filters: {
-    formatTime(time) {
+    formatTime(time, buzz) {
+      if (buzz.__embed) {
+        return formatTime(time, true)
+      }
       const useTimeago = (new Date()) - time < 86400000
       return useTimeago ? timeagoFormat(time, shared.isZh ? 'zh_CN' : 'en_US') : formatTime(time)
     }
@@ -63,11 +70,11 @@ export default ({
     align-items: center;
     .username {
       font-weight: bold;
+      margin-right: 6px;
     }
     .time {
       color: #909399;
       font-size: 12px;
-      margin-left: 6px;
     }
   }
   .tx-link {

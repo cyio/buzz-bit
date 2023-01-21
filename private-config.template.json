@@ -6,5 +6,15 @@
   "production": {
     "clientId": "",
     "clientSecret": ""
+  },
+  "chargeAddress": {
+    "postFee": "18H4SRi4nh9yg6Tr8M24CTtsveqzmFmJxM",
+    "basicSizeFee": "13fk1eut5jjefQ7HdgY34ANm6shBnVzUVc",
+    "savedSizeFee": "14nXduvCiHx3hEm6dmGKwJnth2iZVX6YF1",
+    "fileSizeFee": "17V5qvM9fhZaAL7vA3PRpcWwpbAnVowqot",
+    "postExtractCodeFee": "123L4QjyAKtCenczSczwjKDLij1dTDwizk",
+    "likeFee": "1C4ZwGXLJnBpz3rZNTAGTEKoAM32qiaHug",
+    "tipsFee": "1A2tsf36H3VAgfdzUWJA9k4Aou99JUy2as",
+    "showOffical": "19NeJJM6eEa3bruYnqkTA4Cp6VvdFGSepd"
   }
 }

@@ -15,7 +15,7 @@
       <!-- TODO 费用估算 -->
     </div>
     <!-- 提取码 -->
-    <div v-if="useExtractCode">
+    <div v-if="useExtractCode" class="extract-code-input-area">
       <div class="input-area">
         <van-field
           v-model="encryptContent"
@@ -406,6 +406,9 @@ export default {
     .send {
       width: 80px;
     }
+  }
+  .extract-code-input-area {
+    padding-bottom: 15px;
   }
   .list-nav {
     display: flex;

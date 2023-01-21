@@ -1,6 +1,6 @@
 <template>
   <div id="app">
-    <div class="nav">
+    <div class="site-nav" v-if="!embed">
       <div class="left">
         <span class="title" @click="goHome">BuzzBit</span>
         <span class="ver">{{$version}}</span>
@@ -52,14 +52,8 @@ import SDKInit from '@/utils/sdk';
 import { useI18n } from 'vue-i18n-composable'
 import NavItem from '@/components/NavItem.vue'
 import { getUserFollow } from '@/api/buzz.ts'
-import SensiletWidget from './components/SensiletWidget.vue';
 import sensiletIcon from '@/assets/icons/sensilet.png'
 
-function setLocal(key, val) {
-  return window.localStorage.setItem(key, val)
-}
-
-// import Search from "@/components/Search.vue";
 let tId = null
 export default defineComponent({
   name: "App",
@@ -67,13 +61,12 @@ export default defineComponent({
   },
   components: {
     NavItem,
-    SensiletWidget
-    // Search
   },
   data() {
     return {
       showPub: location.host.includes('localhost'),
-      path: ''
+      path: '',
+      embed: false,
     };
   },
   setup() {
@@ -299,6 +292,9 @@ export default defineComponent({
     },
   },
   created() {
+    const querys = new URLSearchParams(window.location.search)
+    this.embed = querys.get('embed') === '1'
+
     window.handleUserLoginData = this.handleUserLoginData
     this.code = getUrlParameterByName('code')
     this.path = location.pathname
@@ -335,15 +331,6 @@ export default defineComponent({
 </script>
 
 <style lang="scss" scoped>
-
-.nav {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin: 25px auto;
-  max-width: 600px;
-  color: var(--theme-color);
-}
 
 .left {
   display: flex;
@@ -420,5 +407,15 @@ export default defineComponent({
   background: white;
   color: var(--theme-color);
   border-color: var(--theme-color);
+}
+
+
+.site-nav {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin: 25px auto;
+  max-width: 600px;
+  color: var(--theme-color);
 }
 </style>

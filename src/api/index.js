@@ -23,7 +23,7 @@ export const queryBuzzFromWOC = async (txId) => {
   } catch (e) {
     console.error(e)
   }
-  // console.log('1', ret, target.scriptPubKey.opReturn)
+  console.log('1', ret, target.scriptPubKey.opReturn)
   return ret
 }
 
