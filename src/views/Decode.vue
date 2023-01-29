@@ -1,7 +1,7 @@
 <template>
   <div class="decode-view">
     <div class="set" v-show="!embed">
-      <div class="title">支持 Metafile 协议 1.0
+      <div class="title">
         <div class="example">
           <a href="https://whatsonchain.com/tx/7fe74c9845fab0a08dd4fc2389c5b07038d05f3f019fa0b5c391e1a22559bf3d" target="_blank">测试tx</a>
           <a href="https://whatsonchain.com/tx/be0124d264e27ddb4d6044785b3f23c155ac746521e2d295a57e920bbcad0ad7" target="_blank">提取码tx</a>
@@ -11,11 +11,16 @@
       <input type="text" name=""
           id="" placeholder="输入含有有效 txid 的地址，或仅 txid" v-model="txUrl">
       <div class="form">
-        数据源：
+        <span>协议类型：</span>
+        <select v-model="selectedProtocol">
+          <option disabled value="">请选择</option>
+          <option>Metafile</option>
+          <option>B://</option>
+        </select>
+        <span style="margin-left: 10px;">数据源：</span>
         <select v-model="selected">
           <option disabled value="">请选择</option>
-          <option>showMANDB</option>
-          <option>whatsonchain</option>
+          <option v-for="item in dataSourceOptions" :key="item">{{item}}</option>
         </select>
       </div>
       <!-- <div class="or">或</div>
@@ -51,6 +56,7 @@
         :showMetaInfo="true"
         :key="txId"
         :embed="true"
+        :protocol="selectedProtocol"
        />
     </div>
   </div>
@@ -72,6 +78,7 @@ export default ({
       txHexInput: '',
       extractCode: '',
       selected: 'whatsonchain',
+      selectedProtocol: 'Metafile',
       embed: false,
       embedCode: ''
     };
@@ -117,6 +124,11 @@ export default ({
     },
   },
   computed: {
+    dataSourceOptions() {
+        return this.selectedProtocol === 'Metafile'
+          ? ['showMANDB', 'whatsonchain']
+          : ['whatsonchain']
+    }
   },
   created() {
     const { id } = this.$route.params

@@ -28,7 +28,7 @@ import { Script } from 'bsv'
 import FilePreview from '@/components/FilePreview'
 import { hexToUtf8 } from '@/utils/index'
 import { getHexByTxId } from '@/utils/convert'
-import { queryBuzz } from '@/api/'
+import { queryBuzz, queryBinary } from '@/api/'
 
 export default ({
   name: "FileDecode",
@@ -36,6 +36,7 @@ export default ({
     txId: String,
     txHex: String,
     extractCode: String,
+    protocol: String,
     apiService: {
       type: String,
       required: true
@@ -120,6 +121,16 @@ export default ({
       this.buzz.timestamp = buzz.createTime
       this.buzz.extractCode = this.extractCode
     },
+    async setBinary() {
+      this.loading = true
+      const binary = await queryBinary[this.apiService](this.txId)
+      this.loading = false
+      if (!buzz) {
+        this.$toast('获取异常')
+        return
+      }
+      console.log(binary)
+    },
     hexToBlobUrl(hexStr, type = '') {
         // console.log('hex', hexStr)
         let buf = Buffer.from(hexStr, 'hex')
@@ -158,7 +169,13 @@ export default ({
   created() {
     if (this.mode !== 'list') {
       if (this.txId) {
-        this.setBuzz()
+        if (this.protocol === 'Metafile') {
+          this.setBuzz()
+        } else if (this.protocol === 'B://') {
+          this.setBinary()
+        } else {
+          this.$toast('未知协议')
+        }
       } else if (this.txHex) {
         this.decodeHex(this.txHex)
       }

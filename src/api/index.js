@@ -23,7 +23,22 @@ export const queryBuzzFromWOC = async (txId) => {
   } catch (e) {
     console.error(e)
   }
-  console.log('1', ret, target.scriptPubKey.opReturn)
+  console.log('buzz', ret, target.scriptPubKey.opReturn)
+  return ret
+}
+
+export const queryBinaryFromWOC = async (txId) => {
+  let url = `https://api.whatsonchain.com/v1/bsv/main/tx/hash/${txId}`  // index 不一定是 0，怎么判断？
+  let res = await fetch(url)
+  let json = await res.json()
+  let target = json.vout.find(item => item.value === 0 && item.scriptPubKey?.opReturn)
+  let ret = null
+  try {
+    ret = target.scriptPubKey.opReturn.parts
+  } catch (e) {
+    console.error(e)
+  }
+  console.log('binary', ret, target.scriptPubKey.opReturn)
   return ret
 }
 
@@ -67,6 +82,10 @@ export const queryHex = {
 export const queryBuzz = {
   'showMANDB': queryBuzzFromShow,
   'whatsonchain': queryBuzzFromWOC
+}
+
+export const queryBinary = {
+  'whatsonchain': queryBinaryFromWOC
 }
 
 export const getQuotes = async () => {
