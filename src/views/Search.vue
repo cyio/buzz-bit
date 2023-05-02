@@ -174,7 +174,7 @@ export default {
         from: fromIndex,
         fromTime
       }
-      fetch(`https://api.bitails.net/search?${new URLSearchParams(query)}`).then(
+      fetch(`https://api.bitails.io/search?${new URLSearchParams(query)}`).then(
         res => res.json()
       ).then(json => {
         this.buzzListData[_listType].loading = false

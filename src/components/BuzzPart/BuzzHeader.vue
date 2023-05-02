@@ -9,7 +9,7 @@
       </div>
     </div>
     <div class="right" v-show="buzz.txId">
-      <a class="tx-link" :href="getTxUrl(buzz.txId)" target="_blank" @click.stop="">tx</a>
+      <a class="tx-link" :href="getTxUrl(buzz.txId)" target="_blank" @click.stop="">{{isMVC ? 'mvc-tx' : 'tx'}}</a>
       <a class="tx-link" :href="getShowBuzzUrl(buzz.txId)" target="_blank" @click.stop="">showbuzz</a>
     </div>
   </div>
@@ -33,7 +33,8 @@ export default ({
   },
   methods: {
     getTxUrl(txId) {
-      return 'https://whatsonchain.com/tx/' + txId
+      const base = this.isMVC ? 'https://mvcscan.com/tx/' : 'https://whatsonchain.com/tx/'
+      return base + txId
     },
     getShowBuzzUrl(txId) {
       return 'https://www.showbuzz.app/details/' + txId
@@ -46,6 +47,9 @@ export default ({
   computed: {
     username() {
       return this.buzz.userName || this.buzz.name
+    },
+    isMVC() {
+      return this.buzz.blockHeight < 50000
     }
   },
   filters: {
