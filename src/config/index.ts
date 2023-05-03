@@ -8,6 +8,7 @@ export interface ConfigTypes {
   readonly showMoneyAuthUrl: string; // Showmoney 钱包地址
   readonly metaFileServiceUrl: string; // MetaFile 服务Url
   readonly metaIdServiceUrl: string; // MetaId 数据服务Url
+  readonly show3Url: string;
   readonly metaIdCenterUrl: string; // MetaId tag 服务Url
   readonly metaIdTag: string;
   readonly env: string;
@@ -106,6 +107,7 @@ const config: ObjTypes<ConfigTypes> = {
     baseUrl: 'https://buzz.metasv.com', 		    // 当前项目的基本 Url
     showMoneyUrl: 'https://api.showmoney.app',  // Showmoney 钱包地址 - 不需要变动
     showMoneyAuthUrl: 'https://www.showmoney.app',  // Showmoney 钱包地址 - 不需要变动
+    show3Url: 'https://api.show3.io',  // Showmoney 钱包地址 - 不需要变动
     metaFileServiceUrl: 'https://showman.metaidservices.com',
     metaIdServiceUrl: 'https://api.showmoney.app',      // Showmoney MetaId 数据服务服务API地址
     // metaIdServiceUrl: 'https://buzz-api.metasv.com',      // MetaSV MetaId 数据服务服务API地址

@@ -61,6 +61,10 @@ export default defineConfig({
         target: 'https://api.showmoney.app',
         changeOrigin: true
       },
+      '/aggregation/v2/app/show/': {
+        target: 'https://api.show3.io',
+        changeOrigin: true
+      },
       '/aggregation/v2/': {
         target: 'https://api.showmoney.app',
         changeOrigin: true

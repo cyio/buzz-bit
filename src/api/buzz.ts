@@ -32,13 +32,32 @@ interface MetaIdDataResTypes {
   data: string;
 }
 
+const useShow3 = true
+
+// ?langId=1&page=3&pageSize=16&loading=true&nothing=false&totalPages=0&timestamp=1682596837511&metaId=062615638a738d3f2a1ac82374a1d5c602259ba11e01ead24916f9dc4c569967
+const paramsAdapter = params => {
+  return {
+    langId: 1,
+    metaId: params.MetaId || '',
+    // timestamp: +new Date(),
+    pageSize: params.pageSize,
+    page: params.page,
+    // totalPages: 0
+  }
+}
+
 const callApi = async (config: ApiRequestTypes): Promise<any> => {
   const Http = new HttpRequests()
   let url = AppConfig.showMoneyUrl + config.url
+  let res
   if (config.host) {
     url = isProd ? config.host + config.url : config.url
   }
-  const res = await Http.postFetch<any>(url, config.params, config.options)
+  if (config.useGet) {
+    res = await Http.getFetch<any>(url, config.params, config.options)
+  } else {
+    res = await Http.postFetch<any>(url, config.params, config.options)
+  }
   return res
 }
 export const getToken = (params: GetTokenParamsTypes): Promise<any> => {
@@ -54,6 +73,7 @@ export const getToken = (params: GetTokenParamsTypes): Promise<any> => {
     }
   })
 }
+// show3 无变化
 export const getBuzzList = (params): Promise<any> => {
   return callApi({
     url: '/aggregation/v2/app/buzz/getBuzzMyCustomizeList',
@@ -64,6 +84,17 @@ export const getBuzzList = (params): Promise<any> => {
   })
 }
 export const getFollowBuzzList = (params): Promise<any> => {
+  if (useShow3) {
+    return callApi({
+      url: '/aggregation/v2/app/show/posts/line/timeline',
+      host: AppConfig.show3Url,
+      params: paramsAdapter(params),
+      useGet: true,
+      options: {
+        credentials: 'omit',
+      }
+    })
+  }
   return callApi({
     url: '/aggregation/v2/app/buzz/getBuzzFollowList',
     params: params,
@@ -73,6 +104,17 @@ export const getFollowBuzzList = (params): Promise<any> => {
   })
 }
 export const getHotBuzzList = (params): Promise<any> => {
+  if (useShow3) {
+    return callApi({
+      url: '/aggregation/v2/app/show/posts/line/recommendline',
+      host: AppConfig.show3Url,
+      params: paramsAdapter(params),
+      useGet: true,
+      options: {
+        credentials: 'omit',
+      }
+    })
+  }
   return callApi({
     url: '/aggregation/v2/app/buzz/getBuzzHotList',
     params: params,

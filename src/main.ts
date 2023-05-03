@@ -28,7 +28,7 @@ Vue.component('inline-svg', InlineSvg);
 Vue.use(VueKeepAliveDev);
 Vue.use(Popover)
 
-Vue.prototype.$version = '1.21.7'
+Vue.prototype.$version = '1.21.8'
 Vue.prototype.$chargeAddress = privateConfig.chargeAddress
 Vue.prototype.$SDKInit = SDKInit
 Vue.prototype.$isMobile = isMobile()
