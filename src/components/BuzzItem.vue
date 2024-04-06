@@ -53,6 +53,9 @@
               :src="metafile | parseVideoUrl"
             />
           </template>
+          <div v-else-if="metafile.startsWith('metacontract://')">
+            <span class="nft-tag">NFT</span>
+          </div>
           <img
             v-else-if="isImg(metafile)"
             :src="getAssetUrl(metafile)"
@@ -196,8 +199,9 @@ export default Vue.extend({
       }
       let fileId = imgFix(srcArray[1])
       let url = src
+      console.log('getAssetUrl', src, srcArray, fileId, url)
       if (srcArray[0] === 'metafile') {
-        url = fileId && fileId !== '' ? `${AppConfig.metaFileServiceUrl}/metafile/${fileId.join('.')}` : null
+        url = fileId && fileId !== '' ? `${AppConfig.metaFileServiceUrl}/metafile//${srcArray[1]}` : null
       } else if (srcArray[0] === 'sensible') {
         url = fileId && fileId !== '' ? `${AppConfig.metaFileServiceUrl}/metafile/sensible/${fileId.join('.')}` : null
       }
@@ -447,6 +451,12 @@ export default Vue.extend({
   background: #eee;
   padding: 2px;
   border: 1px dashed;
+}
+.nft-tag {
+  font-size: 12px;
+  color: #565454;
+  width: 30px;
+  padding: 2px 4px;
 }
 </style>
 

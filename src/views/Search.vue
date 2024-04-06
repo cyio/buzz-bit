@@ -117,7 +117,7 @@ export default {
       keywords: '',
       showVideoInFlow: true,
       caseInsensitive: false,
-      searchChain: false,
+      searchChain: true,
       showResult: false,
       timeValue: 0,
       timeOptions: getTimeOptions()

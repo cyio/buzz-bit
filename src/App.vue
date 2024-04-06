@@ -28,7 +28,7 @@
             <span v-if="user.name">{{user.name}}</span>
             <!-- <van-loading v-else color="var(--theme-color)" class="loading" /> -->
           </div>
-          <van-button @click="auth" v-else color="var(--theme-color)" size="small">{{t('btn.login')}}</van-button>
+          <!-- <van-button @click="auth" v-else color="var(--theme-color)" size="small">{{t('btn.login')}}</van-button> -->
         </div>
         <!-- <search /> -->
       </div>
@@ -283,7 +283,7 @@ export default defineComponent({
       if (this.isSendPage) {
         return
       }
-      await SDKInit()
+      // await SDKInit()
       console.log('sdk loaded')
       this.$store.commit('SET_SDK_LOADED', true);
       if (this.$isInShowApp || !hasUserInfo) {

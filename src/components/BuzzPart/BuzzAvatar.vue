@@ -1,6 +1,6 @@
 <template>
   <div class="avatar" :class="size" @click.stop="goUserDetail">
-    <img :src="avatarUrl" v-if="avatarUrl" loading="lazy" />
+    <img :src="avatarUrl" v-if="0 && avatarUrl" loading="lazy" />
     <div class="default" v-else></div>
   </div>
 </template>

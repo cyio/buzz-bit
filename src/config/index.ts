@@ -77,7 +77,7 @@ const config: ObjTypes<ConfigTypes> = {
     baseUrl: '',
     showMoneyUrl: 'https://api.showmoney.app',  // Showmoney 钱包地址 - 不需要变动
     showMoneyAuthUrl: 'https://www.showmoney.app',  // Showmoney 钱包地址 - 不需要变动
-    metaFileServiceUrl: 'https://showman.metaidservices.com',
+    metaFileServiceUrl: 'https://api.show3.io',
     metaIdServiceUrl: '',
     metaIdCenterUrl: '',
     basePath: '/',
@@ -108,7 +108,7 @@ const config: ObjTypes<ConfigTypes> = {
     showMoneyUrl: 'https://api.showmoney.app',  // Showmoney 钱包地址 - 不需要变动
     showMoneyAuthUrl: 'https://www.showmoney.app',  // Showmoney 钱包地址 - 不需要变动
     show3Url: 'https://api.show3.io',  // Showmoney 钱包地址 - 不需要变动
-    metaFileServiceUrl: 'https://showman.metaidservices.com',
+    metaFileServiceUrl: 'https://api.show3.io',
     metaIdServiceUrl: 'https://api.showmoney.app',      // Showmoney MetaId 数据服务服务API地址
     // metaIdServiceUrl: 'https://buzz-api.metasv.com',      // MetaSV MetaId 数据服务服务API地址
     metaIdCenterUrl: 'https://api.showmoney.app/tag',// Showmoney Tag 服务API地址

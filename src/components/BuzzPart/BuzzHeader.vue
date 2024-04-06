@@ -10,7 +10,7 @@
     </div>
     <div class="right" v-show="buzz.txId">
       <a class="tx-link" :href="getTxUrl(buzz.txId)" target="_blank" @click.stop="">{{isMVC ? 'mvc-tx' : 'tx'}}</a>
-      <a class="tx-link" :href="getShowBuzzUrl(buzz.txId)" target="_blank" @click.stop="">showbuzz</a>
+      <a class="tx-link" :href="getShowBuzzUrl(buzz.txId)" target="_blank" @click.stop="">show</a>
     </div>
   </div>
 </template>
@@ -37,7 +37,7 @@ export default ({
       return base + txId
     },
     getShowBuzzUrl(txId) {
-      return 'https://www.showbuzz.app/details/' + txId
+      return 'https://www.show3.io/buzz/tx/' + txId
     },
     goUserDetail() {
       const id = this.buzz.metaId
@@ -49,7 +49,7 @@ export default ({
       return this.buzz.userName || this.buzz.name
     },
     isMVC() {
-      return this.buzz.blockHeight < 50000
+      return true
     }
   },
   filters: {

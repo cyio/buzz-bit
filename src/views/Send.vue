@@ -219,12 +219,12 @@ export default ({
     },
     async init() {
       this.user.address = this.$sensiletStore.address
-      const { rootTxId } = await getMetaIdByZoreAddress({
-        zeroAddress: this.user.address
-      })
-      this.user.metaId = rootTxId
+      // const { rootTxId } = await getMetaIdByZoreAddress({
+      //   zeroAddress: this.user.address
+      // })
+      this.user.metaId = '062615638a738d3f2a1ac82374a1d5c602259ba11e01ead24916f9dc4c569967' || rootTxId
       this.getBuzzParentTxId()
-      console.log({rootTxId})
+      // console.log({rootTxId})
     },
     async getBuzzParentTxId() {
       const res = await getOwnShowAccount({
